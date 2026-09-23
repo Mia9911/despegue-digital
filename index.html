@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DESPEGUE DIGITAL — Tu negocio vende más. En 48 horas.</title>
+<style>
+  :root{
+    --bg:#0a0e1a; --card:#121829; --card2:#1a2238; --accent:#00e5a0; --accent2:#7c5cff;
+    --gold:#ffd166; --text:#eef2ff; --muted:#93a0c4; --danger:#ff5c7a; --ok:#00e5a0;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:640px;margin:0 auto;padding:0 18px}
+  header{padding:22px 0 10px;display:flex;justify-content:space-between;align-items:center}
+  .logo{font-weight:900;letter-spacing:1px;font-size:15px}
+  .logo b{color:var(--accent)}
+  .badge-pay{font-size:11px;color:var(--muted);border:1px solid #2a3555;border-radius:20px;padding:4px 10px}
+  .hero{padding:28px 0 18px;text-align:center}
+  .hero .pill{display:inline-block;background:linear-gradient(90deg,rgba(0,229,160,.15),rgba(124,92,255,.15));border:1px solid #2a3555;border-radius:20px;padding:5px 14px;font-size:12px;color:var(--accent);margin-bottom:14px;font-weight:700}
+  h1{font-size:30px;line-height:1.15;font-weight:900;margin-bottom:12px}
+  h1 .grad{background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:var(--muted);font-size:15px;margin-bottom:18px}
+  .hero-btn{display:block;width:100%;padding:16px;border:none;border-radius:14px;font-size:16px;font-weight:900;cursor:pointer;background:linear-gradient(90deg,var(--accent),#00b894);color:#04121c;text-decoration:none;text-align:center;box-shadow:0 8px 24px rgba(0,229,160,.25)}
+  .hero-note{font-size:12px;color:var(--muted);margin-top:10px}
+  .steps{display:flex;gap:10px;margin:26px 0}
+  .step{flex:1;background:var(--card);border:1px solid #223052;border-radius:14px;padding:14px 10px;text-align:center}
+  .step .n{font-size:20px;margin-bottom:4px}
+  .step b{display:block;font-size:12.5px;margin-bottom:3px}
+  .step span{font-size:11px;color:var(--muted)}
+  h2{font-size:20px;font-weight:900;margin:30px 0 4px;text-align:center}
+  .h2sub{text-align:center;color:var(--muted);font-size:13px;margin-bottom:18px}
+  .card{background:var(--card);border:1px solid #223052;border-radius:18px;padding:22px;margin-bottom:16px;position:relative}
+  .card.best{border:2px solid var(--accent);box-shadow:0 0 40px rgba(0,229,160,.12)}
+  .tag{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--accent);color:#04121c;font-size:11px;font-weight:900;padding:4px 12px;border-radius:20px}
+  .p-name{font-size:13px;font-weight:800;color:var(--accent);letter-spacing:.5px;text-transform:uppercase}
+  .p-price{font-size:38px;font-weight:900;margin:6px 0 2px}
+  .p-price small{font-size:14px;color:var(--muted);font-weight:600}
+  .p-desc{color:var(--muted);font-size:13.5px;margin-bottom:14px}
+  ul.feat{list-style:none;margin-bottom:16px}
+  ul.feat li{padding:6px 0 6px 26px;position:relative;font-size:14px;border-bottom:1px dashed #223052}
+  ul.feat li:last-child{border-bottom:none}
+  ul.feat li:before{content:"✔";position:absolute;left:2px;color:var(--ok);font-weight:900}
+  .btn-buy{display:block;width:100%;padding:14px;border:none;border-radius:12px;font-size:15px;font-weight:900;cursor:pointer;text-decoration:none;text-align:center;transition:transform .1s}
+  .btn-buy:active{transform:scale(.97)}
+  .btn-buy.main{background:linear-gradient(90deg,var(--accent),#00b894);color:#04121c}
+  .btn-buy.alt{background:linear-gradient(90deg,var(--accent2),#5b3fd6);color:#fff}
+  .btn-buy.trip{background:#fff;color:#0a0e1a}
+  .instant{position:absolute;top:14px;right:14px;font-size:10px;background:rgba(0,229,160,.15);color:var(--ok);border:1px solid var(--ok);padding:3px 8px;border-radius:12px;font-weight:800}
+  .delivery-note{font-size:11.5px;color:var(--muted);text-align:center;margin-top:8px}
+  .proof{display:flex;gap:8px;overflow:hidden}
+  .proof div{flex:1;background:var(--card2);border:1px solid #223052;border-radius:12px;height:90px;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--muted);text-align:center;padding:8px}
+  details{background:var(--card);border:1px solid #223052;border-radius:14px;padding:14px 16px;margin-bottom:10px}
+  summary{font-weight:800;font-size:14.5px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center}
+  summary:after{content:"+";color:var(--accent);font-size:18px;font-weight:900}
+  details[open] summary:after{content:"–"}
+  details p{color:var(--muted);font-size:13.5px;margin-top:10px}
+  .garantee{background:linear-gradient(135deg,#132033,#1a2238);border:1px solid var(--gold);border-radius:18px;padding:20px;text-align:center;margin:24px 0}
+  .garantee .g-icon{font-size:30px}
+  .garantee b{color:var(--gold)}
+  footer{text-align:center;color:var(--muted);font-size:12px;padding:30px 0 40px;border-top:1px solid #223052;margin-top:30px}
+  /* MODAL */
+  .modal-bg{display:none;position:fixed;inset:0;background:rgba(4,8,20,.85);z-index:50;align-items:flex-end;justify-content:center}
+  .modal-bg.on{display:flex}
+  .modal{background:var(--card);border:1px solid #2a3555;border-radius:20px 20px 0 0;width:100%;max-width:640px;padding:24px 20px 30px;animation:up .25s ease}
+  @keyframes up{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
+  .m-demo-badge{display:inline-block;background:var(--gold);color:#04121a;font-size:10.5px;font-weight:900;padding:3px 10px;border-radius:12px;margin-bottom:12px}
+  .m-title{font-size:18px;font-weight:900;margin-bottom:4px}
+  .m-amount{font-size:34px;font-weight:900;color:var(--accent);margin:8px 0}
+  .m-methods{display:flex;gap:8px;margin:12px 0 18px}
+  .m-methods span{flex:1;background:var(--card2);border:1px solid #2a3555;border-radius:10px;padding:10px 6px;text-align:center;font-size:11.5px;color:var(--muted)}
+  .m-methods span b{display:block;font-size:15px;margin-bottom:2px}
+  .btn-m{width:100%;padding:15px;border:none;border-radius:12px;font-size:15px;font-weight:900;cursor:pointer;margin-bottom:8px}
+  .btn-pay{background:linear-gradient(90deg,var(--accent),#00b894);color:#04121c}
+  .btn-cancel{background:transparent;color:var(--muted);border:1px solid #2a3555}
+  .paying{display:none;text-align:center;padding:30px 0}
+  .spinner{width:44px;height:44px;border:4px solid #223052;border-top-color:var(--accent);border-radius:50%;margin:0 auto 14px;animation:spin 1s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  /* ENTREGA */
+  .delivery{display:none;position:fixed;inset:0;background:var(--bg);z-index:60;overflow-y:auto;padding:24px 0 60px}
+  .delivery.on{display:block}
+  .d-head{text-align:center;margin-bottom:18px}
+  .d-head .ok{font-size:44px}
+  .d-head h3{font-size:22px;font-weight:900;margin-top:6px}
+  .d-head p{color:var(--muted);font-size:13px}
+  .d-card{background:var(--card);border:1px solid #223052;border-radius:16px;padding:18px;margin-bottom:14px}
+  .d-card h4{color:var(--accent);font-size:14px;margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px}
+  .d-card pre{white-space:pre-wrap;font-family:inherit;font-size:13.5px;color:var(--text);background:var(--card2);border-radius:10px;padding:14px;line-height:1.6}
+  .btn-d{display:inline-block;padding:12px 18px;border:none;border-radius:10px;font-weight:900;font-size:13.5px;cursor:pointer;text-decoration:none;margin:4px 6px 4px 0}
+  .btn-wa{background:#25d366;color:#06281a}
+  .btn-copy{background:var(--accent2);color:#fff}
+  .btn-close-d{background:transparent;border:1px solid #2a3555;color:var(--muted)}
+  .d-center{text-align:center;margin-top:14px}
+  .wa-float{position:fixed;right:16px;bottom:16px;z-index:40;background:#25d366;color:#06281a;width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;text-decoration:none;box-shadow:0 8px 24px rgba(37,211,102,.4)}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="logo">DESPEGUE <b>DIGITAL</b> 🚀</div>
+    <div class="badge-pay">🔒 Pago seguro · QvaPay</div>
+  </header>
+
+  <section class="hero">
+    <div class="pill">⚡ ENTREGA EN 24-48 HORAS · 100% ONLINE</div>
+    <h1>Tu negocio <span class="grad">vende más</span>.<br>Sin que muevas un dedo.</h1>
+    <p class="sub">Instagram vivo, WhatsApp que contesta solo y clientes que llegan. Tocas, pagas y te llega. Así de simple.</p>
+    <a href="#packs" class="hero-btn">VER LOS PACKS ↓</a>
+    <p class="hero-note">Tarjeta · PayPal · USDT — paga desde cualquier país</p>
+  </section>
+
+  <div class="steps">
+    <div class="step"><div class="n">👆</div><b>1. TOCA</b><span>Elige tu pack</span></div>
+    <div class="step"><div class="n">💳</div><b>2. PAGA</b><span>2 minutos, seguro</span></div>
+    <div class="step"><div class="n">⚡</div><b>3. RECIBE</b><span>Al instante / 24-48h</span></div>
+  </div>
+
+  <h2 id="packs">ELIGE TU PACK</h2>
+  <p class="h2sub">Pagas una vez. Lo tuyo para siempre.</p>
+
+  <!-- ============ PRODUCTO 1: TRIPWIRE INSTANTÁNEO ============ -->
+  <div class="card">
+    <div class="instant">⚡ INSTANTÁNEO</div>
+    <div class="p-name">🎁 Kit Exprés Digital</div>
+    <div class="p-price">$9 <small>USD</small></div>
+    <p class="p-desc">Lo descargas AL INSTANTE después de pagar. Empiezas a vender hoy mismo.</p>
+    <ul class="feat">
+      <li>30 respuestas de WhatsApp listas para vender (copiar y pegar)</li>
+      <li>10 fórmulas de biografías que convierten visitas en clientes</li>
+      <li>7 plantillas de publicaciones que venden sin parecer publicidad</li>
+      <li>PDF + texto editable — funciona en cualquier celular</li>
+    </ul>
+    <button class="btn-buy trip" onclick="comprar('kit')">COMPRAR — $9 → RECIBIRLO AHORA</button>
+    <p class="delivery-note">Entrega: INMEDIATA, en esta misma pantalla</p>
+  </div>
+
+  <!-- ============ PRODUCTO 2: PACK B ============ -->
+  <div class="card">
+    <div class="p-name">⚡ Pack B — Kit de Ventas Exprés</div>
+    <div class="p-price">$125 <small>USD</small></div>
+    <p class="p-desc">Te dejamos tu WhatsApp y tu Google vendiendo solos. HECHO POR NOSOTROS.</p>
+    <ul class="feat">
+      <li>WhatsApp Business montado: catálogo con precios + mensajes automáticos</li>
+      <li>30 respuestas de venta configuradas en tu WhatsApp</li>
+      <li>Google Business activado (te encuentran los de tu zona)</li>
+      <li>6 piezas de contenido de regalo para despegar</li>
+      <li>Guía en 1 página: cómo pedir reseñas que atraen clientes</li>
+    </ul>
+    <button class="btn-buy alt" onclick="comprar('packB')">COMPRAR — $125</button>
+    <p class="delivery-note">Entrega: 24 HORAS · 50% ahora, 50% al aprobar</p>
+  </div>
+
+  <!-- ============ PRODUCTO 3: PACK A (BEST) ============ -->
+  <div class="card best">
+    <div class="tag">🔥 EL MÁS VENDIDO</div>
+    <div class="p-name">🚀 Pack A — Resurrección Digital</div>
+    <div class="p-price">$250 <small>USD</small></div>
+    <p class="p-desc">Tu presencia online COMPLETA renacida. El que hace que tu negocio parezca grande.</p>
+    <ul class="feat">
+      <li>TODO lo del Pack B, y además:</li>
+      <li>12 piezas de contenido PRO diseñadas para tu marca</li>
+      <li>Biografía de Instagram + link de catálogo que vende 24/7</li>
+      <li>Calendario de publicaciones de 2 semanas (sin pensar)</li>
+      <li>Catálogo de productos con fotos y precios listo para WhatsApp</li>
+      <li>Entrega en 24-48h + 3 días de ajustes gratis</li>
+    </ul>
+    <button class="btn-buy main" onclick="comprar('packA')">COMPRAR — $250</button>
+    <p class="delivery-note">Entrega: 24-48 HORAS · 50% ahora, 50% al aprobar</p>
+  </div>
+
+  <!-- PRUEBA SOCIAL: pegar capturas reales aquí -->
+  <h2>LO QUE DICEN</h2>
+  <p class="h2sub">Capturas reales de clientes (pega aquí tus capturas)</p>
+  <div class="proof">
+    <div>📸 Captura<br>cliente 1</div>
+    <div>📸 Captura<br>cliente 2</div>
+    <div>📸 Captura<br>cliente 3</div>
+  </div>
+
+  <h2>PREGUNTAS FRECUENTES</h2>
+  <p class="h2sub">Sin letra pequeña</p>
+  <details>
+    <summary>¿Cómo pago?</summary>
+    <p>Con <b>tarjeta, PayPal o criptomonedas (USDT)</b> a través de QvaPay, la plataforma de pagos más usada de Cuba y Latinoamérica. El pago tarda 2 minutos y es 100% seguro.</p>
+  </details>
+  <details>
+    <summary>¿Cuándo recibo mi compra?</summary>
+    <p>El <b>Kit Exprés Digital ($9)</b> te llega <b>al instante</b>, en esta misma pantalla, al confirmarse el pago. Los Packs A y B son trabajo a medida de tu marca: se entregan en <b>24-48 horas</b> (te avisamos por WhatsApp cuando está listo).</p>
+  </details>
+  <details>
+    <summary>¿Y si no sé nada de redes?</summary>
+    <p>Justo por eso existimos. Tú no haces nada: nos pasas tus fotos y precios, y nosotros lo dejamos funcionando. Tú solo contestas los clientes que empiezan a llegar.</p>
+  </details>
+  <details>
+    <summary>¿Está garantizado?</summary>
+    <p><b>SÍ.</b> Si no entregamos en el plazo prometido, te devolvemos el 100%. Sin preguntas incómodas. El riesgo es nuestro.</p>
+  </details>
+
+  <div class="garantee">
+    <div class="g-icon">🛡️</div>
+    <b>GARANTÍA DE ENTREGA</b>
+    <p style="color:var(--muted);font-size:13px;margin-top:6px">Pagas → recibes. Si no cumplimos el plazo, <b style="color:var(--gold)">reembolso total</b>. Llevamos [X] negocios despegados.</p>
+  </div>
+
+  <footer>
+    DESPEGUE DIGITAL © 2026 · Pagos procesados por QvaPay 🔒<br>
+    Hecho para vender mientras duermes. 😴🚀
+  </footer>
+</div>
+
+<!-- BOTÓN WHATSAPP FLOTANTE: se llena con CONFIG.whatsapp -->
+<a id="waFloat" class="wa-float" href="#" target="_blank" rel="noopener">💬</a>
+
+<!-- ============ MODAL DE PAGO (estilo QvaPay) ============ -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <div id="payZone">
+      <div class="m-demo-badge" id="demoBadge">⚙️ DEMO — conecta tu link de QvaPay (instrucciones al final)</div>
+      <div class="m-title" id="mTitle">—</div>
+      <p style="color:var(--muted);font-size:13px">Pago seguro procesado por QvaPay</p>
+      <div class="m-amount" id="mAmount">—</div>
+      <div class="m-methods">
+        <span><b>💳</b>Tarjeta</span>
+        <span><b>🅿️</b>PayPal</span>
+        <span><b>₮</b>USDT</span>
+      </div>
+      <button class="btn-m btn-pay" id="btnPay" onclick="pagar()">✅ PAGAR AHORA</button>
+      <button class="btn-m btn-cancel" onclick="cerrarModal()">Cancelar</button>
+      <p style="text-align:center;color:var(--muted);font-size:11px">🔒 Tus datos de pago NUNCA llegan a la tienda. Solo vemos el pago aprobado.</p>
+    </div>
+    <div class="paying" id="payingZone">
+      <div class="spinner"></div>
+      <b>Procesando pago seguro…</b>
+      <p style="color:var(--muted);font-size:12px;margin-top:6px">No cierres esta ventana</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PANTALLA DE ENTREGA INSTANTÁNEA ============ -->
+<div class="delivery" id="deliveryZone">
+  <div class="wrap">
+    <div class="d-head">
+      <div class="ok">🎉</div>
+      <h3 id="dTitle">¡Pago aprobado!</h3>
+      <p id="dSub">Aquí tienes tu compra. Es tuya para siempre.</p>
+    </div>
+
+    <!-- ENTREGA DEL KIT DIGITAL $9 -->
+    <div id="entregaKit">
+      <div class="d-card">
+        <h4>📱 30 respuestas de WhatsApp (las 30 en tu kit — copiar y pegar)</h4>
+        <pre id="kit1">/hola  → ¡Hola! 👋 Bienvenido(a) a [TU NEGOCIO]. ¿Qué te interesa pedir hoy?
+/precio → Los precios están en el catálogo 👆 ¿Te ayudo a elegir?
+/envio → Sí, hacemos envíos a [ZONA] por [PRECIO/GRATIS desde $X]. ¿A qué dirección?
+/pago → Aceptamos [efectivo / transferencia / USDT]. ¿Cuál prefieres?
+/horario → Atendemos de [HORARIO]. ¿Hacemos tu pedido para hoy?
+/promo → 🔥 Esta semana: [PROMO]. ¿Te reservo uno?
+/como → Es fácil: 1) Eliges del catálogo 2) Me escribes aquí 3) Lo tienes en [TIEMPO].
+/gracias → ¡Gracias a ti! Cualquier cosa, aquí andamos. 😊
+/pedido → ¡Perfecto! Anoto: [PRODUCTO] x [CANTIDAD]. ¿Confirmo? Total: $[X].
+/confirmado → ✅ Pedido confirmado. Listo en [TIEMPO]. ¡Gracias por confiar!
+/demorado → Te agradezco la paciencia 🙏 Tu pedido va por [ESTADO], listo en [TIEMPO].
+/agotado → Se acabó por hoy 😔 ¿Te reservo para mañana o prefieres [ALTERNATIVA]?
+/recomend → Lo más pedido: [PRODUCTO ESTRELLA]. ¡Te va a encantar!
+/nuevo → ¡Bienvenido! Por ser nuevo te llevo [DETALLE/BONO]. ¿Qué te apetece?
+/cerca → Estamos en [DIRECCIÓN/ZONA]. ¿Te lo mandamos o pasas?
+/mayor → ¿Pedido grande? Desde [X] unidades te hago precio especial. ¿Cuántas necesitas?
+/opcion1 → Tenemos [A], [B] y [C]. El favorito del cliente es [X].
+/foto → Te mando fotos reales ahora mismo 📸
+/tamaño → Disponible en [TAMAÑOS/CANTIDADES]. ¿Cuál te sirve?
+/fecha → Para [FECHA] sí llega. Te lo reservo con el adelanto.
+/regalo → ¿Es regalo? Lo empaquetamos bonito 🎁 sin costo extra.
+/cuidado → Te explico en 1 minuto cómo cuidarlo y te dura el triple.
+/duda → Pregúntame lo que sea, sin compromiso 👍
+/cupones → Tenemos [CUPÓN] con [DESCUENTO] hasta [FECHA].
+/repite → 🎉 Por tu [X] compra te llevas [PREMIO]. ¡Gracias por volver!
+/refer → ¿Nos recomiendas? Por cada amigo que compre te llevas [BONO].
+/cancela → Sin problema, cancelamos. ¿Te guardo [PRODUCTO] para otra ocasión?
+/queja → Lamento mucho eso 😔 Cuéntame y lo resuelvo AHORA mismo.
+/propina → ¡Gracias! Con eso seguimos creciendo 🙌
+/cierre → Tu pedido va en camino 🚀 Cualquier cosa, aquí andamos. ¡Que lo disfrutes!
+/export → Hacemos envíos a [PAÍSES/ZONAS]. ¿De dónde eres?
+/stock → Hoy quedan [X] unidades. Últimas.</pre>
+        <div class="d-center">
+          <button class="btn-d btn-copy" onclick="copiar('kit1')">📋 COPIAR ESTAS 30</button>
+        </div>
+      </div>
+      <div class="d-card">
+        <h4>✍️ 10 fórmulas de biografía que venden</h4>
+        <pre id="kit2">1. [PRODUCTO] 🔥 en [CIUDAD] | Pide por WhatsApp 👇 | Entrega en [TIEMPO]
+2. Ayudamos a [CLIENTE IDEAL] a [RESULTADO] 📲 Pide hoy → link
+3. [NEGOCIO]: [PRODUCTO] hechos con [DIFERENCIA] ✅ +[X] clientes felices
+4. ¿Cansado de [PROBLEMA]? Nosotros lo resolvemos en [TIEMPO] ⚡ Escríbenos
+5. Los [PRODUCTO] más [ADJETIVO] de [CIUDAD] 🏆 Pide por DM — respondemos YA
+6. De [CIUDAD] para el mundo 🌎 [PRODUCTO] con envío | Catálogo aquí 👇
+7. [AÑOS] años haciendo [PRODUCTO] con amor ❤️ Hecho a mano | Pide el tuyo
+8. Tu [NECESIDAD] resuelta en 1 clic 👆 Catálogo + precios + WhatsApp
+9. NO vendemos [PRODUCTO]… vendemos [EMOCIÓN/RESULTADO] 😍 Mira y pide
+10. [PRODUCTO] que [BENEFICIO CLARO] 🚀 Hoy: [PROMO] — solo por WhatsApp
+
+REGLA DE ORO: QUÉ vendes + PARA QUIÉN + DÓNDE + CTA (llamada a la acción).</pre>
+        <div class="d-center">
+          <button class="btn-d btn-copy" onclick="copiar('kit2')">📋 COPIAR LAS 10</button>
+        </div>
+      </div>
+      <div class="d-card">
+        <h4>🔥 7 plantillas de publicaciones que venden</h4>
+        <pre id="kit3">1. PRODUCTO HÉROE: Foto del producto + precio grande + "Pide por WhatsApp 👉"
+   Copy: "El más pedido de la semana 🔥 [NOMBRE] — $[PRECIO]. ¿Te guardo uno?"
+
+2. ANTES/DESPUÉS (o proceso): Muestra cómo se hace / el cambio que generas.
+   Copy: "Así nace tu [PRODUCTO] 👀 De [PASO 1] a [PASO FINAL]. Calidad que se nota."
+
+3. PRUEBA SOCIAL: Captura de un cliente feliz + su frase.
+   Copy: "No lo decimos nosotros 😍 '[frase del cliente]'. Gracias, [nombre] 🙌"
+
+4. URGENCIA: Producto + pocas unidades + fecha.
+   copy: "⚠️ Solo quedan [X] para hoy. Cuando se van, se van hasta [FECHA]."
+
+5. EDUCATIVA: Enseña algo útil de tu rubro (posiciona como experto).
+   Copy: "3 trucos para que tu [producto] dure el triple 👆 Guárdalo para después."
+
+6. DETRÁS DE CÁMARAS: La cocina/el taller/el equipo. Humaniza = confianza.
+   Copy: "Un día cualquiera en [NEGOCIO] 🎬 Así llega tu pedido hasta tus manos."
+
+7. CTA DIRECTA: Sin rodeos, una vez por semana.
+   Copy: "¿Ya viste el catálogo? 👆 Todo con precios, todo por WhatsApp, todo fácil. Pide hoy."
+
+FÓRMULA MÁGICA: 60% producto/valor · 20% prueba social · 20% llamada a la acción.
+FRECUENCIA: 3-4 publicaciones por semana. Constancia gana a perfección.</pre>
+        <div class="d-center">
+          <button class="btn-d btn-copy" onclick="copiar('kit3')">📋 COPIAR LAS 7</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ENTREGA DE PEDIDOS DE SERVICIO (PACK A / PACK B) -->
+    <div id="entregaPack" style="display:none">
+      <div class="d-card">
+        <h4>✅ Tu pedido está CONFIRMADO</h4>
+        <p style="font-size:14px;color:var(--muted)">Ya entraste en la cola de producción de esta semana. En <b style="color:var(--text)">máximo 24-48 horas</b> te llega todo listo. Solo falta un paso de 10 segundos: mándanos tus datos de negocio por WhatsApp.</p>
+        <div class="d-center">
+          <a id="waPedido" class="btn-d btn-wa" href="#" target="_blank" rel="noopener">💬 ENVIAR MIS DATOS POR WHATSAPP (10 seg)</a>
+        </div>
+      </div>
+      <div class="d-card">
+        <h4>📋 Qué necesitamos de ti (mándalo junto en el WhatsApp)</h4>
+        <pre>1. Nombre de tu negocio
+2. Logo (si tienes) y colores de tu marca
+3. Fotos de tus productos o servicios (las que tengas)
+4. Los precios que quieres destacar
+5. Tu zona de entrega / horario</pre>
+      </div>
+      <div class="d-card" id="pagoPendiente" style="display:none;border-color:var(--gold)">
+        <h4>⏳ Segundo pago (50% final)</h4>
+        <p style="font-size:14px;color:var(--muted)">Recuerda: este pack se paga 50% ahora (¡hecho! ✅) y 50% cuando apruebes tu entrega. Ya casi lo tienes.</p>
+      </div>
+    </div>
+
+    <div class="d-center">
+      <button class="btn-d btn-close-d" onclick="cerrarEntrega()">← Volver a la tienda</button>
+    </div>
+    <p style="text-align:center;color:var(--muted);font-size:11px;margin-top:14px">¿Pagaste fuera de esta pantalla? Escríbenos por WhatsApp y te lo activamos al instante.</p>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   ⚙️ CONFIGURACIÓN — ESTO ES LO ÚNICO QUE TIENES QUE CAMBIAR TÚ
+   =====================================================================
+   1) links: pega aquí los 3 links de cobro de QvaPay (Configuración → Links de pago).
+      Mientras estén vacíos ("") funciona el MODO DEMO para que veas el flujo completo.
+   2) whatsapp: tu número con código de país, SIN + ni espacios (ej. Cuba 53XXXXXXXXX).
+   ===================================================================== */
+const CONFIG = {
+  links: {
+    kit:   "https://www.qvapay.com/pay/8b766b25-1cb9-40f9-ab85-99de32760378",   // $9 Kit Exprés — creado por El Económico 2026-09-22
+    packB: "https://www.qvapay.com/pay/70739a82-23c8-4982-ba85-ee3031ec34e0",   // $62.50 adelanto Kit Ventas (total $125)
+    packA: "https://www.qvapay.com/pay/adda5488-ca0b-44cd-8627-1d5dc418443f"    // $125 adelanto Pack Resurrección (total $250)
+  },
+  whatsapp: "5351152620", // ← número de la Jefa (53 + 8 dígitos) — puesto por El Económico 2026-09-23
+  productos: {
+    kit:   { nombre: "Kit Exprés Digital",  precio: 9,   tipo: "kit"  },
+    packB: { nombre: "Pack B — Kit de Ventas Exprés", precio: 125, tipo: "pack" },
+    packA: { nombre: "Pack A — Resurrección Digital", precio: 250, tipo: "pack" }
+  }
+};
+
+let productoActual = null;
+
+function armarWhatsApp(texto){
+  return "https://wa.me/" + CONFIG.whatsapp + "?text=" + encodeURIComponent(texto);
+}
+function initWhatsApp(){
+  document.getElementById("waFloat").href = armarWhatsApp("¡Hola! 👋 Vengo de la tienda DESPEGUE DIGITAL. Tengo una pregunta:");
+}
+
+function comprar(id){
+  const p = CONFIG.productos[id];
+  productoActual = id;
+  const linkReal = CONFIG.links[id];
+  if(linkReal){ window.location.href = linkReal; return; } // ← EN VIVO: se va a pagar a QvaPay
+  // MODO DEMO: simula el checkout de QvaPay
+  document.getElementById("mTitle").textContent = p.nombre;
+  document.getElementById("mAmount").textContent = "$" + p.precio + " USD";
+  document.getElementById("payZone").style.display = "block";
+  document.getElementById("payingZone").style.display = "none";
+  document.getElementById("modalBg").classList.add("on");
+}
+
+function cerrarModal(){ document.getElementById("modalBg").classList.remove("on"); }
+
+function pagar(){
+  document.getElementById("payZone").style.display = "none";
+  document.getElementById("payingZone").style.display = "block";
+  setTimeout(entregar, 1800); // Simula la confirmación de QvaPay (en vivo lo hace el webhook)
+}
+
+function entregar(){
+  cerrarModal();
+  const p = CONFIG.productos[productoActual];
+  document.getElementById("entregaKit").style.display   = (p.tipo === "kit")  ? "block" : "none";
+  document.getElementById("entregaPack").style.display  = (p.tipo === "pack") ? "block" : "none";
+  document.getElementById("pagoPendiente").style.display = "block";
+  if(p.tipo === "pack"){
+    document.getElementById("dTitle").textContent = "¡Pago aprobado! ✅";
+    document.getElementById("dSub").textContent = p.nombre + " — confirmado. Producción en 24-48h.";
+    document.getElementById("waPedido").href = armarWhatsApp(
+      "¡Hola! 👋 Acabo de comprar el " + p.nombre + " ($" + p.precio + ") en DESPEGUE DIGITAL. ✅ PAGO APROBADO.\nTe mando mis datos:\n1. Negocio:\n2. Colores/logo:\n3. Fotos:\n4. Precios destacados:\n5. Zona/horario:"
+    );
+  } else {
+    document.getElementById("dTitle").textContent = "¡Pago aprobado! 🎁";
+    document.getElementById("dSub").textContent = "Tu Kit Exprés Digital es tuyo. Copia, pega y vende HOY.";
+    document.getElementById("waPedido").href = armarWhatsApp("¡Hola! 👋 Compré el Kit Exprés Digital ($9). ¡Gracias! 🚀");
+  }
+  document.getElementById("deliveryZone").classList.add("on");
+  window.scrollTo(0,0);
+}
+
+function cerrarEntrega(){ document.getElementById("deliveryZone").classList.remove("on"); }
+
+function copiar(id){
+  const txt = document.getElementById(id).innerText;
+  navigator.clipboard.writeText(txt).then(()=>alert("¡COPIADO! ✅ Ya lo tienes en tu portapapeles."));
+}
+
+initWhatsApp();
+</script>
+</body>
+</html>
