@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-🤖 BOT-CYCLE v2 — GUARDIÁN COMPLETO DE DESPEGUE DIGITAL
+🤖 BOT-CYCLE v3 — EL SEGUNDO JEFE DE VERDAD
 Corre en GitHub Actions cada 10 minutos, PARA SIEMPRE:
   1. Atiende 1-a-1 a cada cliente (precios, muestra, cierre, links de cobro)
-  2. Detecta cuándo lo agregan a un GRUPO → saluda y queda registrado
-  3. Publica 1 post al día por grupo (17:00-21:00 hora Cuba, sin spam)
-  4. Avisa a la Jefa de cada prospecto, cliente interesado y foto
-  5. Detecta si lo expulsan de un grupo y lo desactiva sin drama
+  2. LIBRETA DE PROSPECTOS: guarda TODO lo que escriba cada cliente en
+     prospectos.json → El Económico lo lee solo cuando la Jefa escriba REVISION
+     (la Jefa ya NO tiene que reenviar nada)
+  3. ENTREGA AUTOMÁTICA del Kit $9: cliente dice "pagué" → recibe su kit YA
+  4. ENTREGA DE MUESTRAS: cuando El Económico fabrica muestras y las pone en
+     muestras.json, el guardián se las entrega al cliente SOLO
+  5. Posts diarios en grupos (17-21h Cuba) + avisos a la Jefa
 """
 import json, os, base64, urllib.request
 from datetime import datetime, timezone, timedelta
@@ -18,6 +21,7 @@ JEFA = int(os.environ.get("JEFA_CHAT_ID", "1227661387"))
 API_T = "https://api.telegram.org/bot" + TOKEN + "/"
 REPO = "https://api.github.com/repos/Mia9911/despegue-digital"
 CUBA = timezone(timedelta(hours=-4))
+KIT_URL = "https://mia9911.github.io/despegue-digital/kit-express.html"
 
 def tg(method, params):
     req = urllib.request.Request(API_T + method, data=json.dumps(params).encode(),
@@ -53,7 +57,7 @@ except Exception:
     pass
 VITRINA = LINKS.get("vitrina", "https://mia9911.github.io/despegue-digital/")
 
-# ---------------- TEXTOS 1-A-1 ----------------
+# ---------------- TEXTOS ----------------
 TXT_START = (
     "🚀 ¡Bienvenido/a a DESPEGUE DIGITAL!\n"
     "Diseño y marketing que VENDEN, para negocios de Cuba y la diáspora.\n\n"
@@ -101,9 +105,18 @@ TXT_SOPORTE = (
     "La Jefa revisa cada caso personalmente."
 )
 TXT_JEFA = (
-    "👑 Línea de la Jefa — guardián activo (respondo cada 10 min).\n"
-    "Para respuesta instantánea y muestras, la Jefa escribe a El Económico "
-    "en el chat de Arena. Yo nunca duermo más de 10 minutos. 🏰"
+    "👑 Línea de la Jefa — el imperio está de guardia.\n"
+    "Todo lo que escriban los clientes queda grabado en la libreta y El Económico "
+    "lo revisa cuando escribas REVISION en el chat de Arena.\n"
+    "Para respuesta instantánea, escríbele allí. 🏰"
+)
+TXT_KIT_PAGADO = (
+    "🎉 ¡Pago anotado! Aquí está tu KIT EXPRÉS DIGITAL, al instante:\n\n"
+    + KIT_URL + "\n\n"
+    "Ábrelo y guárdalo: 30 respuestas de WhatsApp + 10 bios + 7 plantillas, "
+    "listas para copiar y pegar.\n"
+    "Si tienes cualquier duda usando el kit, escríbeme aquí mismo.\n"
+    "Bienvenido/a a DESPEGUE DIGITAL 🚀 (mi jefa confirma tu pago en minutos)"
 )
 
 def txt_cierre():
@@ -118,7 +131,7 @@ def txt_cierre():
     if LINKS.get("packA"): r += "💳 Pack Resurrección $250 (adelanto $125):\n" + LINKS["packA"] + "\n"
     return r
 
-# ---------------- POSTS PARA GRUPOS (1 por día, rotando) ----------------
+# ---------------- POSTS PARA GRUPOS ----------------
 IG = "@despegue_digitalmarketing"
 PROMOS = [
     ("🚀 ¿Tu negocio vende por WhatsApp... pero tu Instagram parece abandonado?\n"
@@ -143,7 +156,6 @@ PROMOS = [
      "🤖 Precios y muestra gratis al instante → t.me/Despeguedijitalbot\n"
      "📸 " + IG),
 ]
-
 BIENVENIDA_GRUPO = (
     "👋 ¡Hola a todos! Soy el asistente de DESPEGUE DIGITAL 🚀\n\n"
     "Ayudo a negocios cubanos a vender más por internet:\n"
@@ -175,15 +187,34 @@ def guardar_grupos():
     except Exception as e:
         print("grupos save fail:", e)
 
+# ---------------- ENTREGA DE MUESTRAS FABRICADAS POR EL ECONÓMICO ----------------
+try:
+    muestras, sha_mu = gh_get_file("muestras.json")
+    pendientes = muestras.get("pendientes", [])
+    for m in pendientes:
+        try:
+            tg("sendMessage", {"chat_id": m["chat_id"], "text": m["texto"]})
+            tg("sendMessage", {"chat_id": JEFA, "text":
+                "🎁 MUESTRA ENTREGADA automáticamente a " + m.get("nombre", "?") +
+                " (@" + m.get("username", "-") + ")"})
+        except Exception as e:
+            print("muestra fail:", e)
+    if pendientes:
+        muestras["pendientes"] = []
+        gh_put_file("muestras.json", muestras, sha_mu,
+                    "muestras entregadas: %d" % len(pendientes))
+except Exception as e:
+    print("muestras:", e)
+
 # ---------------- RONDA DE ATENCIÓN ----------------
 res = tg("getUpdates", {"timeout": 0, "offset": offset})
 updates = res.get("result", [])
 nuevo_offset = offset
+libreta_nueva = []   # todo lo que escriban los clientes queda grabado
 
 for u in updates:
     nuevo_offset = max(nuevo_offset, u["update_id"] + 1)
 
-    # --- agregado / expulsado de grupos ---
     mcm = u.get("my_chat_member")
     if mcm:
         chat = mcm.get("chat", {})
@@ -212,11 +243,7 @@ for u in updates:
                 "👋 Me quitaron del grupo %s. Sin drama — sigo con los demás." % titulo})
         continue
 
-    # --- canal (si la Jefa lo hace admin de otro) ---
     if u.get("channel_post"):
-        ch = u["channel_post"].get("chat", {})
-        tg("sendMessage", {"chat_id": JEFA, "text":
-            "📢 Post detectado en el canal %s — el bot ya está adentro." % (ch.get("title") or "")})
         continue
 
     m = u.get("message")
@@ -233,22 +260,24 @@ for u in updates:
         tg("sendMessage", {"chat_id": chat_id,
             "text": "📸 ¡Foto recibida! El equipo la revisa en minutos."})
         if not es_jefa:
+            libreta_nueva.append({"chat_id": chat_id, "nombre": nombre,
+                                  "username": username, "texto": "[FOTO]",
+                                  "ts": datetime.now(CUBA).isoformat()})
             tg("sendMessage", {"chat_id": JEFA, "text":
-                "📸 %s (@%s) mandó una foto al bot." % (nombre, username)})
+                "📸 %s (@%s) mandó una foto al bot (queda en la libreta)." % (nombre, username)})
         continue
 
-    if not es_jefa:
-        if bajo.startswith("/start"):
-            tg("sendMessage", {"chat_id": JEFA, "text":
-                "👀 VISITA NUEVA: %s (@%s)" % (nombre, username)})
-        if any(k in bajo for k in ("mi negocio", "tengo un", "vendo", "mi tienda",
-                                   "cafeter", "barber", "salon", "salón", "dulcer",
-                                   "manicur", "tienda de", "tengo una")):
-            tg("sendMessage", {"chat_id": JEFA, "text":
-                "🔥 PROSPECTO: %s (@%s) dice: %s" % (nombre, username, texto[:120])})
+    # ---- LIBRETA: todo mensaje de cliente queda grabado ----
+    if not es_jefa and texto:
+        libreta_nueva.append({"chat_id": chat_id, "nombre": nombre,
+                              "username": username, "texto": texto[:500],
+                              "ts": datetime.now(CUBA).isoformat()})
 
     if bajo.startswith("/start"):
         r = TXT_JEFA if es_jefa else TXT_START
+        if not es_jefa:
+            tg("sendMessage", {"chat_id": JEFA, "text":
+                "👀 VISITA NUEVA: %s (@%s) — ya la atiendo (y queda en la libreta)." % (nombre, username)})
     elif bajo.startswith("/precios") or "precio" in bajo or "cuanto" in bajo or "cuánto" in bajo:
         r = TXT_PRECIOS
     elif bajo.startswith("/muestra") or "muestra" in bajo or "gratis" in bajo:
@@ -259,6 +288,12 @@ for u in updates:
         r = TXT_SOPORTE
     elif bajo.startswith("/vitrina") or "tienda" in bajo:
         r = "🛒 Tienda online: " + VITRINA + "\nPrecios: /precios · Muestra: /muestra"
+    elif any(k in bajo for k in ("pagué", "pague", "ya pag", "pagado", "pague el", "realicé el pago")):
+        r = TXT_KIT_PAGADO
+        if not es_jefa:
+            tg("sendMessage", {"chat_id": JEFA, "text":
+                "💰 %s (@%s) dice que PAGÓ → le entregué el Kit YA. Verifica el pago "
+                "cuando puedas (escribe COBRO en el chat de Arena)." % (nombre, username)})
     elif any(k in bajo for k in ("quiero", "comprar", "me interesa", "empezar", "reserv")):
         r = txt_cierre()
         if not es_jefa:
@@ -272,7 +307,21 @@ for u in updates:
              "O cuéntame qué necesitas y te oriento.")
     tg("sendMessage", {"chat_id": chat_id, "text": r})
 
-# ---------------- PUBLICACIÓN DIARIA EN GRUPOS (hora de oro Cuba) ----------------
+# ---------------- GUARDAR LIBRETA ----------------
+if libreta_nueva:
+    try:
+        try:
+            prov, sha_p = gh_get_file("prospectos.json")
+        except Exception:
+            prov, sha_p = {"mensajes": []}, None
+        prov.setdefault("mensajes", []).extend(libreta_nueva)
+        prov["mensajes"] = prov["mensajes"][-500:]
+        gh_put_file("prospectos.json", prov, sha_p,
+                    "libreta: +%d mensajes" % len(libreta_nueva))
+    except Exception as e:
+        print("libreta fail:", e)
+
+# ---------------- POSTS DIARIOS EN GRUPOS ----------------
 ahora_cuba = datetime.now(CUBA)
 hoy = ahora_cuba.strftime("%Y-%m-%d")
 hora = int(ahora_cuba.strftime("%H"))
@@ -304,4 +353,5 @@ if nuevo_offset != offset or sha_offset is None:
 if grupos.get("grupos"):
     guardar_grupos()
 
-print("guardian v2: %d updates, %d posts hoy" % (len(updates), publicados))
+print("guardian v3: %d updates, %d libreta, %d posts hoy" %
+      (len(updates), len(libreta_nueva), publicados))
