@@ -269,8 +269,11 @@ for u in updates:
     es_jefa = (chat_id == JEFA)
 
     if m.get("photo"):
-        tg("sendMessage", {"chat_id": chat_id,
-            "text": "📸 ¡Foto recibida! El equipo la revisa en minutos."})
+        try:
+            tg("sendMessage", {"chat_id": chat_id,
+                "text": "📸 ¡Foto recibida! El equipo la revisa en minutos."})
+        except Exception as e:
+            print("foto reply fail:", e)
         if not es_jefa:
             libreta_nueva.append({"chat_id": chat_id, "nombre": nombre,
                                   "username": username, "texto": "[FOTO]",
