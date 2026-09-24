@@ -360,6 +360,13 @@ FRECUENCIA: 3-4 publicaciones por semana. Constancia gana a perfección.</pre>
         <h4>⏳ Segundo pago (50% final)</h4>
         <p style="font-size:14px;color:var(--muted)">Recuerda: este pack se paga 50% ahora (¡hecho! ✅) y 50% cuando apruebes tu entrega. Ya casi lo tienes.</p>
       </div>
+      <!-- 🧾 COMPROBANTE DE COMPRA -->
+      <div class="d-card" id="reciboCard" style="border-color:var(--accent)">
+        <h4>🧾 Tu comprobante de compra</h4>
+        <div id="reciboTexto" style="font-family:monospace;background:#0d1b30;border-radius:10px;padding:14px;font-size:12.5px;line-height:1.7;color:#d7e3f4"></div>
+        <button class="btn-d" style="background:linear-gradient(90deg,var(--accent),#00b894);color:#04121c;border:none" onclick="guardarRecibo()">💾 Guardar mi comprobante (imagen)</button>
+      </div>
+
     </div>
 
     <div class="d-center">
@@ -433,12 +440,70 @@ function pagar(){
   setTimeout(entregar, 1800); // Simula la confirmación de QvaPay (en vivo lo hace el webhook)
 }
 
+
+/* ============ 🧾 COMPROBANTE ============ */
+let ordenActual = "";
+function generarOrden(){
+  const d = new Date();
+  const f = String(d.getDate()).padStart(2,"0") + String(d.getMonth()+1).padStart(2,"0");
+  return f + "-" + Math.floor(1000 + Math.random()*9000);
+}
+function pintarRecibo(p, monto){
+  ordenActual = generarOrden();
+  const d = new Date();
+  const fecha = d.toLocaleDateString("es-CU") + " " + d.toLocaleTimeString("es-CU",{hour:"2-digit",minute:"2-digit"});
+  const entrega = (p.tipo === "kit") ? "ENTREGADO ✅ (inmediato)" : "ENTREGA EN 24-48H";
+  const txt =
+    "🚀 DESPEGUE DIGITAL\n" +
+    "========================\n" +
+    "RECIBO Nº " + ordenActual + "\n" +
+    "Fecha: " + fecha + " (Cuba)\n" +
+    "------------------------\n" +
+    "Producto: " + p.nombre + "\n" +
+    "Monto: $" + monto.toFixed(2) + " USD\n" +
+    "Pago: QvaPay ✅\n" +
+    "Entrega: " + entrega + "\n" +
+    "------------------------\n" +
+    "🛡️ Garantía: plazo incumplido\n    = reembolso TOTAL\n" +
+    "🤖 Soporte 24/7:\n    t.me/Despeguedijitalbot\n" +
+    "========================\n" +
+    "¡Gracias por tu compra! 🎉\n" +
+    "Recomiéndanos y gana bonos 🎁";
+  document.getElementById("reciboTexto").innerText = txt;
+  document.getElementById("reciboCard").style.display = "block";
+  return txt;
+}
+function guardarRecibo(){
+  const p = CONFIG.productos[productoActual];
+  const c = document.createElement("canvas");
+  c.width = 400; c.height = 620;
+  const x = c.getContext("2d");
+  const txt = document.getElementById("reciboTexto").innerText;
+  x.fillStyle = "#0a1628"; x.fillRect(0,0,400,620);
+  x.strokeStyle = "#10b981"; x.lineWidth = 3; x.strokeRect(8,8,384,604);
+  x.fillStyle = "#e8eef7"; x.font = "15px monospace"; 
+  const lineas = txt.split("\n");
+  let y = 48;
+  for(const l of lineas){
+    if(l.startsWith("🚀")){ x.font = "bold 20px monospace"; x.fillStyle = "#10b981"; }
+    else if(l.startsWith("===") || l.startsWith("---")){ x.fillStyle = "#10b981"; x.font = "15px monospace"; }
+    else { x.fillStyle = "#d7e3f4"; x.font = "15px monospace"; }
+    x.fillText(l, 30, y); y += 27;
+  }
+  const a = document.createElement("a");
+  a.href = c.toDataURL("image/png");
+  a.download = "comprobante-despegue-" + ordenActual + ".png";
+  a.click();
+}
+
 function entregar(){
   cerrarModal();
   const p = CONFIG.productos[productoActual];
   document.getElementById("entregaKit").style.display   = (p.tipo === "kit")  ? "block" : "none";
   document.getElementById("entregaPack").style.display  = (p.tipo === "pack") ? "block" : "none";
   document.getElementById("pagoPendiente").style.display = "block";
+  const montos = { kit: 9, packB: 62.5, packA: 125 };
+  pintarRecibo(p, montos[productoActual] || p.precio);
   if(p.tipo === "pack"){
     document.getElementById("dTitle").textContent = "¡Gracias por tu compra! ✅";
     document.getElementById("dSub").textContent = p.nombre + " — arrancamos al confirmar tu pago (minutos). Entrega en 24-48h.";
