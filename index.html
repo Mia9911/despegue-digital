@@ -169,14 +169,11 @@
     <p class="delivery-note">Entrega: 24-48 HORAS · 50% ahora, 50% al aprobar</p>
   </div>
 
-  <!-- PRUEBA SOCIAL: pegar capturas reales aquí -->
-  <h2>LO QUE DICEN</h2>
-  <p class="h2sub">Capturas reales de clientes (pega aquí tus capturas)</p>
-  <div class="proof">
-    <div>📸 Captura<br>cliente 1</div>
-    <div>📸 Captura<br>cliente 2</div>
-    <div>📸 Captura<br>cliente 3</div>
-  </div>
+  <!-- ⭐ RESEÑAS REALES (se llenan solas desde resenas.json en el repo) -->
+  <h2>⭐ LO QUE DICEN LOS CLIENTES</h2>
+  <p class="h2sub">Calificaciones reales de compradores — sin filtros</p>
+  <div class="proof" id="listaResenas"></div>
+  <p id="resenaVacia" style="text-align:center;color:var(--muted);font-size:13px">🌱 Los primeros clientes están llegando — las calificaciones aparecerán aquí solas en cuanto existan. ¿Serás el primero?</p>
 
   <h2>PREGUNTAS FRECUENTES</h2>
   <p class="h2sub">Sin letra pequeña</p>
@@ -524,6 +521,27 @@ function cerrarEntrega(){ document.getElementById("deliveryZone").classList.remo
 function copiar(id){
   const txt = document.getElementById(id).innerText;
   navigator.clipboard.writeText(txt).then(()=>alert("¡COPIADO! ✅ Ya lo tienes en tu portapapeles."));
+}
+
+
+/* ============ ⭐ RESEÑAS EN VIVO ============ */
+fetch("https://raw.githubusercontent.com/Mia9911/despegue-digital/main/resenas.json")
+  .then(function(r){ return r.json(); })
+  .then(function(d){ pintarResenas(d.resenas || []); })
+  .catch(function(){});
+function pintarResenas(lista){
+  if(!lista.length){ return; }
+  var vacia = document.getElementById("resenaVacia");
+  if(vacia){ vacia.style.display = "none"; }
+  document.getElementById("listaResenas").innerHTML = lista.map(function(r){
+    var estrellas = "";
+    for(var i=0;i<Math.min(5,Math.max(1,r.estrellas||5));i++){ estrellas += "⭐"; }
+    return '<div style="background:var(--card2);border:1px solid #2a3555;border-radius:14px;padding:16px;text-align:left">' +
+      '<div style="font-size:15px;letter-spacing:2px">' + estrellas + '</div>' +
+      '<p style="font-size:13.5px;color:#d7e3f4;margin:8px 0">' + r.texto + '</p>' +
+      '<div style="font-size:12px;color:var(--muted)">— ' + (r.nombre || "Cliente") +
+      (r.negocio ? " · " + r.negocio : "") + " · " + (r.fecha || "") + '</div></div>';
+  }).join("");
 }
 
 initWhatsApp();
