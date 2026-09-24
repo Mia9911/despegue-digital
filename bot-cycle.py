@@ -116,7 +116,19 @@ TXT_KIT_PAGADO = (
     "Ábrelo y guárdalo: 30 respuestas de WhatsApp + 10 bios + 7 plantillas, "
     "listas para copiar y pegar.\n"
     "Si tienes cualquier duda usando el kit, escríbeme aquí mismo.\n"
-    "Bienvenido/a a DESPEGUE DIGITAL 🚀 (mi jefa confirma tu pago en minutos)"
+    "Bienvenido/a a DESPEGUE DIGITAL 🚀 (mi jefa confirma tu pago en minutos)\n\n"
+    "🎁 Cuando lo pruebes, Califícanos: escribe /calificar y déjanos tus "
+    "estrellas. Ayudas a crecer a un negocio cubano ⭐"
+)
+TXT_CALIFICAR = (
+    "⭐ ¡Gracias por querer calificarnos!\n\n"
+    "Escríbenos en un solo mensaje:\n"
+    "1️⃣ Tus estrellas (1 a 5)\n"
+    "2️⃣ Tu opinión sobre lo que compraste\n"
+    "3️⃣ Tu nombre y tu negocio (como quieres que aparezca)\n\n"
+    "Ejemplo: \"⭐⭐⭐⭐⭐ Me encantó el kit, lo uso todos los días. "
+    "— Yanet, Dulcería Yanet de Camagüey\"\n\n"
+    "Con tu permiso, tu reseña se publica en nuestra tienda 🛒"
 )
 
 def txt_cierre():
@@ -295,6 +307,8 @@ for u in updates:
             tg("sendMessage", {"chat_id": JEFA, "text":
                 "💰 %s (@%s) dice que PAGÓ → le entregué el Kit YA. Verifica el pago "
                 "cuando puedas (escribe COBRO en el chat de Arena)." % (nombre, username)})
+    elif bajo.startswith("/calificar") or "estrella" in bajo or "califico" in bajo or "calificación" in bajo or "calificacion" in bajo or bajo.startswith("⭐"):
+        r = TXT_CALIFICAR
     elif any(k in bajo for k in ("quiero", "comprar", "me interesa", "empezar", "reserv")):
         r = txt_cierre()
         if not es_jefa:
