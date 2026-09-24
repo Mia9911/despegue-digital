@@ -401,7 +401,19 @@ function comprar(id){
   const p = CONFIG.productos[id];
   productoActual = id;
   const linkReal = CONFIG.links[id];
-  if(linkReal){ window.location.href = linkReal; return; } // ← EN VIVO: se va a pagar a QvaPay
+  if(linkReal){
+    // EN VIVO: el cliente paga en una pestaña nueva y la tienda LO ESPERA aquí.
+    // (Así no dependemos del redirect de QvaPay: la alfombra la ponemos nosotros.)
+    window.open(linkReal, "_blank");
+    const adelantos = { kit: 9, packB: 62.5, packA: 125 };
+    document.getElementById("mTitle").textContent = p.nombre;
+    document.getElementById("mAmount").textContent = "$" + (adelantos[id] || p.precio) + " USD" + (p.tipo === "pack" ? " (adelanto)" : "");
+    document.getElementById("payZone").style.display = "none";
+    document.getElementById("payingZone").style.display = "block";
+    document.getElementById("linkPago").href = linkReal;
+    document.getElementById("modalBg").classList.add("on");
+    return;
+  }
   // MODO DEMO: simula el checkout de QvaPay
   document.getElementById("mTitle").textContent = p.nombre;
   document.getElementById("mAmount").textContent = "$" + p.precio + " USD";
@@ -425,14 +437,14 @@ function entregar(){
   document.getElementById("entregaPack").style.display  = (p.tipo === "pack") ? "block" : "none";
   document.getElementById("pagoPendiente").style.display = "block";
   if(p.tipo === "pack"){
-    document.getElementById("dTitle").textContent = "¡Pago aprobado! ✅";
-    document.getElementById("dSub").textContent = p.nombre + " — confirmado. Producción en 24-48h.";
+    document.getElementById("dTitle").textContent = "¡Gracias por tu compra! ✅";
+    document.getElementById("dSub").textContent = p.nombre + " — arrancamos al confirmar tu pago (minutos). Entrega en 24-48h.";
     document.getElementById("waPedido").href = armarWhatsApp(
-      "¡Hola! 👋 Acabo de comprar el " + p.nombre + " ($" + p.precio + ") en DESPEGUE DIGITAL. ✅ PAGO APROBADO.\nTe mando mis datos:\n1. Negocio:\n2. Colores/logo:\n3. Fotos:\n4. Precios destacados:\n5. Zona/horario:"
+      "¡Hola! 👋 Acabo de comprar el " + p.nombre + " ($" + p.precio + ") en DESPEGUE DIGITAL. ✅\nTe mando mis datos:\n1. Negocio:\n2. Colores/logo:\n3. Fotos:\n4. Precios destacados:\n5. Zona/horario:"
     );
   } else {
-    document.getElementById("dTitle").textContent = "¡Pago aprobado! 🎁";
-    document.getElementById("dSub").textContent = "Tu Kit Exprés Digital es tuyo. Copia, pega y vende HOY.";
+    document.getElementById("dTitle").textContent = "¡Tu Kit ya es tuyo! 🎁";
+    document.getElementById("dSub").textContent = "Copia, pega y vende HOY. (Confirmamos tu pago en minutos)";
     document.getElementById("waPedido").href = armarWhatsApp("¡Hola! 👋 Compré el Kit Exprés Digital ($9). ¡Gracias! 🚀");
   }
   document.getElementById("deliveryZone").classList.add("on");
