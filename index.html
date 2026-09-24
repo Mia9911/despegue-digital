@@ -232,8 +232,11 @@
     </div>
     <div class="paying" id="payingZone">
       <div class="spinner"></div>
-      <b>Procesando pago seguro…</b>
-      <p style="color:var(--muted);font-size:12px;margin-top:6px">No cierres esta ventana</p>
+      <b>Completa tu pago en la pestaña de QvaPay que se abrió</b>
+      <p style="color:var(--muted);font-size:12px;margin-top:6px">¿No se abrió? <a id="linkPago" href="#" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">Toca aquí para ir a pagar</a></p>
+      <button class="btn-m btn-pay" style="margin-top:14px" onclick="entregar()">✅ YA PAGUÉ — RECIBIR MI PRODUCTO</button>
+      <button class="btn-m btn-cancel" onclick="cerrarModal()">Volver</button>
+      <p style="text-align:center;color:var(--muted);font-size:11px;margin-top:8px">Confirmamos tu pago en minutos · Garantía total</p>
     </div>
   </div>
 </div>
