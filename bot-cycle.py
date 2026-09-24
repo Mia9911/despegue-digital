@@ -111,7 +111,8 @@ def txt_cierre():
          "1️⃣ Eliges: Kit $9 · Kit Ventas $125 · Pack Resurrección $250\n"
          "2️⃣ Reservas con 50% de adelanto\n"
          "3️⃣ Empezamos HOY con fecha de entrega por escrito\n\n"
-         "✅ Plazo incumplido = reembolso total.\n\n")
+         "✅ Plazo incumplido = reembolso total.\n"
+         "💳 Pago 100% seguro con QvaPay (si no tienes cuenta, la creas gratis en 2 minutos).\n\n")
     if LINKS.get("kit"):   r += "💳 Kit $9:\n" + LINKS["kit"] + "\n\n"
     if LINKS.get("packB"): r += "💳 Kit Ventas $125 (adelanto $62.50):\n" + LINKS["packB"] + "\n\n"
     if LINKS.get("packA"): r += "💳 Pack Resurrección $250 (adelanto $125):\n" + LINKS["packA"] + "\n"
