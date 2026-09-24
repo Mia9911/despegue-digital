@@ -289,7 +289,8 @@ for u in updates:
     elif bajo.startswith("/vitrina") or "tienda" in bajo:
         r = "🛒 Tienda online: " + VITRINA + "\nPrecios: /precios · Muestra: /muestra"
     elif any(k in bajo for k in ("pagué", "pague", "ya pag", "pagado", "pague el", "realicé el pago")):
-        r = TXT_KIT_PAGADO
+        recibo_n = datetime.now(CUBA).strftime("%d%m-%H%M") + str(datetime.now(CUBA).second)
+        r = TXT_KIT_PAGADO + "\n🧾 RECIBO Nº " + recibo_n[:9] + " — guárdalo como prueba de tu compra."
         if not es_jefa:
             tg("sendMessage", {"chat_id": JEFA, "text":
                 "💰 %s (@%s) dice que PAGÓ → le entregué el Kit YA. Verifica el pago "
