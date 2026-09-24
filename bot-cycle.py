@@ -319,11 +319,17 @@ for u in updates:
                 "💰 CLIENTE INTERESADO: %s (@%s) — ya recibió los links de cobro." % (nombre, username)})
     elif es_jefa:
         r = TXT_JEFA
-    else:
+    elif m["chat"].get("type") == "private":
         r = ("¡Gracias por escribir, " + nombre + "! 😊 Para atenderte al segundo:\n"
              "💰 /precios · 🎁 /muestra · 🛒 /vitrina\n\n"
              "O cuéntame qué necesitas y te oriento.")
-    tg("sendMessage", {"chat_id": chat_id, "text": r})
+    else:
+        r = None  # en grupos solo respondo a palabras clave, no a todo lo que se escriba
+    if r:
+        try:
+            tg("sendMessage", {"chat_id": chat_id, "text": r})
+        except Exception as e:
+            print("reply fail:", chat_id, e)
 
 # ---------------- GUARDAR LIBRETA ----------------
 if libreta_nueva:
