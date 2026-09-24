@@ -18,6 +18,7 @@ from datetime import datetime, timezone, timedelta
 TOKEN = os.environ["TELEGRAM_BOT_TOKEN"]
 GH = os.environ.get("GITHUB_TOKEN", "")
 JEFA = int(os.environ.get("JEFA_CHAT_ID", "1227661387"))
+CANAL_ID = int(os.environ.get("CANAL_CHAT_ID", "-1004446713229"))
 API_T = "https://api.telegram.org/bot" + TOKEN + "/"
 REPO = "https://api.github.com/repos/Mia9911/despegue-digital"
 CUBA = timezone(timedelta(hours=-4))
@@ -363,6 +364,20 @@ if 17 <= hora < 21:
                     "📢 Post diario publicado en: %s" % g.get("title", cid)})
             except Exception as e:
                 print("post grupo fail:", cid, e)
+
+    # ---- V6: post diario en NUESTRO CANAL (auto, para siempre) ----
+    canal = grupos.get("_canal") or {}
+    if canal.get("ultima") != hoy:
+        try:
+            tg("sendMessage", {"chat_id": CANAL_ID,
+                "text": PROMOS[variant] +
+                        "\n👥 Comunidad de negocios → t.me/DespegueDigitalCuba"})
+            grupos["_canal"] = {"ultima": hoy}
+            publicados += 1
+            tg("sendMessage", {"chat_id": JEFA, "text":
+                "📢 Post diario publicado en el CANAL @DespegueDigitalMia."})
+        except Exception as e:
+            print("canal post fail:", e)
 
 # ---------------- GUARDAR ESTADO ----------------
 if nuevo_offset != offset or sha_offset is None:
