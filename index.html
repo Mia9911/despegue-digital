@@ -410,7 +410,7 @@ function comprar(id){
     window.open(linkReal, "_blank");
     const adelantos = { kit: 9, packB: 62.5, packA: 125 };
     document.getElementById("mTitle").textContent = p.nombre;
-    document.getElementById("mAmount").textContent = "$" + (adelantos[id] || p.precio) + " USD" + (p.tipo === "pack" ? " (adelanto)" : "");
+    document.getElementById("mAmount").textContent = "$" + Number(adelantos[id] || p.precio).toFixed(2) + " USD" + (p.tipo === "pack" ? " (adelanto)" : "");
     document.getElementById("payZone").style.display = "none";
     document.getElementById("payingZone").style.display = "block";
     document.getElementById("linkPago").href = linkReal;
