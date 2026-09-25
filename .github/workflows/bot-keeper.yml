@@ -18,3 +18,5 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           JEFA_CHAT_ID: '1227661387'
+          QVAPAY_APP_ID: ${{ secrets.QVAPAY_APP_ID }}
+          QVAPAY_APP_SECRET: ${{ secrets.QVAPAY_APP_SECRET }}
