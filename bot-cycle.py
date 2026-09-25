@@ -144,6 +144,26 @@ def txt_cierre():
     if LINKS.get("packA"): r += "💳 Pack Resurrección $250 (adelanto $125):\n" + LINKS["packA"] + "\n"
     return r
 
+# ---------------- PRODUCTO: PACK PLANTILLAS $4 (25/9) ----------------
+LINK_PLANTILLAS_PAGO = "https://www.qvapay.com/pay/90e8b817-84a4-41c6-8f78-db08d614c096"
+LINK_PLANTILLAS_PROD = "https://mia9911.github.io/despegue-digital/plantillas-whatsapp.html"
+TXT_PLANTILLAS = (
+    "📦 PACK DE PLANTILLAS WHATSAPP — $4 USD\n\n"
+    "20 mensajes listos para copiar y pegar en tu negocio:\n"
+    "✅ Bienvenidas, menús con precios, cobros, promos, seguimiento…\n"
+    "✅ Entrega AL INSTANTE (link directo, tuyo para siempre)\n\n"
+    "💳 Pagar aquí (QvaPay — tarjeta o saldo):\n"
+    + LINK_PLANTILLAS_PAGO + "\n\n"
+    "Cuando pagues, escríbeme \"pagué plantilla\" y te lo entrego al segundo. 🚀"
+)
+TXT_PLANTILLAS_OK = (
+    "🎉 ¡RECIBIDO! Aquí está tu PACK DE PLANTILLAS:\n\n"
+    "📦 " + LINK_PLANTILLAS_PROD + "\n\n"
+    "Guárdalo en favoritos — es tuyo para siempre.\n"
+    "💡 Tip: cópialas a tus \"Respuestas rápidas\" y atiendes en segundos.\n"
+    "Cualquier duda, aquí estoy. ¡A vender! 💰"
+)
+
 # ---------------- POSTS PARA GRUPOS ----------------
 IG = "@despegue_digitalmarketing"
 PROMOS = [
@@ -304,9 +324,17 @@ for u in updates:
         r = TXT_SOPORTE
     elif bajo.startswith("/vitrina") or "tienda" in bajo:
         r = "🛒 Tienda online: " + VITRINA + "\nPrecios: /precios · Muestra: /muestra"
+    elif "plantilla" in bajo:
+        if any(k in bajo for k in ("pagué", "pague", "ya pag", "pagado", "pague el", "realizé el pago", "realicé el pago")):
+            r = TXT_PLANTILLAS_OK
+            if not es_jefa:
+                tg("sendMessage", {"chat_id": JEFA, "text":
+                    "📦 %s (@%s) pagó el PACK PLANTILLAS ($4) → entregado al instante." % (nombre, username)})
+        else:
+            r = TXT_PLANTILLAS
     elif any(k in bajo for k in ("pagué", "pague", "ya pag", "pagado", "pague el", "realicé el pago")):
         recibo_n = datetime.now(CUBA).strftime("%d%m-%H%M") + str(datetime.now(CUBA).second)
-        r = TXT_KIT_PAGADO + "\n🧾 RECIBO Nº " + recibo_n[:9] + " — guárdalo como prueba de tu compra."
+        r = TXT_KIT_PAGADO + "\n🧾 RECIBO Nº " + recibo_n[:9] + " — guárdalo como prueba de tu compra." + "\n🎁 BONUS incluido: Pack de Plantillas WhatsApp → " + LINK_PLANTILLAS_PROD
         if not es_jefa:
             tg("sendMessage", {"chat_id": JEFA, "text":
                 "💰 %s (@%s) dice que PAGÓ → le entregué el Kit YA. Verifica el pago "
