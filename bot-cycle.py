@@ -407,6 +407,66 @@ if 17 <= hora < 21:
         except Exception as e:
             print("canal post fail:", e)
 
+# ---------------- V8: AGENDA MATUTINA A LA JEFA (8-10 AM Cuba) ----------------
+CAPTIONS_IG = [
+    ("post-3-senales.jpg",
+     "📚 3 señales de que WhatsApp te está COSTANDO clientes (y no lo sabes):\n\n"
+     "1️⃣ Te preguntan lo mismo 20 veces al día… 😩\n"
+     "2️⃣ '¿Tienes X?' y tardas 1 hora → el cliente ya compró en otro lado 🏃\n"
+     "3️⃣ Sin catálogo con precios → cada venta muere en la negociación ⚰️\n\n"
+     "La solución es menos dolorosa de lo que crees. Guárdalo 📌\n"
+     "🎁 Muestra GRATIS → link en la bio 🚀\n\n"
+     "#TipsDeVentas #WhatsAppBusiness #NegociosInteligentes #Cuba #MarketingDigital"),
+    ("post-antes-despues.jpg",
+     "⬅️ ANTES: bio vacía, precios por privado, clientes que preguntan y desaparecen.\n"
+     "➡️ DESPUÉS: perfil que vende, catálogo claro, respuestas al instante.\n\n"
+     "48 horas separan lo uno de lo otro. 🚀\n"
+     "🎁 ¿Ver tu ANTES convertido en DESPUÉS? Muestra GRATIS → link en la bio\n\n"
+     "#AntesYDespues #MarketingDigital #NegociosCuba #EmprendedoresCuba"),
+    ("post-kit.jpg",
+     "⚡ ¿Empezar a vender más HOY sin gastar mucho?\n\n"
+     "El Kit Exprés Digital ($9): 30 respuestas de WhatsApp que venden + 10 bios que "
+     "convierten + 7 plantillas de posts. Descarga inmediata.\n\n"
+     "🛒 Link en la bio · Garantía total 💛\n\n"
+     "#KitDigital #WhatsAppBusiness #VentasPorInternet #Cuba #MarketingDigital"),
+    ("post-pack-a.jpg",
+     "🚀 Tu presencia online COMPLETA renacida en 24-48h.\n\n"
+     "Pack Resurrección: contenido PRO diseñado para tu marca + catálogo con precios + "
+     "calendario de 2 semanas sin pensar.\n\n"
+     "✅ Plazo incumplido = reembolso total. 🛒 Link en la bio\n\n"
+     "#MarketingDigital #NegociosCuba #InstagramParaNegocios #Emprendedores"),
+    ("captura-pantalla-plantillas.jpg",
+     "📦 NUEVO: Pack de 20 plantillas de WhatsApp listas para copiar y pegar — $4.\n\n"
+     "Bienvenidas, menús con precios, cobros amables, promos flash, seguimiento… "
+     "todo lo que tu negocio necesita decir, YA ESCRITO.\n\n"
+     "Entrega al instante. 🛒 Link en la bio\n\n"
+     "#WhatsAppBusiness #Plantillas #VentasFaciles #Cuba #NegociosInteligentes"),
+    ("post-3-senales.jpg",
+     "⏱️ El dato incómodo: la mayoría de las ventas se pierden por TARDANZA, no por precio.\n\n"
+     "Si tardas más de 10 minutos en responder, el cliente ya compró en otro lado. 🏃💨\n"
+     "Con atención automática 24/7 eso no te pasa. ¿Cómo? → link en la bio 🚀\n\n"
+     "#AtencionAlCliente #WhatsAppBusiness #Ventas #Cuba #MarketingDigital"),
+    ("logo-despegue.jpg",
+     "👋 Domingo: día de descansar Y de planear.\n\n"
+     "Esta semana: tu Instagram y tu WhatsApp pueden dejar de perder clientes. "
+     "Todo empieza con una muestra gratis (link en la bio).\n\n"
+     "¿Hablamos esta semana? Te leo 💛\n\n"
+     "#EmprendedoresCuba #NegociosOnline #MarketingDigital #Cuba"),
+]
+if 8 <= hora < 10 and grupos.get("_agenda", {}).get("ultima") != hoy:
+    try:
+        img, cap = CAPTIONS_IG[ahora_cuba.weekday() % 7]
+        tg("sendMessage", {"chat_id": JEFA, "text":
+            "☀️ TU PLAN DE HOY (10-15 minutos en total):\n\n"
+            "1️⃣ IG (2 min) — publica con la imagen '%s':\n\n%s\n\n"
+            "2️⃣ Revisa Telegram: yo te avisé de cada interesado (si hay).\n"
+            "3️⃣ Murales pendientes (5 min c/u): los que te falten.\n"
+            "4️⃣ Recuerda: Revolico se renueva cada 3-4 días — yo te aviso.\n\n"
+            "El resto del día, la máquina trabaja sola. 🤖\n— Tu Económico" % (img, cap)})
+        grupos["_agenda"] = {"ultima": hoy}
+    except Exception as e:
+        print("agenda fail:", e)
+
 # ---------------- GUARDAR ESTADO ----------------
 if nuevo_offset != offset or sha_offset is None:
     try:
