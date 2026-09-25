@@ -467,6 +467,27 @@ if 8 <= hora < 10 and grupos.get("_agenda", {}).get("ultima") != hoy:
     except Exception as e:
         print("agenda fail:", e)
 
+# ---------------- V9: ALARMA DE PAGOS QVAPAY (cada 10 min) ----------------
+try:
+    QP_ID = os.environ.get("QVAPAY_APP_ID", "")
+    QP_SEC = os.environ.get("QVAPAY_APP_SECRET", "")
+    if QP_ID and QP_SEC:
+        _req = urllib.request.Request("https://api.qvapay.com/v2/transactions",
+            data=b"", headers={"app-id": QP_ID, "app-secret": QP_SEC,
+                               "Accept": "application/json", "Content-Type": "application/json",
+                               "User-Agent": "Mozilla/5.0"}, method="POST")
+        with urllib.request.urlopen(_req, timeout=20) as _r:
+            _txs = json.loads(_r.read().decode()).get("transactions", [])
+        _ya = grupos.get("_pagos", {}).get("total", 0)
+        if len(_txs) > _ya:
+            for _tx in _txs[_ya:]:
+                tg("sendMessage", {"chat_id": JEFA, "text":
+                    "\U0001F4B0\U0001F4B0\U0001F4B0 ¡PAGO RECIBIDO EN QVAPAY!\n%s" %
+                    json.dumps(_tx, ensure_ascii=False)[:300]})
+        grupos["_pagos"] = {"total": len(_txs)}
+except Exception as e:
+    print("qvapay check fail:", e)
+
 # ---------------- GUARDAR ESTADO ----------------
 if nuevo_offset != offset or sha_offset is None:
     try:
