@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🧮 Calculadora del Vendedor — Despegue Digital</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
+  body{background:#0d0221;color:#f5f0ff;padding:16px;line-height:1.45}
+  .wrap{max-width:640px;margin:0 auto}
+  header{text-align:center;padding:20px 10px;border-bottom:2px solid #7b2ff7;margin-bottom:14px}
+  h1{font-size:1.35rem;background:linear-gradient(90deg,#a8ff78,#7b2ff7);-webkit-background-clip:text;background-clip:text;color:transparent}
+  header p{color:#c9b8e8;font-size:.85rem;margin-top:4px}
+  .panel{background:#1a0b38;border:1px solid #3b2a6b;border-radius:16px;padding:14px;margin-bottom:14px}
+  .panel h2{font-size:.95rem;color:#a8ff78;margin-bottom:10px;letter-spacing:.5px}
+  label{display:block;font-size:.78rem;color:#c9b8e8;margin:8px 0 3px}
+  input{width:100%;background:#0d0221;border:1px solid #3b2a6b;border-radius:10px;color:#fff;padding:10px;font-size:1rem}
+  input:focus{outline:none;border-color:#7b2ff7}
+  .fila{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:6px;align-items:end;margin-bottom:8px}
+  .fila input{font-size:.9rem;padding:8px}
+  .fila .res{text-align:center;padding:8px 4px;border-radius:10px;font-weight:800;font-size:.95rem}
+  .gan{background:#11251a;color:#a8ff78;border:1px solid #2f6b4f}
+  .perd{background:#2d1120;color:#ff8fb1;border:1px solid #6b2f4f}
+  .fhead{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:6px;font-size:.68rem;color:#c9b8e8;text-align:center;margin-bottom:4px}
+  button{cursor:pointer;border:none;border-radius:24px;font-weight:800;padding:11px 20px;font-size:.92rem}
+  .b-add{background:linear-gradient(90deg,#7b2ff7,#f72fb8);color:#fff;width:100%;margin-top:4px}
+  .b-del{background:none;color:#ff8fb1;font-size:1rem;padding:6px 8px;border-radius:8px}
+  .total{display:flex;justify-content:space-between;align-items:center;background:#11251a;border:1px solid #2f6b4f;border-radius:12px;padding:12px 16px;margin-top:10px}
+  .total b{color:#a8ff78;font-size:1.3rem}
+  .comision{display:flex;gap:10px;align-items:end}
+  .comision div{flex:1}
+  .modo2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .precio-sug{background:#11251a;border:2px solid #a8ff78;border-radius:12px;padding:12px;text-align:center;margin-top:10px}
+  .precio-sug b{color:#a8ff78;font-size:1.8rem}
+  .nota{font-size:.75rem;color:#c9b8e8;text-align:center;margin:10px 0}
+  .cta{background:linear-gradient(135deg,#7b2ff7,#f72fb8);border-radius:16px;padding:16px;text-align:center;margin:14px 0}
+  .cta b{font-size:1rem}
+  .cta p{font-size:.82rem;margin:6px 0 10px;color:#f0e6ff}
+  .cta a{display:inline-block;background:#fff;color:#5b1e9e;text-decoration:none;font-weight:900;padding:10px 22px;border-radius:24px;font-size:.9rem;margin:3px}
+  footer{text-align:center;color:#c9b8e8;font-size:.75rem;padding:14px;border-top:1px solid #3b2a6b;margin-top:8px}
+  footer a{color:#a8ff78}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>🧮 Calculadora del Vendedor Cubano</h1>
+  <p>Pon tus precios y sabe tu ganancia REAL — con la comisión de la transferencia descontada.</p>
+</header>
+
+<div class="panel">
+  <h2>⚙️ LA COMISIÓN DE TU TRANSFERENCIA</h2>
+  <div class="comision">
+    <div><label>Porcentaje que te cobran (%)</label><input type="number" id="comGlobal" value="2" step="0.5"></div>
+    <div><label style="visibility:hidden">.</label><p class="nota" style="margin:0;text-align:left">En Cuba suele ser 2-4%. Pon la tuya.</p></div>
+  </div>
+</div>
+
+<div class="panel">
+  <h2>📊 MIS PRODUCTOS</h2>
+  <div class="fhead"><span style="text-align:left">Producto</span><span>Costo</span><span>Precio venta</span><span>Ganancia real</span></div>
+  <div id="filas"></div>
+  <button class="b-add" onclick="addFila()">＋ Añadir producto</button>
+  <div class="total"><span>Ganancia total de la lista</span><b id="total">$0</b></div>
+  <p class="nota">Verde = ganas 💚 · Rosado = estás perdiendo con la comisión</p>
+</div>
+
+<div class="panel">
+  <h2>🎯 ¿QUIERES GANAR X? PONLE ESTE PRECIO</h2>
+  <div class="modo2">
+    <div><label>¿Cuánto te costó?</label><input type="number" id="rCosto" value="800"></div>
+    <div><label>¿Cuánto quieres ganar?</label><input type="number" id="rGana" value="300"></div>
+  </div>
+  <div class="precio-sug">Vende en:<br><b id="rPrecio">$—</b><br><span style="font-size:.75rem;color:#c9b8e8">(comisión ya incluida — redondea hacia arriba 😉)</span></div>
+</div>
+
+<div class="cta">
+  <b>📦 Quiero la versión PRO en Excel (offline) — $3 USD</b>
+  <p>Funciona sin internet · hoja "¿a cuánto vendo?" · lista ilimitada · tuya para siempre. Pago fácil por QvaPay.</p>
+  <a href="https://www.qvapay.com/pay/63b2090d-b3a7-4214-a64d-fa8f85d50c71">🧮 COMPRAR PRO — $3</a>
+  <a href="https://mia9911.github.io/despegue-digital/">🛒 Ver más herramientas</a>
+  <p style="margin-top:10px">¿Dudas al instante? Nuestro asistente 24/7 👉 <a href="https://t.me/Despeguedijitalbot" style="background:none;color:#fff;padding:0;text-decoration:underline">t.me/Despeguedijitalbot</a></p>
+</div>
+
+<footer>Hecho con 💜 por <b>DESPEGUE DIGITAL</b> · IG @despegue_digitalmarketing<br>Tus datos se guardan solo en TU teléfono (ningún servidor).</footer>
+
+</div>
+<script>
+const LSK='despegue_calc_v1';
+let datos=JSON.parse(localStorage.getItem(LSK)||'null')||{com:2,filas:[["Café (libra)",800,1200],["Pan (unidad)",60,120]]};
+
+function fmt(n){const v=Math.round(n*100)/100;return (v<0?"-$":"$")+Math.abs(v).toLocaleString('es')}
+function calcGan(c,p,com){return p*(1-com/100)-c}
+
+function render(){
+  document.getElementById('comGlobal').value=datos.com;
+  const cont=document.getElementById('filas');cont.innerHTML='';
+  datos.filas.forEach((f,i)=>{
+    const d=document.createElement('div');d.className='fila';
+    const gan=calcGan(f[1],f[2],datos.com);
+    d.innerHTML=`<input value="${f[0]}" onchange="ed(${i},0,this.value)" placeholder="Producto">
+      <input type="number" value="${f[1]}" onchange="ed(${i},1,+this.value||0)">
+      <input type="number" value="${f[2]}" onchange="ed(${i},2,+this.value||0)">
+      <div class="res ${gan>=0?'gan':'perd'}">${fmt(gan)}<button class="b-del" onclick="del(${i})">✕</button></div>`;
+    cont.appendChild(d);
+  });
+  const tot=datos.filas.reduce((s,f)=>s+calcGan(f[1],f[2],datos.com),0);
+  document.getElementById('total').textContent=fmt(tot);
+  reversa();
+}
+function ed(i,c,v){datos.filas[i][c]=v;save()}
+function del(i){datos.filas.splice(i,1);save()}
+function addFila(){datos.filas.push(["",0,0]);save()}
+function save(){localStorage.setItem(LSK,JSON.stringify(datos));render()}
+
+function reversa(){
+  const c=+document.getElementById('rCosto').value||0,g=+document.getElementById('rGana').value||0;
+  const com=+datos.com||0;
+  document.getElementById('rPrecio').textContent=(g<=0&&c<=0)?"$—":fmt((c+g)/(1-com/100));
+}
+document.getElementById('comGlobal').onchange=e=>{datos.com=+e.target.value||0;save()};
+['rCosto','rGana'].forEach(id=>document.getElementById(id).oninput=reversa);
+render();
+</script>
+</body>
+</html>
