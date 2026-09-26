@@ -14,8 +14,8 @@
   .panel{background:#1a0b38;border:1px solid #3b2a6b;border-radius:16px;padding:14px;margin-bottom:14px}
   .panel h2{font-size:.95rem;color:#a8ff78;margin-bottom:10px;letter-spacing:.5px}
   label{display:block;font-size:.78rem;color:#c9b8e8;margin:8px 0 3px}
-  input{width:100%;background:#0d0221;border:1px solid #3b2a6b;border-radius:10px;color:#fff;padding:10px;font-size:1rem}
-  input:focus{outline:none;border-color:#7b2ff7}
+  input,select{width:100%;background:#0d0221;border:1px solid #3b2a6b;border-radius:10px;color:#fff;padding:10px;font-size:1rem}
+  input:focus,select:focus{outline:none;border-color:#7b2ff7}
   .fila{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:6px;align-items:end;margin-bottom:8px}
   .fila input{font-size:.9rem;padding:8px}
   .fila .res{text-align:center;padding:8px 4px;border-radius:10px;font-weight:800;font-size:.95rem}
@@ -27,8 +27,7 @@
   .b-del{background:none;color:#ff8fb1;font-size:1rem;padding:6px 8px;border-radius:8px}
   .total{display:flex;justify-content:space-between;align-items:center;background:#11251a;border:1px solid #2f6b4f;border-radius:12px;padding:12px 16px;margin-top:10px}
   .total b{color:#a8ff78;font-size:1.3rem}
-  .comision{display:flex;gap:10px;align-items:end}
-  .comision div{flex:1}
+  .config{display:grid;grid-template-columns:1fr 1fr 1.3fr;gap:10px;align-items:end}
   .modo2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
   .precio-sug{background:#11251a;border:2px solid #a8ff78;border-radius:12px;padding:12px;text-align:center;margin-top:10px}
   .precio-sug b{color:#a8ff78;font-size:1.8rem}
@@ -46,14 +45,24 @@
 
 <header>
   <h1>🧮 Calculadora del Vendedor Cubano</h1>
-  <p>Pon tus precios y sabe tu ganancia REAL — con la comisión de la transferencia descontada.</p>
+  <p>Pon tus precios y sabe tu ganancia REAL — con la comisión de la transferencia descontada. Todo sale solo, en tu moneda.</p>
 </header>
 
 <div class="panel">
-  <h2>⚙️ LA COMISIÓN DE TU TRANSFERENCIA</h2>
-  <div class="comision">
+  <h2>⚙️ AJUSTES: COMISIÓN Y MONEDA</h2>
+  <div class="config">
     <div><label>Porcentaje que te cobran (%)</label><input type="number" id="comGlobal" value="2" step="0.5"></div>
-    <div><label style="visibility:hidden">.</label><p class="nota" style="margin:0;text-align:left">En Cuba suele ser 2-4%. Pon la tuya.</p></div>
+    <div><label>Moneda</label>
+      <select id="monSel">
+        <option value="CUP">CUP 🇨🇺</option>
+        <option value="USD">USD $</option>
+        <option value="EUR">EUR €</option>
+        <option value="MLC">MLC</option>
+        <option value="CAD">CAD</option>
+        <option value="OTRA">Otra</option>
+      </select>
+    </div>
+    <div><label style="visibility:hidden">.</label><p class="nota" style="margin:0;text-align:left">La comisión en Cuba suele ser 2-4%. Pon la tuya.</p></div>
   </div>
 </div>
 
@@ -62,7 +71,7 @@
   <div class="fhead"><span style="text-align:left">Producto</span><span>Costo</span><span>Precio venta</span><span>Ganancia real</span></div>
   <div id="filas"></div>
   <button class="b-add" onclick="addFila()">＋ Añadir producto</button>
-  <div class="total"><span>Ganancia total de la lista</span><b id="total">$0</b></div>
+  <div class="total"><span>Ganancia total de la lista</span><b id="total">—</b></div>
   <p class="nota">Verde = ganas 💚 · Rosado = estás perdiendo con la comisión</p>
 </div>
 
@@ -72,12 +81,12 @@
     <div><label>¿Cuánto te costó?</label><input type="number" id="rCosto" value="800"></div>
     <div><label>¿Cuánto quieres ganar?</label><input type="number" id="rGana" value="300"></div>
   </div>
-  <div class="precio-sug">Vende en:<br><b id="rPrecio">$—</b><br><span style="font-size:.75rem;color:#c9b8e8">(comisión ya incluida — redondea hacia arriba 😉)</span></div>
+  <div class="precio-sug">Vende en:<br><b id="rPrecio">—</b><br><span style="font-size:.75rem;color:#c9b8e8">(comisión ya incluida — redondea hacia arriba 😉)</span></div>
 </div>
 
 <div class="cta">
   <b>📦 Quiero la versión PRO en Excel (offline) — $3 USD</b>
-  <p>Funciona sin internet · hoja "¿a cuánto vendo?" · lista ilimitada · tuya para siempre. Pago fácil por QvaPay.</p>
+  <p>Funciona sin internet · lista ilimitada · hoja "¿a cuánto vendo?" · <b>CONVERSOR DE MONEDAS</b> (compras en USD y vendes en CUP: te lo pasa con la tasa del día). Pago fácil por QvaPay.</p>
   <a href="https://www.qvapay.com/pay/63b2090d-b3a7-4214-a64d-fa8f85d50c71">🧮 COMPRAR PRO — $3</a>
   <a href="https://mia9911.github.io/despegue-digital/">🛒 Ver más herramientas</a>
   <p style="margin-top:10px">¿Dudas al instante? Nuestro asistente 24/7 👉 <a href="https://t.me/Despeguedijitalbot" style="background:none;color:#fff;padding:0;text-decoration:underline">t.me/Despeguedijitalbot</a></p>
@@ -87,14 +96,22 @@
 
 </div>
 <script>
-const LSK='despegue_calc_v1';
-let datos=JSON.parse(localStorage.getItem(LSK)||'null')||{com:2,filas:[["Café (libra)",800,1200],["Pan (unidad)",60,120]]};
+const LSK='despegue_calc_v2';
+const SIMB={CUP:'CUP ',USD:'$',EUR:'€',MLC:'MLC ',CAD:'CA$',OTRA:''};
 
-function fmt(n){const v=Math.round(n*100)/100;return (v<0?"-$":"$")+Math.abs(v).toLocaleString('es')}
+/* Guardado seguro: si el navegador bloquea el almacenamiento (modo privado/visor),
+   la calculadora SIGUE CALCULANDO igual — solo no recuerda los datos al cerrar. */
+function cargaLS(){try{return JSON.parse(localStorage.getItem(LSK)||'null')}catch(e){return null}}
+function salvaLS(o){try{localStorage.setItem(LSK,JSON.stringify(o))}catch(e){}}
+
+let datos=cargaLS()||{com:2,mon:'CUP',filas:[["Café (libra)",800,1200],["Pan (unidad)",60,120]]};
+
+function fmt(n){const v=Math.round(n*100)/100;return (v<0?'-':'')+(SIMB[datos.mon]||'')+Math.abs(v).toLocaleString('es')}
 function calcGan(c,p,com){return p*(1-com/100)-c}
 
 function render(){
   document.getElementById('comGlobal').value=datos.com;
+  document.getElementById('monSel').value=datos.mon in SIMB?datos.mon:'OTRA';
   const cont=document.getElementById('filas');cont.innerHTML='';
   datos.filas.forEach((f,i)=>{
     const d=document.createElement('div');d.className='fila';
@@ -106,20 +123,21 @@ function render(){
     cont.appendChild(d);
   });
   const tot=datos.filas.reduce((s,f)=>s+calcGan(f[1],f[2],datos.com),0);
-  document.getElementById('total').textContent=fmt(tot);
+  document.getElementById('total').textContent=datos.filas.length?fmt(tot):'—';
   reversa();
 }
 function ed(i,c,v){datos.filas[i][c]=v;save()}
 function del(i){datos.filas.splice(i,1);save()}
 function addFila(){datos.filas.push(["",0,0]);save()}
-function save(){localStorage.setItem(LSK,JSON.stringify(datos));render()}
+function save(){salvaLS(datos);render()}
 
 function reversa(){
   const c=+document.getElementById('rCosto').value||0,g=+document.getElementById('rGana').value||0;
   const com=+datos.com||0;
-  document.getElementById('rPrecio').textContent=(g<=0&&c<=0)?"$—":fmt((c+g)/(1-com/100));
+  document.getElementById('rPrecio').textContent=(g<=0&&c<=0)?'—':fmt((c+g)/(1-com/100));
 }
 document.getElementById('comGlobal').onchange=e=>{datos.com=+e.target.value||0;save()};
+document.getElementById('monSel').onchange=e=>{datos.mon=e.target.value;save()};
 ['rCosto','rGana'].forEach(id=>document.getElementById(id).oninput=reversa);
 render();
 </script>
