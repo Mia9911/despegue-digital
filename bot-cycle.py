@@ -483,16 +483,26 @@ CAPTIONS_IG = [
 if 8 <= hora < 10 and grupos.get("_agenda", {}).get("ultima") != hoy:
     try:
         img, cap = CAPTIONS_IG[ahora_cuba.weekday() % 7]
+        _paso1 = "1️⃣ IG (2 min) — publica con la imagen '%s':\n\n%s" % (img, cap)
+        try:
+            tg("sendPhoto", {"chat_id": JEFA,
+                "photo": "https://raw.githubusercontent.com/Mia9911/despegue-digital/main/imagenes/" + img,
+                "caption": cap})
+            _paso1 = ("1️⃣ IG (2 min) — la FOTO y el CAPTION ya te llegaron arriba ⬆️ "
+                      "(guárdalas en tu teléfono y publica).")
+        except Exception:
+            pass
         tg("sendMessage", {"chat_id": JEFA, "text":
             "☀️ TU PLAN DE HOY (10-15 minutos en total):\n\n"
-            "1️⃣ IG (2 min) — publica con la imagen '%s':\n\n%s\n\n"
-            "2️⃣ Revisa Telegram: yo te avisé de cada interesado (si hay).\n"
+            + _paso1 +
+            "\n\n2️⃣ Revisa Telegram: yo te avisé de cada interesado (si hay).\n"
             "3️⃣ Murales pendientes (5 min c/u): los que te falten.\n"
             "4️⃣ Recuerda: Revolico se renueva cada 3-4 días — yo te aviso.\n\n"
-            "El resto del día, la máquina trabaja sola. 🤖\n— Tu Económico" % (img, cap)})
+            "El resto del día, la máquina trabaja sola. 🤖\n— Tu Económico"})
         grupos["_agenda"] = {"ultima": hoy}
     except Exception as e:
         print("agenda fail:", e)
+
 
 # ---------------- V9: ALARMA DE PAGOS QVAPAY (cada 10 min) ----------------
 try:
@@ -533,6 +543,10 @@ try:
                     headers={"User-Agent": "Mozilla/5.0"})
                 with urllib.request.urlopen(_rr, timeout=20) as _rh:
                     _hx = _rh.read().decode("utf-8", "ignore")
+                _tmap = {}
+                for _t, _d in re.findall(r'"title":"([^"]{5,120})","description":"([^"]{10,900})"', _hx):
+                    _k = re.sub(r"[^a-z0-9]+", "-", _t.lower()).strip("-")[:30]
+                    _tmap[_k] = (_t, _d)
                 for _sm in re.finditer(r'"slug":"([a-z0-9][a-z0-9-]{7,119})"', _hx):
                     _s = _sm.group(1)
                     if _s in _vistos or len(_nuevos) >= 5:
@@ -540,19 +554,33 @@ try:
                     if any(_m in _s for _m in LX_MALOS):
                         continue
                     _t = _s.replace("-", " ")
-                    if any(_v in _t for _v in LX_VERBOS):
-                        _vistos.add(_s)
-                        _nuevos.append(_s)
+                    if not any(_v in _t for _v in LX_VERBOS):
+                        continue
+                    _base = re.sub(r"-\d+$", "", _s)
+                    _k = re.sub(r"[^a-z0-9]+", "-", _base.lower()).strip("-")[:30]
+                    _vistos.add(_s)
+                    _nuevos.append((_s, _tmap.get(_k)))
             except Exception as _e:
                 print("radar lx fetch fail:", _q, _e)
         if _nuevos:
-            _lis = "\n".join("%d. https://laborx.com/jobs/%s" % (i + 1, s)
-                              for i, s in enumerate(_nuevos[:5]))
             tg("sendMessage", {"chat_id": JEFA, "text":
-                "\U0001F9ED RADAR LABORX — %d trabajo(s) nuevo(s) que te pueden servir:\n\n"
-                "%s\n\n"
-                "Pégame aquí el que te guste y te fabrico la propuesta en ingl\u00e9s, "
-                "lista para copiar y pegar. \U0001F680\n\u2014 Tu Econ\u00f3mico" % (len(_nuevos[:5]), _lis)})
+                "\U0001F9ED RADAR LABORX — %d trabajo(s) nuevo(s) que te pueden servir "
+                "(te los cuento uno a uno abajo):" % len(_nuevos[:3])})
+        for _s, _par in _nuevos[:3]:
+            _tit = re.sub(r"-\d+$", "", _s).replace("-", " ").title()
+            _msg = "\U0001F4CC %s\n\U0001F517 https://laborx.com/jobs/%s" % (_tit, _s)
+            if _par:
+                _d = re.sub(r"\\u003C.*?\\u003E", " ", _par[1])
+                _d = _d.replace("\\u002F", "/").replace("\\u0026", "&").replace("\\n", " ")
+                _d = _d.replace("&lt;", "<").replace("&gt;", ">").replace("&quot;", '"')
+                _d = _d.replace("&#39;", "'")
+                _d = re.sub(r"<[^>]{0,80}>", " ", _d).replace("&amp;", "&")
+                _d = re.sub(r"\s+", " ", _d).strip()
+                if len(_d) > 30:
+                    _msg += "\n\U0001F4C4 De qué trata: %s..." % _d[:220]
+            _msg += ("\n\n\u00bfTe gusta? P\u00e9gamelo aqu\u00ed y te fabrico la propuesta "
+                     "en ingl\u00e9s lista para enviar. \U0001F680")
+            tg("sendMessage", {"chat_id": JEFA, "text": _msg})
         grupos["_radar_lx"] = {"ultima": hoy, "vistos": list(_vistos)[-150:]}
         print("radar lx:", len(_nuevos), "nuevos")
 except Exception as _e:
