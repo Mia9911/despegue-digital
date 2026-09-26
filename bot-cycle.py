@@ -409,7 +409,7 @@ ahora_cuba = datetime.now(CUBA)
 hoy = ahora_cuba.strftime("%Y-%m-%d")
 hora = int(ahora_cuba.strftime("%H"))
 publicados = 0
-if 17 <= hora < 21:
+if 17 <= hora < 23:
     variant = ahora_cuba.timetuple().tm_yday % len(PROMOS)
     for cid, g in grupos["grupos"].items():
         if g.get("activo") and g.get("ultima") != hoy:
@@ -480,7 +480,7 @@ CAPTIONS_IG = [
      "¿Hablamos esta semana? Te leo 💛\n\n"
      "#EmprendedoresCuba #NegociosOnline #MarketingDigital #Cuba"),
 ]
-if 8 <= hora < 10 and grupos.get("_agenda", {}).get("ultima") != hoy:
+if hora >= 8 and grupos.get("_agenda", {}).get("ultima") != hoy:
     try:
         img, cap = CAPTIONS_IG[ahora_cuba.weekday() % 7]
         _paso1 = "1️⃣ IG (2 min) — publica con la imagen '%s':\n\n%s" % (img, cap)
@@ -527,7 +527,7 @@ except Exception as e:
 
 # ---------------- V11: RADAR LABORX (1 vez al dia, 10-11 AM Cuba) ----------------
 try:
-    if 10 <= hora < 11 and grupos.get("_radar_lx", {}).get("ultima") != hoy:
+    if hora >= 10 and grupos.get("_radar_lx", {}).get("ultima") != hoy:
         LX_VERBOS = ["social", "instagram", "content", "community", "marketing",
                      "caption", "copywrit", "whatsapp", "facebook", "spanish", "design"]
         LX_MALOS = ["rent", "flash", "must-be-in", "in-the-usa", "usa-or-canada",
