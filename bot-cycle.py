@@ -164,6 +164,27 @@ TXT_PLANTILLAS_OK = (
     "Cualquier duda, aquí estoy. ¡A vender! 💰"
 )
 
+# ---------------- PRODUCTO: CALCULADORA (25/9, idea de la Jefa) ----------------
+LINK_CALC_PAGO = "https://www.qvapay.com/pay/63b2090d-b3a7-4214-a64d-fa8f85d50c71"
+LINK_CALC_WEB = "https://mia9911.github.io/despegue-digital/calculadora.html"
+LINK_CALC_PRO = "https://github.com/Mia9911/despegue-digital/raw/main/CalculadoraPRO.xlsx"
+TXT_CALCULADORA = (
+    "\U0001F9EE CALCULADORA DEL VENDEDOR — GRATIS:\n\n"
+    "Pon cuánto te cost\u00f3 y a cu\u00e1nto vendes... y mira tu GANANCIA REAL con la "
+    "comisi\u00f3n de la transferencia ya descontada. Tambi\u00e9n te dice a cu\u00e1nto vender "
+    "para ganar lo que quieras.\n\n"
+    "\U0001F4F1 Versi\u00f3n web gratis (se abre y listo):\n" + LINK_CALC_WEB + "\n\n"
+    "\U0001F4E6 Versi\u00f3n PRO en Excel (offline, ilimitada) — $3 USD:\n" + LINK_CALC_PAGO + "\n"
+    "Al pagar escríbeme \"pagué calculadora\" y te la entrego al segundo. \U0001F680"
+)
+TXT_CALCULADORA_OK = (
+    "\U0001F9EE \U0001F389 ¡RECIBIDO! Aquí está tu CALCULADORA PRO:\n\n"
+    "\U0001F4C2 " + LINK_CALC_PRO + "\n\n"
+    "(Se descarga el Excel. Funciona SIN internet en Excel, WPS o Google Sheets.\n"
+    "Abre la hoja \"Como usarla\" primero.)\n"
+    "Cualquier duda, aquí estoy. ¡A ganar bien! \U0001F4B0"
+)
+
 # ---------------- POSTS PARA GRUPOS ----------------
 IG = "@despegue_digitalmarketing"
 PROMOS = [
@@ -324,6 +345,14 @@ for u in updates:
         r = TXT_SOPORTE
     elif bajo.startswith("/vitrina") or "tienda" in bajo:
         r = "🛒 Tienda online: " + VITRINA + "\nPrecios: /precios · Muestra: /muestra"
+    elif "calculadora" in bajo or "cálcul" in bajo or "ganancia" in bajo:
+        if any(k in bajo for k in ("pagué", "pague", "ya pag", "pagado", "realicé el pago")):
+            r = TXT_CALCULADORA_OK
+            if not es_jefa:
+                tg("sendMessage", {"chat_id": JEFA, "text":
+                    "\U0001F9EE %s (@%s) pagó la CALCULADORA PRO ($3) → entregada al instante." % (nombre, username)})
+        else:
+            r = TXT_CALCULADORA
     elif "plantilla" in bajo:
         if any(k in bajo for k in ("pagué", "pague", "ya pag", "pagado", "pague el", "realizé el pago", "realicé el pago")):
             r = TXT_PLANTILLAS_OK
@@ -441,11 +470,8 @@ CAPTIONS_IG = [
      "todo lo que tu negocio necesita decir, YA ESCRITO.\n\n"
      "Entrega al instante. 🛒 Link en la bio\n\n"
      "#WhatsAppBusiness #Plantillas #VentasFaciles #Cuba #NegociosInteligentes"),
-    ("post-3-senales.jpg",
-     "⏱️ El dato incómodo: la mayoría de las ventas se pierden por TARDANZA, no por precio.\n\n"
-     "Si tardas más de 10 minutos en responder, el cliente ya compró en otro lado. 🏃💨\n"
-     "Con atención automática 24/7 eso no te pasa. ¿Cómo? → link en la bio 🚀\n\n"
-     "#AtencionAlCliente #WhatsAppBusiness #Ventas #Cuba #MarketingDigital"),
+    ("captura-calculadora.jpg",
+     "\U0001F9EE ¿A cu\u00e1nto ganas DE VERDAD con cada venta? (pista: la comisi\u00f3n de la transferencia se come algo)\n\nCalculadora del vendedor cubano — GRATIS: pon costo y precio, y mira tu ganancia real. Y si quieres ganar X, te dice a cu\u00e1nto vender.\n\n\U0001F4F1 Link en la bio \U0001F680\n\n#NegociosCuba #Emprendedores #Ventas #Cuba #WhatsAppBusiness #MarketingDigital"),
     ("logo-despegue.jpg",
      "👋 Domingo: día de descansar Y de planear.\n\n"
      "Esta semana: tu Instagram y tu WhatsApp pueden dejar de perder clientes. "
