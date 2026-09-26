@@ -12,7 +12,8 @@ Corre en GitHub Actions cada 10 minutos, PARA SIEMPRE:
      muestras.json, el guardián se las entrega al cliente SOLO
   5. Posts diarios en grupos (17-21h Cuba) + avisos a la Jefa
 """
-import json, os, base64, urllib.request
+import json
+import re, os, base64, urllib.request
 from datetime import datetime, timezone, timedelta
 
 TOKEN = os.environ["TELEGRAM_BOT_TOKEN"]
@@ -513,6 +514,49 @@ try:
         grupos["_pagos"] = {"total": len(_txs)}
 except Exception as e:
     print("qvapay check fail:", e)
+
+# ---------------- V11: RADAR LABORX (1 vez al dia, 10-11 AM Cuba) ----------------
+try:
+    if 10 <= hora < 11 and grupos.get("_radar_lx", {}).get("ultima") != hoy:
+        LX_VERBOS = ["social", "instagram", "content", "community", "marketing",
+                     "caption", "copywrit", "whatsapp", "facebook", "spanish", "design"]
+        LX_MALOS = ["rent", "flash", "must-be-in", "in-the-usa", "usa-or-canada",
+                    "uk-only", "account-for", "verify", "kyc"]
+        _radar_est = grupos.get("_radar_lx", {})
+        _vistos = set(_radar_est.get("vistos", []))
+        _nuevos = []
+        for _q in ("social media", "spanish", "instagram", "content creator",
+                   "community manager", "whatsapp"):
+            try:
+                _rr = urllib.request.Request(
+                    "https://laborx.com/jobs?search=" + _q.replace(" ", "%20"),
+                    headers={"User-Agent": "Mozilla/5.0"})
+                with urllib.request.urlopen(_rr, timeout=20) as _rh:
+                    _hx = _rh.read().decode("utf-8", "ignore")
+                for _sm in re.finditer(r'"slug":"([a-z0-9][a-z0-9-]{7,119})"', _hx):
+                    _s = _sm.group(1)
+                    if _s in _vistos or len(_nuevos) >= 5:
+                        continue
+                    if any(_m in _s for _m in LX_MALOS):
+                        continue
+                    _t = _s.replace("-", " ")
+                    if any(_v in _t for _v in LX_VERBOS):
+                        _vistos.add(_s)
+                        _nuevos.append(_s)
+            except Exception as _e:
+                print("radar lx fetch fail:", _q, _e)
+        if _nuevos:
+            _lis = "\n".join("%d. https://laborx.com/jobs/%s" % (i + 1, s)
+                              for i, s in enumerate(_nuevos[:5]))
+            tg("sendMessage", {"chat_id": JEFA, "text":
+                "\U0001F9ED RADAR LABORX — %d trabajo(s) nuevo(s) que te pueden servir:\n\n"
+                "%s\n\n"
+                "Pégame aquí el que te guste y te fabrico la propuesta en ingl\u00e9s, "
+                "lista para copiar y pegar. \U0001F680\n\u2014 Tu Econ\u00f3mico" % (len(_nuevos[:5]), _lis)})
+        grupos["_radar_lx"] = {"ultima": hoy, "vistos": list(_vistos)[-150:]}
+        print("radar lx:", len(_nuevos), "nuevos")
+except Exception as _e:
+    print("radar lx fail:", _e)
 
 # ---------------- GUARDAR ESTADO ----------------
 if nuevo_offset != offset or sha_offset is None:
