@@ -497,7 +497,7 @@ if hora >= 8 and grupos.get("_agenda", {}).get("ultima") != hoy:
             + _paso1 +
             "\n\n2️⃣ Revisa Telegram: yo te avisé de cada interesado (si hay).\n"
             "3️⃣ Murales pendientes (5 min c/u): los que te falten.\n"
-            "4️⃣ Recuerda: Revolico se renueva cada 3-4 días — yo te aviso.\n\n"
+            "4️⃣ LaborX (2 min): revisa tus propuestas y mensajes → laborx.com/dashboard\n5️⃣ Recuerda: Revolico se renueva cada 3-4 días — yo te aviso.\n\n"
             "El resto del día, la máquina trabaja sola. 🤖\n— Tu Económico"})
         grupos["_agenda"] = {"ultima": hoy}
     except Exception as e:
