@@ -456,7 +456,7 @@ CAPTIONS_IG = [
      "\U0001F4D3 \u00bfCU\u00c1NTO VENDISTE HOY?\n\n"
      "La Libreta del Vendedor — GRATIS: registra tus productos, toca \U0001F4B8 cada vez que vendes, "
      "y mira tu ganancia REAL del d\u00eda (comisi\u00f3n descontada), tu meta y tus \u00faltimos 7 d\u00edas.\n\n"
-     "Sin cuenta. Sin internet. Sin mensualidades. Hecha para Cuba \U0001F1E8\U0001F1F5\n\n"
+     "Sin cuenta. Sin internet. Sin mensualidades. Hecha para Cuba \U0001F1E8\U0001F1FA\n\n"
      "\U0001F4F1 Link en la bio \U0001F680\n\n"
      "#NegociosCuba #Emprendedores #Ventas #Cuba #WhatsAppBusiness #MarketingDigital"),
     ("post-antes-despues.jpg",
