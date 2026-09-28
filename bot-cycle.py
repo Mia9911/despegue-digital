@@ -532,6 +532,9 @@ try:
                      "caption", "copywrit", "whatsapp", "facebook", "spanish", "design"]
         LX_MALOS = ["rent", "flash", "must-be-in", "in-the-usa", "usa-or-canada",
                     "uk-only", "account-for", "verify", "kyc"]
+        LX_TRAP_DESC = ["developer account", "anydesk", "old live account",
+                        "referral code", "followers for sale", "account with"]
+        LX_SPAM_DESC = ["for hire", "hire me"]
         _radar_est = grupos.get("_radar_lx", {})
         _vistos = set(_radar_est.get("vistos", []))
         _nuevos = []
@@ -558,8 +561,18 @@ try:
                         continue
                     _base = re.sub(r"-\d+$", "", _s)
                     _k = re.sub(r"[^a-z0-9]+", "-", _base.lower()).strip("-")[:30]
+                    _par = _tmap.get(_k)
+                    _blob = ""
+                    if _par:
+                        _blob = (_par[0] + " " + _par[1]).lower()
+                        if any(_m in _blob for _m in LX_TRAP_DESC):
+                            _vistos.add(_s)
+                            continue
+                        if any(_m in _blob for _m in LX_SPAM_DESC) or _blob[:40].find("i'm a") >= 0 or _blob[:40].find("i am a") >= 0:
+                            _vistos.add(_s)
+                            continue
                     _vistos.add(_s)
-                    _nuevos.append((_s, _tmap.get(_k)))
+                    _nuevos.append((_s, _par))
             except Exception as _e:
                 print("radar lx fetch fail:", _q, _e)
         if _nuevos:
