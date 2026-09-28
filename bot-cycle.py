@@ -186,6 +186,17 @@ TXT_CALCULADORA_OK = (
     "Cualquier duda, aquí estoy. ¡A ganar bien! \U0001F4B0"
 )
 
+LINK_LIBRETA = "https://mia9911.github.io/despegue-digital/libreta.html"
+TXT_LIBRETA = (
+    "\U0001F4D3 LA LIBRETA DEL VENDEDOR — GRATIS:\n\n"
+    "La herramienta que lleva la cuenta de tu negocio: registra tus productos, toca \U0001F4B8 "
+    "cada vez que vendes y mira cu\u00e1nto ganaste HOY — con la comisi\u00f3n de la transferencia "
+    "ya descontada.\n\n"
+    "\U0001F3AF Meta del d\u00eda · \U0001F4C8 tus \u00faltimos 7 d\u00edas · \U0001F4B1 conversor de monedas.\n\n"
+    "Todo gratis, sin cuenta y funciona sin internet:\n" + LINK_LIBRETA + "\n\n"
+    "\U0001F680 Y si quieres la Calculadora PRO en Excel ($3), escr\u00edbeme \"calculadora\"."
+)
+
 # ---------------- POSTS PARA GRUPOS ----------------
 IG = "@despegue_digitalmarketing"
 PROMOS = [
@@ -346,6 +357,8 @@ for u in updates:
         r = TXT_SOPORTE
     elif bajo.startswith("/vitrina") or "tienda" in bajo:
         r = "🛒 Tienda online: " + VITRINA + "\nPrecios: /precios · Muestra: /muestra"
+    elif "libreta" in bajo or "inventario" in bajo or "vendi" in bajo or "cuenta de ventas" in bajo:
+        r = TXT_LIBRETA
     elif "calculadora" in bajo or "cálcul" in bajo or "ganancia" in bajo:
         if any(k in bajo for k in ("pagué", "pague", "ya pag", "pagado", "realicé el pago")):
             r = TXT_CALCULADORA_OK
@@ -439,14 +452,13 @@ if 17 <= hora < 23:
 
 # ---------------- V8: AGENDA MATUTINA A LA JEFA (8-10 AM Cuba) ----------------
 CAPTIONS_IG = [
-    ("post-3-senales.jpg",
-     "📚 3 señales de que WhatsApp te está COSTANDO clientes (y no lo sabes):\n\n"
-     "1️⃣ Te preguntan lo mismo 20 veces al día… 😩\n"
-     "2️⃣ '¿Tienes X?' y tardas 1 hora → el cliente ya compró en otro lado 🏃\n"
-     "3️⃣ Sin catálogo con precios → cada venta muere en la negociación ⚰️\n\n"
-     "La solución es menos dolorosa de lo que crees. Guárdalo 📌\n"
-     "🎁 Muestra GRATIS → link en la bio 🚀\n\n"
-     "#TipsDeVentas #WhatsAppBusiness #NegociosInteligentes #Cuba #MarketingDigital"),
+    ("post-libreta.jpg",
+     "\U0001F4D3 \u00bfCU\u00c1NTO VENDISTE HOY?\n\n"
+     "La Libreta del Vendedor — GRATIS: registra tus productos, toca \U0001F4B8 cada vez que vendes, "
+     "y mira tu ganancia REAL del d\u00eda (comisi\u00f3n descontada), tu meta y tus \u00faltimos 7 d\u00edas.\n\n"
+     "Sin cuenta. Sin internet. Sin mensualidades. Hecha para Cuba \U0001F1E8\U0001F1F5\n\n"
+     "\U0001F4F1 Link en la bio \U0001F680\n\n"
+     "#NegociosCuba #Emprendedores #Ventas #Cuba #WhatsAppBusiness #MarketingDigital"),
     ("post-antes-despues.jpg",
      "⬅️ ANTES: bio vacía, precios por privado, clientes que preguntan y desaparecen.\n"
      "➡️ DESPUÉS: perfil que vende, catálogo claro, respuestas al instante.\n\n"
