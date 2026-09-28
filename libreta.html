@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📓 La Libreta del Vendedor — Despegue Digital</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
+  body{background:#0d0221;color:#f5f0ff;padding:14px;line-height:1.45}
+  .wrap{max-width:640px;margin:0 auto}
+  header{text-align:center;padding:16px 10px;border-bottom:2px solid #7b2ff7;margin-bottom:12px}
+  h1{font-size:1.3rem;background:linear-gradient(90deg,#a8ff78,#f72fb8);-webkit-background-clip:text;background-clip:text;color:transparent}
+  header p{color:#c9b8e8;font-size:.8rem;margin-top:4px}
+  .panel{background:#1a0b38;border:1px solid #3b2a6b;border-radius:16px;padding:14px;margin-bottom:12px}
+  .panel h2{font-size:.95rem;color:#a8ff78;margin-bottom:10px;letter-spacing:.5px}
+  label{display:block;font-size:.75rem;color:#c9b8e8;margin:7px 0 3px}
+  input,select{width:100%;background:#0d0221;border:1px solid #3b2a6b;border-radius:10px;color:#fff;padding:9px;font-size:.95rem}
+  input:focus,select:focus{outline:none;border-color:#7b2ff7}
+  button{cursor:pointer;border:none;border-radius:22px;font-weight:800;padding:10px 16px;font-size:.88rem}
+  .b-main{background:linear-gradient(90deg,#7b2ff7,#f72fb8);color:#fff;width:100%}
+  .b-vendi{background:linear-gradient(90deg,#00b894,#00cec9);color:#04121c;font-size:.8rem;padding:8px 12px}
+  .b-mini{background:#2a1a4d;color:#c9b8e8;font-size:.75rem;padding:6px 10px;border-radius:10px}
+  .fila{display:grid;grid-template-columns:1.5fr .9fr .9fr .9fr auto;gap:5px;align-items:end;margin-bottom:7px}
+  .fila input{font-size:.85rem;padding:7px}
+  .fhead{display:grid;grid-template-columns:1.5fr .9fr .9fr .9fr auto;gap:5px;font-size:.62rem;color:#c9b8e8;text-align:center;margin-bottom:4px}
+  .res{padding:7px 4px;border-radius:9px;font-weight:800;font-size:.82rem;text-align:center}
+  .gan{background:#11251a;color:#a8ff78;border:1px solid #2f6b4f}
+  .perd{background:#2d1120;color:#ff8fb1;border:1px solid #6b2f4f}
+  .meta-box{background:#11251a;border:2px solid #a8ff78;border-radius:14px;padding:14px;text-align:center;margin-bottom:10px}
+  .meta-box .grande{color:#a8ff78;font-size:2rem;font-weight:900}
+  .barra{background:#0d0221;border-radius:12px;height:16px;margin:10px 0 4px;overflow:hidden;border:1px solid #2f6b4f}
+  .barra>div{height:100%;background:linear-gradient(90deg,#00b894,#a8ff78);width:0%;transition:width .4s}
+  .ok{color:#a8ff78;font-weight:800}
+  .falta{color:#ffc107;font-weight:700}
+  .venta-item{display:flex;justify-content:space-between;font-size:.82rem;padding:6px 4px;border-bottom:1px dashed #3b2a6b}
+  .chart{display:flex;gap:6px;align-items:flex-end;height:90px;margin-top:10px}
+  .chart .col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+  .chart .bar{width:100%;background:linear-gradient(180deg,#f72fb8,#7b2ff7);border-radius:6px 6px 0 0;min-height:3px}
+  .chart .dl{font-size:.58rem;color:#c9b8e8}
+  .chart .dv{font-size:.6rem;color:#a8ff78;font-weight:700}
+  .nota{font-size:.72rem;color:#c9b8e8;text-align:center;margin:8px 0}
+  .cta{background:linear-gradient(135deg,#7b2ff7,#f72fb8);border-radius:16px;padding:14px;text-align:center;margin:12px 0}
+  .cta b{font-size:.95rem}
+  .cta p{font-size:.78rem;margin:6px 0 8px;color:#f0e6ff}
+  .cta a{display:inline-block;background:#fff;color:#5b1e9e;text-decoration:none;font-weight:900;padding:9px 18px;border-radius:22px;font-size:.82rem;margin:3px}
+  footer{text-align:center;color:#c9b8e8;font-size:.7rem;padding:12px;border-top:1px solid #3b2a6b;margin-top:8px}
+  footer a{color:#a8ff78}
+  textarea{width:100%;background:#0d0221;border:1px solid #3b2a6b;border-radius:10px;color:#fff;padding:8px;font-size:.75rem;min-height:64px}
+  details summary{cursor:pointer;color:#a8ff78;font-weight:700;font-size:.85rem;padding:4px 0}
+  .conv{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;align-items:end}
+  .conv-res{background:#11251a;border:2px solid #a8ff78;border-radius:12px;padding:10px;text-align:center;margin-top:8px;font-size:1.1rem;font-weight:900;color:#a8ff78}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>📓 La Libreta del Vendedor</h1>
+  <p>Tu negocio en tu bolsillo · Gratis · Sin cuenta · Funciona sin internet · Hecha para Cuba 🇨🇺</p>
+</header>
+
+<div class="meta-box">
+  <div style="font-size:.8rem;color:#c9b8e8">GANANCIA REAL DE HOY <span id="fechaHoy"></span></div>
+  <div class="grande" id="ganHoy">—</div>
+  <div style="font-size:.78rem;color:#c9b8e8" id="nVentas">0 ventas registradas</div>
+  <div class="barra"><div id="barraMeta"></div></div>
+  <div id="msjMeta" class="falta">Pon tu meta del día abajo ⬇️</div>
+</div>
+
+<div class="panel">
+  <h2>⚙️ AJUSTES (una sola vez)</h2>
+  <div class="fila" style="grid-template-columns:1fr 1fr 1fr">
+    <div><label>Moneda</label>
+      <select id="monSel">
+        <option value="CUP">CUP 🇨🇺</option><option value="USD">USD $</option>
+        <option value="EUR">EUR €</option><option value="MLC">MLC</option>
+        <option value="CAD">CAD</option><option value="OTRA">Otra</option>
+      </select></div>
+    <div><label>Comisión %</label><input type="number" id="comIn" value="2" step="0.5"></div>
+    <div><label>Meta del día</label><input type="number" id="metaIn" value="10"></div>
+  </div>
+  <p class="nota">La comisión de la transferencia ya viene descontada en TODO (2-4% en Cuba).</p>
+</div>
+
+<div class="panel">
+  <h2>📦 MIS PRODUCTOS</h2>
+  <div class="fhead"><span style="text-align:left">Producto</span><span>Costo</span><span>Precio</span><span>Ganancia</span><span>Vendí</span></div>
+  <div id="filas"></div>
+  <button class="b-main" onclick="addProd()" style="margin-top:6px">＋ Añadir producto</button>
+  <p class="nota">Toca <b style="color:#00cec9">💸 Vendí</b> cada vez que vendas uno — la libreta hace el resto.</p>
+</div>
+
+<div class="panel">
+  <h2>💸 VENTAS DE HOY</h2>
+  <div id="ventas"></div>
+  <button class="b-mini" onclick="deshacer()">↩️ Deshacer última venta</button>
+</div>
+
+<div class="panel">
+  <h2>📈 TUS ÚLTIMOS 7 DÍAS</h2>
+  <div class="chart" id="chart"></div>
+</div>
+
+<div class="panel">
+  <h2>💱 CONVERSOR (tasa del día)</h2>
+  <div class="fila" style="grid-template-columns:1fr 1fr 1fr 1fr">
+    <div><label>USD vale</label><input type="number" id="tUSD" value="400"></div>
+    <div><label>EUR vale</label><input type="number" id="tEUR" value="400"></div>
+    <div><label>MLC vale</label><input type="number" id="tMLC" value="250"></div>
+    <div><label>Tienes</label><input type="number" id="cCant" value="20"></div>
+  </div>
+  <div class="fila" style="grid-template-columns:1fr 1fr;margin-top:6px">
+    <div><label>De</label>
+      <select id="cDe"><option>USD</option><option>EUR</option><option>MLC</option><option>CUP</option></select></div>
+    <div><label>A</label>
+      <select id="cA"><option>CUP</option><option>USD</option><option>EUR</option><option>MLC</option></select></div>
+  </div>
+  <div class="conv-res" id="cRes">—</div>
+  <p class="nota">Cambia las tasas cuando cambien — son tuyas, nadie las ve.</p>
+</div>
+
+<div class="panel">
+  <h2>💾 RESPALDO DE TU LIBRETA</h2>
+  <details>
+    <summary>Copiar mis datos (guárdalos en notas o WhatsApp)</summary>
+    <textarea id="expTxt" readonly></textarea>
+    <button class="b-mini" onclick="document.getElementById('expTxt').select();document.execCommand('copy');this.textContent='✅ Copiado'">📋 Copiar todo</button>
+  </details>
+  <details style="margin-top:6px">
+    <summary>Recuperar mis datos (pega aquí)</summary>
+    <textarea id="impTxt" placeholder="Pega el texto de tu respaldo..."></textarea>
+    <button class="b-main" onclick="importar()">📥 Recuperar</button>
+  </details>
+</div>
+
+<div class="cta">
+  <b>🧮 ¿Vendes seguido? La Calculadora PRO en Excel — $3 USD</b>
+  <p>Lista ilimitada + hoja "¿a cuánto vendo?" + conversor. Funciona SIN internet en Excel, WPS o Google Sheets. Tuya para siempre (nada de mensualidades 😉).</p>
+  <a href="https://www.qvapay.com/pay/63b2090d-b3a7-4214-a64d-fa8f85d50c71">🧮 COMPRAR PRO — $3</a>
+  <a href="https://mia9911.github.io/despegue-digital/">🛒 Ver más herramientas</a>
+  <p style="margin-top:8px">Asistente 24/7 👉 <a href="https://t.me/Despeguedijitalbot" style="background:none;color:#fff;padding:0;text-decoration:underline">t.me/Despeguedijitalbot</a></p>
+</div>
+
+<footer>Hecho con 💜 por <b>DESPEGUE DIGITAL</b> · IG @despegue_digitalmarketing<br>Gratis para siempre · Sin cuenta · Sin mensualidades · Tus datos viven SOLO en tu teléfono.</footer>
+
+</div>
+<script>
+const LSK='despegue_libreta_v1';
+const SIMB={CUP:'CUP ',USD:'$',EUR:'€',MLC:'MLC ',CAD:'CA$',OTRA:''};
+function cargaLS(){try{return JSON.parse(localStorage.getItem(LSK)||'null')}catch(e){return null}}
+function salvaLS(o){try{localStorage.setItem(LSK,JSON.stringify(o))}catch(e){}}
+let D=cargaLS()||{
+  mon:'CUP',com:2,meta:10,
+  tasas:{USD:400,EUR:400,MLC:250},
+  prods:[["Café (libra)",800,1200],["Pan (unidad)",60,120]],
+  ventas:[] // {d:'2026-09-28',h:'14:02',n:'Café (libra)',q:1,g:376}
+};
+function hoy(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function fmt(n){const v=Math.round(n*100)/100;return (v<0?'-':'')+(SIMB[D.mon]||'')+Math.abs(v).toLocaleString('es')}
+function ganUnit(c,p){return p*(1-D.com/100)-c}
+
+function render(){
+  document.getElementById('monSel').value=D.mon in SIMB?D.mon:'OTRA';
+  document.getElementById('comIn').value=D.com;
+  document.getElementById('metaIn').value=D.meta;
+  document.getElementById('tUSD').value=D.tasas.USD;
+  document.getElementById('tEUR').value=D.tasas.EUR;
+  document.getElementById('tMLC').value=D.tasas.MLC;
+  document.getElementById('fechaHoy').textContent='('+hoy()+')';
+  // productos
+  const c=document.getElementById('filas');c.innerHTML='';
+  D.prods.forEach((p,i)=>{
+    const g=ganUnit(p[1],p[2]);
+    const d=document.createElement('div');d.className='fila';
+    d.innerHTML=`<input value="${p[0]}" onchange="edP(${i},0,this.value)" placeholder="Producto">
+      <input type="number" value="${p[1]}" onchange="edP(${i},1,+this.value||0)">
+      <input type="number" value="${p[2]}" onchange="edP(${i},2,+this.value||0)">
+      <div class="res ${g>=0?'gan':'perd'}">${p[2]?fmt(g):'—'}</div>
+      <button class="b-vendi" onclick="vendi(${i})">💸</button>`;
+    c.appendChild(d);
+  });
+  // hoy
+  const vh=D.ventas.filter(v=>v.d===hoy());
+  const gh=vh.reduce((s,v)=>s+v.g,0);
+  document.getElementById('ganHoy').textContent=fmt(gh);
+  document.getElementById('nVentas').textContent=vh.length+' venta(s) · '+(vh.reduce((s,v)=>s+v.q,0))+' producto(s)';
+  const pct=D.meta>0?Math.min(100,Math.round(gh/D.meta*100)):0;
+  document.getElementById('barraMeta').style.width=pct+'%';
+  const msj=document.getElementById('msjMeta');
+  if(D.meta>0&&gh>=D.meta){msj.className='ok';msj.textContent='🎉 ¡META CUMPLIDA! Todo lo demás es pura ganancia.'}
+  else if(D.meta>0){msj.className='falta';msj.textContent='Te faltan '+fmt(D.meta-gh)+' para tu meta de '+fmt(D.meta)+' — ¡a vender!'}
+  else{msj.className='falta';msj.textContent='Pon tu meta del día en Ajustes ⬆️'}
+  // lista ventas de hoy
+  const lv=document.getElementById('ventas');lv.innerHTML='';
+  if(!vh.length){lv.innerHTML='<p class="nota" style="margin:4px 0">Sin ventas aún hoy — toca 💸 en un producto cuando vendas.</p>'}
+  vh.slice().reverse().forEach(v=>{
+    const e=document.createElement('div');e.className='venta-item';
+    e.innerHTML=`<span>${v.h} · ${v.n}${v.q>1?' ×'+v.q:''}</span><b style="color:#a8ff78">+${fmt(v.g)}</b>`;
+    lv.appendChild(e);
+  });
+  // chart 7 dias
+  const ch=document.getElementById('chart');ch.innerHTML='';
+  let max=1;
+  const dias=[];
+  for(let i=6;i>=0;i--){
+    const dt=new Date();dt.setDate(dt.getDate()-i);
+    const k=dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0');
+    const g=D.ventas.filter(v=>v.d===k).reduce((s,v)=>s+v.g,0);
+    dias.push([k,g]);if(g>max)max=g;
+  }
+  dias.forEach(([k,g])=>{
+    const col=document.createElement('div');col.className='col';
+    const h=Math.round(g/max*70);
+    col.innerHTML=`<div class="dv">${g?Math.round(g):''}</div><div class="bar" style="height:${Math.max(3,h)}px"></div><div class="dl">${k.slice(8)}/${k.slice(5,7)}</div>`;
+    ch.appendChild(col);
+  });
+  conversor();
+}
+function edP(i,c,v){D.prods[i][c]=v;save()}
+function addProd(){D.prods.push(["",0,0]);save()}
+function vendi(i){
+  const p=D.prods[i];if(!p[0]||!p[2]){alert('Completa nombre y precio de ese producto primero 🙂');return}
+  const t=new Date();
+  D.ventas.push({d:hoy(),h:String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0'),
+                 n:p[0],q:1,g:ganUnit(p[1],p[2])});
+  save();
+}
+function deshacer(){if(D.ventas.length&&confirm('¿Borrar la última venta registrada?')){D.ventas.pop();save()}}
+function save(){salvaLS(D);render()}
+function conversor(){
+  const cant=+document.getElementById('cCant').value||0;
+  const de=document.getElementById('cDe').value, a=document.getElementById('cA').value;
+  const T={USD:+D.tasas.USD,EUR:+D.tasas.EUR,MLC:+D.tasas.MLC,CUP:1};
+  const r=cant*T[de]/T[a];
+  document.getElementById('cRes').textContent=r?((Math.round(r*100)/100).toLocaleString('es'))+' '+a:'—';
+}
+['comIn','metaIn'].forEach(id=>document.getElementById(id).onchange=e=>{
+  D[id==='comIn'?'com':'meta']=+e.target.value||0;save()});
+document.getElementById('monSel').onchange=e=>{D.mon=e.target.value;save()};
+['tUSD','tEUR','tMLC'].forEach((id,i)=>document.getElementById(id).onchange=e=>{
+  D.tasas[['USD','EUR','MLC'][i]]=+e.target.value||0;save()});
+['cCant'].forEach(id=>document.getElementById(id).oninput=conversor);
+['cDe','cA'].forEach(id=>document.getElementById(id).onchange=conversor);
+function exportar(){document.getElementById('expTxt').value=JSON.stringify(D)}
+function importar(){
+  try{
+    const o=JSON.parse(document.getElementById('impTxt').value);
+    if(!o||!Array.isArray(o.prods)||!Array.isArray(o.ventas))throw 0;
+    o.tasas=o.tasas||{USD:400,EUR:400,MLC:250};
+    o.mon=o.mon||'CUP';o.com=o.com||2;o.meta=o.meta||10;
+    D=o;save();alert('✅ Libreta recuperada — bienvenido de vuelta.')
+  }catch(e){alert('Ese texto no parece un respaldo válido 🤔 copia el texto completo de "Copiar mis datos".')}
+}
+document.querySelectorAll('details').forEach(d=>d.addEventListener('toggle',()=>{if(d.open)exportar()}));
+render();
+</script>
+</body>
+</html>
