@@ -565,7 +565,7 @@ try:
                     if _par:
                         _dl = (_par[1].replace("&#x27;", "'").replace("&#39;", "'")
                                .replace("&quot;", '"').replace("&amp;", "&")
-                               .replace("\u2019", "'").lower())
+                               .replace("\u2019", "'").replace("\\u2019", "'").lower())
                         _blob = (_par[0] + " " + _par[1]).lower()
                         if (any(_m in _blob for _m in LX_TRAP_DESC) or
                                 any(_m in _blob for _m in LX_SPAM_DESC) or
