@@ -562,13 +562,14 @@ try:
                     _base = re.sub(r"-\d+$", "", _s)
                     _k = re.sub(r"[^a-z0-9]+", "-", _base.lower()).strip("-")[:30]
                     _par = _tmap.get(_k)
-                    _blob = ""
                     if _par:
+                        _dl = (_par[1].replace("&#x27;", "'").replace("&#39;", "'")
+                               .replace("&quot;", '"').replace("&amp;", "&")
+                               .replace("\u2019", "'").lower())
                         _blob = (_par[0] + " " + _par[1]).lower()
-                        if any(_m in _blob for _m in LX_TRAP_DESC):
-                            _vistos.add(_s)
-                            continue
-                        if any(_m in _blob for _m in LX_SPAM_DESC) or _blob[:40].find("i'm a") >= 0 or _blob[:40].find("i am a") >= 0:
+                        if (any(_m in _blob for _m in LX_TRAP_DESC) or
+                                any(_m in _blob for _m in LX_SPAM_DESC) or
+                                any(_m in _dl[:150] for _m in ("i'm a", "i am a", "i help", "i specialize", "i offer"))):
                             _vistos.add(_s)
                             continue
                     _vistos.add(_s)
