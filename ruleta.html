@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎰 La Ruleta de Despegue Digital</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
+  body{background:#0d0221;color:#f5f0ff;padding:14px;line-height:1.45}
+  .wrap{max-width:520px;margin:0 auto;text-align:center}
+  header{padding:14px 6px;border-bottom:2px solid #7b2ff7;margin-bottom:12px}
+  h1{font-size:1.25rem;background:linear-gradient(90deg,#ffd700,#f72fb8);-webkit-background-clip:text;background-clip:text;color:transparent}
+  header p{color:#c9b8e8;font-size:.78rem;margin-top:4px}
+  .ruleta-zona{position:relative;width:300px;height:300px;margin:16px auto}
+  .puntero{position:absolute;top:-6px;left:50%;transform:translateX(-50%);width:0;height:0;
+    border-left:14px solid transparent;border-right:14px solid transparent;border-top:26px solid #ffd700;z-index:5;
+    filter:drop-shadow(0 2px 3px rgba(0,0,0,.6))}
+  #rueda{width:100%;height:100%;border-radius:50%;border:6px solid #ffd700;position:relative;overflow:hidden;
+    transition:transform 4.2s cubic-bezier(.15,.85,.25,1);
+    box-shadow:0 0 30px rgba(247,47,184,.35), inset 0 0 20px rgba(0,0,0,.5)}
+  .seg-label{position:absolute;left:50%;top:50%;transform-origin:0 0;font-size:.6rem;font-weight:800;
+    width:110px;text-align:left;pointer-events:none;text-shadow:0 1px 2px #000}
+  .centro{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:54px;height:54px;border-radius:50%;
+    background:linear-gradient(135deg,#7b2ff7,#f72fb8);border:3px solid #ffd700;z-index:4;display:flex;
+    align-items:center;justify-content:center;font-size:1.4rem}
+  button{cursor:pointer;border:none;border-radius:26px;font-weight:900;padding:14px 30px;font-size:1rem}
+  .b-girar{background:linear-gradient(90deg,#ffd700,#f72fb8);color:#1a0b38;width:100%;max-width:320px;
+    box-shadow:0 4px 18px rgba(247,47,184,.4)}
+  button:disabled{opacity:.45;cursor:not-allowed}
+  .panel{background:#1a0b38;border:1px solid #3b2a6b;border-radius:16px;padding:14px;margin:12px 0;text-align:left}
+  .panel h2{font-size:.9rem;color:#a8ff78;margin-bottom:8px}
+  .panel p{font-size:.78rem;color:#c9b8e8;margin:4px 0}
+  #resultado{background:#11251a;border:2px solid #a8ff78;border-radius:16px;padding:16px;margin:14px 0;display:none}
+  #resultado .premio{color:#a8ff78;font-size:1.15rem;font-weight:900;margin:6px 0}
+  .codigo{background:#0d0221;border:1px dashed #a8ff78;border-radius:10px;padding:10px;font-size:1.05rem;
+    font-weight:900;color:#ffd700;letter-spacing:2px;margin:8px 0;font-family:monospace}
+  .cta a{display:inline-block;background:#fff;color:#5b1e9e;text-decoration:none;font-weight:900;
+    padding:10px 20px;border-radius:24px;font-size:.85rem;margin:4px 3px}
+  .nota{font-size:.7rem;color:#c9b8e8;margin:10px 0}
+  footer{text-align:center;color:#c9b8e8;font-size:.7rem;padding:12px;border-top:1px solid #3b2a6b;margin-top:8px}
+  footer a{color:#a8ff78}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>🎰 La Ruleta de Despegue Digital</h1>
+  <p>Gira GRATIS 1 vez al día · Premios de verdad de nuestra tienda · Sin dinero, sin apuestas</p>
+</header>
+
+<div class="ruleta-zona">
+  <div class="puntero"></div>
+  <div id="rueda"></div>
+  <div class="centro">🚀</div>
+</div>
+
+<button class="b-girar" id="btnGirar" onclick="girar()">🎰 GIRAR AHORA</button>
+<p class="nota" id="msj">100% gratis · si sale premio, te lo llevas · vuelve mañana para girar otra vez</p>
+
+<div id="resultado">
+  <div style="font-size:.8rem;color:#c9b8e8">🎉 ¡FELICIDADES! SALIÓ:</div>
+  <div class="premio" id="txtPremio"></div>
+  <div style="font-size:.8rem;color:#c9b8e8">Tu código:</div>
+  <div class="codigo" id="txtCodigo"></div>
+  <p style="font-size:.8rem">Para reclamarlo, escríbele a nuestro asistente (toca):</p>
+  <div class="cta"><a href="https://t.me/Despeguedijitalbot">👉 ABRIR EL BOT Y ENVIAR: <span id="miniCodigo"></span></a></div>
+  <p class="nota">Mia te escribe enseguida para entregarte tu premio 💜</p>
+</div>
+
+<div class="panel">
+  <h2>🎁 ¿Qué puedes ganar?</h2>
+  <p>💸 −10% en el Pack de Plantillas WhatsApp ($4)</p>
+  <p>🎁 Una muestra gratis de contenido para tu negocio</p>
+  <p>🧮 −$1 en la Calculadora PRO en Excel ($3)</p>
+  <p>⚡ −15% en el Kit Exprés Digital ($9)</p>
+  <p>💬 Una consulta de marketing gratis (10 min)</p>
+  <p>🍀 Y a veces... nada (así es la ruleta 😄 ¡mañana otra vez!)</p>
+</div>
+
+<div class="cta">
+  <a href="https://mia9911.github.io/despegue-digital/">🛒 Ver la tienda</a>
+  <a href="https://mia9911.github.io/despegue-digital/calculadora.html">🧮 Calculadora gratis</a>
+  <a href="https://mia9911.github.io/despegue-digital/libreta.html">📓 La Libreta gratis</a>
+</div>
+
+<footer>Hecho con 💜 por <b>DESPEGUE DIGITAL</b> · IG @despegue_digitalmarketing<br>
+Reglas simples: 1 giro gratis por día · nadie paga nada por girar · premios entregados por Mia ·
+diviértete y vuelve mañana 😄<br>
+<img src="https://visitor-badge.laobi.icu/badge?page_id=despegue-ruleta&left_text=%F0%9F%8E%B0%20Giros" alt="Visitas" style="height:20px;vertical-align:middle;margin-top:8px"></footer>
+
+</div>
+<script>
+const LSK='despegue_ruleta_v1';
+const SEGS=[
+  {t:"Casi... 😅",c:"#2a1a4d",miss:1},
+  {t:"Plantillas −10%",c:"#5b1e9e"},
+  {t:"Sigue intentando 🍀",c:"#2a1a4d",miss:1},
+  {t:"Muestra GRATIS",c:"#0e5c3f"},
+  {t:"PRO −$1",c:"#5b1e9e"},
+  {t:"Kit −15%",c:"#7b2ff7"},
+  {t:"Mañana es otro día",c:"#2a1a4d",miss:1},
+  {t:"Consulta gratis",c:"#0e5c3f"}
+];
+const CODIGOS={1:"PLANTA10",3:"MUESTRA",4:"PRO1",5:"KIT15",7:"CONSUL10"};
+function hoy(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function cargaLS(){try{return JSON.parse(localStorage.getItem(LSK)||'null')}catch(e){return null}}
+function salvaLS(o){try{localStorage.setItem(LSK,JSON.stringify(o))}catch(e){}}
+
+// pintar la rueda
+const rueda=document.getElementById('rueda');
+let conic=[];
+SEGS.forEach((s,i)=>{conic.push(s.c+' '+(i*45)+'deg '+((i+1)*45)+'deg')});
+rueda.style.background='conic-gradient('+conic.join(',')+')';
+SEGS.forEach((s,i)=>{
+  const l=document.createElement('div');l.className='seg-label';
+  l.textContent=s.t;
+  const ang=i*45+22.5;
+  l.style.transform='rotate('+ang+'deg) translate(38px,-6px)';
+  l.style.color=s.miss?'#8b7ba8':'#ffd700';
+  rueda.appendChild(l);
+});
+
+let rot=0, girando=false;
+const btn=document.getElementById('btnGirar');
+const msj=document.getElementById('msj');
+const st=cargaLS()||{};
+if(st.ultimo===hoy()){
+  btn.disabled=true;btn.textContent='⏳ YA GIRASTE HOY';
+  msj.textContent='Vuelve mañana para girar otra vez — los premios te esperan 👀';
+}
+function girar(){
+  if(girando||btn.disabled)return;
+  girando=true;btn.disabled=true;
+  const i=Math.floor(Math.random()*8);
+  const objetivo=(360-((i*45)+22.5))+(Math.random()*24-12);
+  rot+=1800+objetivo;
+  rueda.style.transform='rotate('+rot+'deg)';
+  setTimeout(()=>{
+    const seg=SEGS[i];
+    salvaLS({ultimo:hoy()});
+    if(seg.miss){
+      btn.textContent='😊 ¡Casi! Mañana otra vez';
+      msj.textContent='La ruleta no siempre premia — pero mañana tienes otra oportunidad GRATIS.';
+    }else{
+      document.getElementById('txtPremio').textContent=seg.t;
+      const cod=CODIGOS[i];
+      document.getElementById('txtCodigo').textContent='PREMIO '+cod;
+      document.getElementById('miniCodigo').textContent='"PREMIO '+cod+'"';
+      document.getElementById('resultado').style.display='block';
+      document.getElementById('resultado').scrollIntoView({behavior:'smooth'});
+      btn.textContent='🎉 ¡GANASTE!';
+    }
+    girando=false;
+  },4400);
+}
+</script>
+</body>
+</html>
