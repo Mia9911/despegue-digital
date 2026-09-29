@@ -214,9 +214,31 @@ TXT_PREMIO_OK = (
 # ---------------- AUTOVENTA DE PREMIOS (V12.2) ----------------
 # La Jefa crea estos 3 cobros UNA VEZ en qvapay.com (Cobros -> Crear cobro)
 # y los pega aqui -> desde ese momento la ruleta es 100% automatica:
-LINK_PREMIO_PRO1 = ""      # $2.00  - Calculadora PRO con descuento
-LINK_PREMIO_PLANTA10 = ""  # $3.60  - Pack Plantillas con descuento
-LINK_PREMIO_KIT15 = ""     # $7.65  - Kit Express con descuento
+LINK_PREMIO_PRO1 = "https://www.qvapay.com/pay/508bd240-9d95-493a-8c1e-397cff9fe84c"
+LINK_PREMIO_PLANTA10 = "https://www.qvapay.com/pay/e18fc122-36f8-40c0-bb66-b1a4d346e6de"
+LINK_PREMIO_KIT15 = "https://www.qvapay.com/pay/4f9afb61-8715-4e9a-a63b-06e42be38466"
+
+def crear_cobro_qvapay(amount, desc, remote_id):
+    """Crea una factura en QvaPay (endpoint oficial /v2/create_invoice) y
+    devuelve su URL de pago. None si falla."""
+    try:
+        _id = os.environ.get("QVAPAY_APP_ID", "")
+        _sec = os.environ.get("QVAPAY_APP_SECRET", "")
+        if not (_id and _sec):
+            return None
+        _body = json.dumps({"amount": amount, "description": desc,
+                            "remote_id": remote_id}).encode()
+        _req = urllib.request.Request("https://api.qvapay.com/v2/create_invoice",
+            data=_body, headers={"app-id": _id, "app-secret": _sec,
+                                 "Accept": "application/json",
+                                 "Content-Type": "application/json",
+                                 "User-Agent": "Mozilla/5.0"}, method="POST")
+        with urllib.request.urlopen(_req, timeout=20) as _r:
+            _d = json.loads(_r.read().decode())
+        return _d.get("url") or None
+    except Exception as _e:
+        print("crear cobro fail:", _e)
+        return None
 
 TXT_INTAKE_GRANDE = (
     "\U0001F525 \u00a1GENIAL! Para fabricar tu pedido a la medida necesito 4 datos:\n\n"
@@ -410,25 +432,31 @@ for u in updates:
                 "\U0001F3B0 %s (@%s) gan\u00f3 la CONSULTA (10 min) \u2014 agr\u00e9gale d\u00eda y hora "
                 "cuando puedas. \U0001F381" % (nombre, username)})
         elif _cod in ("PRO1", "PLANTA10", "KIT15"):
+            _p = {"PRO1": ("la Calculadora PRO en Excel", 2, "2.00", "3"),
+                  "PLANTA10": ("el Pack de Plantillas WhatsApp", 3.6, "3.60", "4"),
+                  "KIT15": ("el Kit Expr\u00e9s Digital", 7.65, "7.65", "9")}[_cod]
             _l = {"PRO1": LINK_PREMIO_PRO1, "PLANTA10": LINK_PREMIO_PLANTA10,
                   "KIT15": LINK_PREMIO_KIT15}[_cod]
-            _p = {"PRO1": ("la Calculadora PRO en Excel", "2", "3"),
-                  "PLANTA10": ("el Pack de Plantillas WhatsApp", "3.60", "4"),
-                  "KIT15": ("el Kit Expr\u00e9s Digital", "7.65", "9")}[_cod]
-            if _l:
-                r = ("\U0001F389 Tu premio: " + _p[0] + " \u2014 en vez de $" + _p[2] +
-                     ", pagas $" + _p[1] + ".\n\n"
-                     "Paga aqu\u00ed (descuento ya aplicado):\n" + _l + "\n\n"
+            _rid = "premio-%s-%s" % (_cod.lower(), datetime.now(CUBA).strftime("%d%m%H%M%S"))
+            _url_pago = crear_cobro_qvapay(_p[1], "PREMIO RULETA " + _cod + " - " + _p[0], _rid) or _l
+            if _url_pago:
+                r = ("\U0001F389 Tu premio: " + _p[0] + " \u2014 en vez de $" + _p[3] +
+                     ", pagas $" + _p[2] + ".\n\n"
+                     "Tu link de pago (descuento ya aplicado):\n" + _url_pago + "\n\n"
                      "Al pagar escr\u00edbeme: pagu\u00e9 premio " + _cod)
+                if not es_jefa:
+                    tg("sendMessage", {"chat_id": JEFA, "text":
+                        "\U0001F3B0\U0001F4B0 %s (@%s) gan\u00f3 %s \u2014 le gener\u00e9 SU link de $%s. "
+                        "Cuando pague salta la alarma. \U0001F680" % (nombre, username, _cod, _p[2])})
             else:
-                r = ("\U0001F389 Tu premio: " + _p[0] + " \u2014 en vez de $" + _p[2] +
-                     ", pagas $" + _p[1] + ".\n\n"
+                r = ("\U0001F389 Tu premio: " + _p[0] + " \u2014 en vez de $" + _p[3] +
+                     ", pagas $" + _p[2] + ".\n\n"
                      "Mia te manda tu link de pago con el descuento en unos minutos "
                      "\U0001F4B3 (gu\u00e1rdate el c\u00f3digo " + _cod + ").")
                 tg("sendMessage", {"chat_id": JEFA, "text":
                     ("\U0001F3B0 %s (@%s) gan\u00f3 %s ($%s) \u2014 m\u00e1ndale su link de cobro con "
                      "descuento YA, o p\u00e9game el link y lo dejo autom\u00e1tico para siempre.") %
-                    (nombre, username, _cod, _p[1])})
+                    (nombre, username, _cod, _p[2])})
         elif "premio" in bajo:
             r = TXT_PREMIO_OK
             tg("sendMessage", {"chat_id": JEFA, "text":
