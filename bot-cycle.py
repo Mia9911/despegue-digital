@@ -686,7 +686,7 @@ try:
                     "uk-only", "account-for", "verify", "kyc"]
         LX_TRAP_DESC = ["developer account", "anydesk", "old live account",
                         "referral code", "followers for sale", "account with"]
-        LX_SPAM_DESC = ["for hire", "hire me"]
+        LX_SPAM_DESC = ["for hire", "hire me", "for sale", "serious buyer", "time for sale", "don\u0027t hesitate to message"]
         _radar_est = grupos.get("_radar_lx", {})
         _vistos = set(_radar_est.get("vistos", []))
         _nuevos = []
