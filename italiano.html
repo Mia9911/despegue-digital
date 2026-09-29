@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🇮🇹 Entrenador de Italiano — Mia</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: Georgia, 'Times New Roman', serif; background:#0d1b2a; color:#eaf2f8; padding:16px; max-width:720px; margin:0 auto; }
+  h1 { font-size:1.5em; text-align:center; color:#f4d35e; margin:10px 0 4px; }
+  .sub { text-align:center; color:#8ecae6; font-style:italic; margin-bottom:16px; font-size:.95em; }
+  .card { background:#1b263b; border-radius:14px; padding:16px; margin:14px 0; box-shadow:0 4px 12px rgba(0,0,0,.4); }
+  h2 { color:#f4d35e; font-size:1.15em; margin-bottom:10px; border-bottom:1px solid #f4d35e55; padding-bottom:6px; }
+  .rutina { list-style:none; }
+  .rutina li { padding:8px 0; border-bottom:1px dashed #ffffff22; }
+  .rutina b { color:#8ecae6; }
+  .tabbar { display:flex; flex-wrap:wrap; gap:6px; margin:8px 0; }
+  .tab { background:#1b263b; color:#eaf2f8; border:1px solid #f4d35e66; border-radius:20px; padding:7px 12px; font-size:.85em; cursor:pointer; font-family:inherit; }
+  .tab.on { background:#f4d35e; color:#0d1b2a; font-weight:bold; }
+  .flip { background:#0d1b2a; border:2px solid #8ecae6; border-radius:14px; min-height:150px; display:flex; flex-direction:column; align-items:center; justify-content:center; margin:10px 0; padding:14px; cursor:pointer; text-align:center; }
+  .flip .es { font-size:1.5em; color:#eaf2f8; }
+  .flip .it { font-size:1.7em; color:#f4d35e; font-weight:bold; margin-top:8px; }
+  .flip .tip { color:#8ecae6; font-size:.85em; font-style:italic; margin-top:6px; }
+  .flip .pista { color:#8ecae6; font-size:.8em; margin-top:10px; }
+  .botones { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+  .bt { background:#8ecae6; color:#0d1b2a; border:none; border-radius:10px; padding:10px 18px; font-size:1em; cursor:pointer; font-family:inherit; font-weight:bold; }
+  .bt.ok { background:#2a9d8f; color:#fff; }
+  .progreso { background:#1b263b; border-radius:8px; height:16px; overflow:hidden; margin:6px 0 2px; }
+  .progreso > div { background:#2a9d8f; height:100%; width:0%; transition:width .4s; }
+  .contadores { display:flex; justify-content:space-between; font-size:.85em; color:#8ecae6; margin-bottom:8px; }
+  .frase { padding:9px 0; border-bottom:1px dashed #ffffff22; }
+  .frase b { color:#f4d35e; }
+  .meta { text-align:center; color:#f4d35e; font-size:1.05em; padding:10px; margin-top:8px; font-weight:bold; }
+  .nota { font-size:.85em; color:#8ecae6; text-align:center; margin-top:14px; font-style:italic; }
+  .semana { width:100%; border-collapse:collapse; font-size:.88em; }
+  .semana td, .semana th { border:1px solid #ffffff22; padding:7px 6px; text-align:left; }
+  .semana th { color:#f4d35e; }
+  .semana td:first-child { color:#8ecae6; font-weight:bold; white-space:nowrap; }
+</style>
+</head>
+<body>
+<h1>🇮🇹 Entrenador de Italiano</h1>
+<div class="sub">El avión despega en 2027 — el idioma se construye HOY, 20 minutos al día. Fabricado con 💜 para Mia</div>
+
+<div class="card">
+  <h2>⏱️ Tu rutina diaria (20 minutos — sin excusas)</h2>
+  <ul class="rutina">
+    <li><b>4 min</b> — Repasar las palabras de AYER (aquí mismo, tapa las tarjetas)</li>
+    <li><b>6 min</b> — 10 palabras NUEVAS de una categoría (toca la tarjeta para verla)</li>
+    <li><b>4 min</b> — Leer en voz alta las frases de supervivencia (¡EN VOZ ALTA!)</li>
+    <li><b>3 min</b> — Escribir 3 frases nuevas con las palabras de hoy (en un papel o el móvil)</li>
+    <li><b>3 min</b> — Escuchar italiano: cualquier video corto de Italia (recetas, ciudades, gatos 🐱)</li>
+  </ul>
+  <div class="meta">Regla de oro: mejor 20 min TODOS los días que 3 horas el domingo.</div>
+</div>
+
+<div class="card">
+  <h2>🃏 Tarjetas — 100 palabras para despegar</h2>
+  <div class="contadores">
+    <span id="ct">Elige una categoría ↑</span>
+    <span id="score">✅ 0 sabidas</span>
+  </div>
+  <div class="progreso"><div id="bar"></div></div>
+  <div class="tabbar" id="tabs"></div>
+  <div class="flip" id="flip" onclick="voltear()">
+    <div class="pista">Elige una categoría arriba para empezar 👆</div>
+  </div>
+  <div class="botones">
+    <button class="bt" onclick="prev()">← Anterior</button>
+    <button class="bt ok" onclick="sabia()">✅ La sé</button>
+    <button class="bt" onclick="next()">Siguiente →</button>
+  </div>
+  <div class="nota">Toca la tarjeta para revelar el italiano. Marca "La sé" y tu avance queda guardado en este teléfono.</div>
+</div>
+
+<div class="card">
+  <h2>🆘 Frases de supervivencia (leer EN VOZ ALTA cada día)</h2>
+  <div class="frase"><b>Buongiorno, mi chiamo Mia.</b> — Buenos días, me llamo Mia.</div>
+  <div class="frase"><b>Quanto costa?</b> — ¿Cuánto cuesta?</div>
+  <div class="frase"><b>Dov'è la stazione?</b> — ¿Dónde está la estación?</div>
+  <div class="frase"><b>Non capisco, può parlare più lentamente?</b> — No entiendo, ¿puede hablar más despacio?</div>
+  <div class="frase"><b>Parla spagnolo o inglese?</b> — ¿Habla español o inglés?</div>
+  <div class="frase"><b>Ho bisogno di aiuto.</b> — Necesito ayuda.</div>
+  <div class="frase"><b>Un caffè, per favore.</b> — Un café, por favor.</div>
+  <div class="frase"><b>Il conto, per favore.</b> — La cuenta, por favor.</div>
+  <div class="frase"><b>Sto imparando l'italiano.</b> — Estoy aprendiendo italiano.</div>
+  <div class="frase"><b>Da dove vieni? Vengo da Cuba.</b> — ¿De dónde eres? Vengo de Cuba.</div>
+</div>
+
+<div class="card">
+  <h2>📅 La semana (para no aburrirse)</h2>
+  <table class="semana">
+    <tr><th>Día</th><th>Enfoque</th></tr>
+    <tr><td>Lunes</td><td>Saludos + personas (cortesía italiana = todo)</td></tr>
+    <tr><td>Martes</td><td>Números + dinero (comprar sin que te vean el pin 😄)</td></tr>
+    <tr><td>Miércoles</td><td>Verbs clave (essere/avere/fare = el 80% de las frases)</td></tr>
+    <tr><td>Jueves</td><td>Ciudad + transporte (imagínate ya en Roma)</td></tr>
+    <tr><td>Viernes</td><td>Comida (la más divertida 🍝)</td></tr>
+    <tr><td>Sábado</td><td>Trabajo + marketing (tu mundo del imperio)</td></tr>
+    <tr><td>Domingo</td><td>REPASO de la semana + 1 video en italiano</td></tr>
+  </table>
+  <div class="meta">Meta dic 2026: las 100 palabras + presente de los verbos = nivel A1 en camino 🚀</div>
+</div>
+
+<div class="nota">Tu ventaja secreta: el español te regala ~60% del vocabulario. Lo que hay que construir es el oído y la boca — por eso EN VOZ ALTA siempre.</div>
+
+<script>
+var CATS = {
+"👋 Saludos":["ciao|hola / chao","buongiorno|buenos días","buonasera|buenas tardes/noches","buonanotte|buenas noches (al dormir)","arrivederci|hasta la vista","per favore|por favor","grazie (mille)|gracias (mil)","prego|de nada / pase","scusa / scusi|perdón (informal/formal)","piacere|un gusto (encantada)"],
+"🧑 Personas":["io|yo","tu|tú","lui / lei|él / ella","noi|nosotros","voi|ustedes","loro|ellos","amico / amica|amigo / amiga","uomo|hombre","donna|mujer","famiglia|familia"],
+"🔢 Números":["uno|uno","due|dos","tre|tres","quattro|cuatro","cinco|cinco","sei|seis","sette|siete","otto|ocho","nove|nueve","dieci|diez"],
+"⏰ Tiempo":["oggi|hoy","domani|mañana (día)","ieri|ayer","adesso|ahora","mattina|mañana (hora)","pomeriggio|tarde","sera|noche","settimana|semana","mese|mes","anno|año"],
+"🚌 Ciudad":["strada|calle","piazza|plaza","treno|tren","biglietto|billete/boleto","stazione|estación","autobus|autobús","aeroporto|aeropuerto","taxi|taxi","mappa|mapa","banca|banco"],
+"🍝 Comida":["acqua|agua","caffè|café","pane|pan","formaggio|queso","pasta|pasta","carne|carne","pesce|pescado","frutta|fruta","vino|vino","conto|la cuenta"],
+"💰 Compras":["quanto costa?|¿cuánto cuesta?","prezzo|precio","euro|euro","soldi|dinero","sconto|descuento","negozio|tienda","mercato|mercado","aperto|abierto","chiuso|cerrado","ricevuta|recibo"],
+"⚡ Verbos clave":["essere|ser/estar","avere|tener","fare|hacer","andare|ir","venire|venir","parlare|hablar","volere|querer","potere|poder","dovere|deber","lavorare|trabajar"],
+"💼 Trabajo":["lavoro|trabajo","cliente|cliente","vendita|venta","pubblicità|publicidad","social media|redes sociales","sito web|sitio web","email|correo","contratto|contrato","fattura|factura","pagamento|pago"],
+"🆘 Emergencias":["aiuto!|¡ayuda!","ospedale|hospital","farmacia|farmacia","polizia|policía","ambulanza|ambulancia","non capisco|no entiendo","più lentamente|más despacio","dov'è...?|¿dónde está...?","ho bisogno di...|necesito...","come stai?|¿cómo estás?"]
+};
+var cat = null, idx = 0, known = {}, shown = false;
+try { known = JSON.parse(localStorage.getItem("it_known") || "{}"); } catch(e) { known = {}; }
+function save() { try { localStorage.setItem("it_known", JSON.stringify(known)); } catch(e) {} }
+var tabs = document.getElementById("tabs");
+Object.keys(CATS).forEach(function(name) {
+  var b = document.createElement("button");
+  b.className = "tab"; b.textContent = name;
+  b.onclick = function() { cat = name; idx = 0; shown = false; pintar(); };
+  tabs.appendChild(b);
+});
+function pintar() {
+  if (!cat) return;
+  var btns = tabs.querySelectorAll(".tab");
+  for (var i = 0; i < btns.length; i++) btns[i].className = (btns[i].textContent === cat) ? "tab on" : "tab";
+  var par = CATS[cat][idx].split("|");
+  var f = document.getElementById("flip");
+  if (!shown) {
+    f.innerHTML = '<div class="es">' + par[1] + '</div><div class="pista">Toca para ver el italiano 👆</div>';
+  } else {
+    f.innerHTML = '<div class="es">' + par[1] + '</div><div class="it">' + par[0] + '</div>';
+  }
+  var total = 0, sab = 0;
+  for (var c in CATS) {
+    for (var k = 0; k < CATS[c].length; k++) {
+      total++;
+      if (known[c + k]) sab++;
+    }
+  }
+  document.getElementById("ct").textContent = cat + " — palabra " + (idx + 1) + "/10";
+  document.getElementById("score").textContent = "✅ " + sab + " sabidas de " + total;
+  document.getElementById("bar").style.width = Math.round(sab * 100 / total) + "%";
+}
+function voltear() { if (!cat) return; shown = !shown; pintar(); }
+function next() { if (!cat) return; idx = (idx + 1) % 10; shown = false; pintar(); }
+function prev() { if (!cat) return; idx = (idx + 9) % 10; shown = false; pintar(); }
+function sabia() {
+  if (!cat) return;
+  known[cat + idx] = 1; save();
+  next();
+}
+pintar();
+</script>
+</body>
+</html>
