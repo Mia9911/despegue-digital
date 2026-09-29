@@ -197,6 +197,20 @@ TXT_LIBRETA = (
     "\U0001F680 Y si quieres la Calculadora PRO en Excel ($3), escr\u00edbeme \"calculadora\"."
 )
 
+LINK_RULETA = "https://mia9911.github.io/despegue-digital/ruleta.html"
+TXT_RULETA = (
+    "\U0001F3B0 LA RULETA DE DESPEGUE DIGITAL — GRATIS:\n\n"
+    "Gira 1 vez al d\u00eda y gana premios de verdad: descuentos en plantillas, kit y calculadora, "
+    "muestras gratis y consultas de marketing.\n\n"
+    "Sin dinero, sin apuestas — solo premios de nuestra tienda:\n" + LINK_RULETA + "\n\n"
+    "\U0001F3B0 Gira tuya aqu\u00ed \U0001F680"
+)
+TXT_PREMIO_OK = (
+    "\U0001F3B0\U0001F389 ¡PREMIO REGISTRADO!\n\n"
+    "Mia te escribe enseguida para entregarte tu premio. Si no te llega en unas horas, "
+    "escr\u00edbeme \"premio\" otra vez o b\u00fascala en IG: @despegue_digitalmarketing \U0001F49C"
+)
+
 # ---------------- POSTS PARA GRUPOS ----------------
 IG = "@despegue_digitalmarketing"
 PROMOS = [
@@ -357,6 +371,14 @@ for u in updates:
         r = TXT_SOPORTE
     elif bajo.startswith("/vitrina") or "tienda" in bajo:
         r = "🛒 Tienda online: " + VITRINA + "\nPrecios: /precios · Muestra: /muestra"
+    elif "premio" in bajo or "ruleta" in bajo or "giré" in bajo or "girar" in bajo:
+        if "premio" in bajo and not es_jefa:
+            r = TXT_PREMIO_OK
+            tg("sendMessage", {"chat_id": JEFA, "text":
+                "\U0001F3B0 %s (@%s) gir\u00f3 LA RULETA y gan\u00f3 \u2014 revisa su mensaje y "
+                "entr\u00e9gale el premio \U0001F381" % (nombre, username)})
+        else:
+            r = TXT_RULETA
     elif "libreta" in bajo or "inventario" in bajo or "vendi" in bajo or "cuenta de ventas" in bajo:
         r = TXT_LIBRETA
     elif "calculadora" in bajo or "cálcul" in bajo or "ganancia" in bajo:
