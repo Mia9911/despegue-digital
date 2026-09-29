@@ -64,7 +64,7 @@
   <div style="font-size:.8rem;color:#c9b8e8">Tu código:</div>
   <div class="codigo" id="txtCodigo"></div>
   <p style="font-size:.8rem">Para reclamarlo, escríbele a nuestro asistente (toca):</p>
-  <div class="cta"><a href="https://t.me/Despeguedijitalbot">👉 ABRIR EL BOT Y ENVIAR: <span id="miniCodigo"></span></a></div>
+  <div class="cta"><a id="btnClaim" href="https://t.me/Despeguedijitalbot">👉 TOCA AQUÍ PARA RECIBIR TU PREMIO (1 toque)</a></div>
   <p class="nota">Mia te escribe enseguida para entregarte tu premio 💜</p>
 </div>
 
@@ -146,7 +146,7 @@ function girar(){
       document.getElementById('txtPremio').textContent=seg.t;
       const cod=CODIGOS[i];
       document.getElementById('txtCodigo').textContent='PREMIO '+cod;
-      document.getElementById('miniCodigo').textContent='"PREMIO '+cod+'"';
+      document.getElementById('btnClaim').href='https://t.me/Despeguedijitalbot?text='+'PREMIO%20'+cod;
       document.getElementById('resultado').style.display='block';
       document.getElementById('resultado').scrollIntoView({behavior:'smooth'});
       btn.textContent='🎉 ¡GANASTE!';
