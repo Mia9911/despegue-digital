@@ -11,6 +11,7 @@ Corre en GitHub Actions cada 10 minutos, PARA SIEMPRE:
   4. ENTREGA DE MUESTRAS: cuando El Económico fabrica muestras y las pone en
      muestras.json, el guardián se las entrega al cliente SOLO
   5. Posts diarios en grupos (17-21h Cuba) + avisos a la Jefa
+  6. CAZA-FINA LaborX: API publica cada hora -> trabajos NUEVOS a la Jefa
 """
 import json
 import re, os, base64, urllib.request
@@ -677,78 +678,187 @@ try:
 except Exception as e:
     print("qvapay check fail:", e)
 
-# ---------------- V11: RADAR LABORX (1 vez al dia, 10-11 AM Cuba) ----------------
+# ---------------- V12.4: RADAR LABORX "CAZA-FINA" (API publica, cada hora) ----------------
+# 29/9 DESCUBIERTA LA API PUBLICA de LaborX (sin login, solo feeds publicos):
+#   GET api.laborx.com/simple-jobs/list?limit=100  -> trabajos precio fijo ($15+)
+#   GET api.laborx.com/vacancy/list?limit=100      -> vacantes de largo plazo
+#   GET api.laborx.com/gig/get?id=122772           -> vitrina de la Jefa (vistas/clicks)
+# REGLA DE HIERRO: los endpoints /me/* (aplicar, notificaciones, retiros) piden el
+# token de SU cuenta y el punto 4.1(h) de los Terminos de LaborX PROHIBE "any
+# automated use of the Website or its Services". NUNCA automatizar su cuenta (en
+# juego estan su reputacion y su dinero del escrow). El bot SOLO lee feeds
+# publicos (lo mismo que ver la web) y le manda los matches con todo listo para
+# que ella aplique con un toque. Velocidad: cada hora, trabajos con menos de 26h.
 try:
-    if hora >= 10 and grupos.get("_radar_lx", {}).get("ultima") != hoy:
+    def _api_lx(_path):
+        _rq = urllib.request.Request("https://api.laborx.com/" + _path,
+                                     headers={"Accept": "application/json",
+                                              "User-Agent": "Mozilla/5.0"})
+        with urllib.request.urlopen(_rq, timeout=25) as _rh:
+            return json.loads(_rh.read().decode("utf-8", "ignore"))
+    _utc_now = datetime.utcnow()
+    _hora_id = _utc_now.strftime("%Y-%m-%dT%H")
+    _rad = grupos.get("_radar_lx", {}) or {}
+    if _rad.get("hora") != _hora_id:
         LX_VERBOS = ["social", "instagram", "content", "community", "marketing",
-                     "caption", "copywrit", "whatsapp", "facebook", "spanish", "design"]
+                     "caption", "copywrit", "whatsapp", "facebook", "spanish",
+                     "design", "telegram", "moderat", "discord", "influencer",
+                     "tiktok", "youtube"]
+        LX_VAC_VERBOS = ["community", "moderat", "telegram", "discord",
+                         "social media", "social-media", "instagram",
+                         "content creat", "content writ", "marketing assist",
+                         "marketing special", "marketing manag", "spanish",
+                         "whatsapp", "caption", "influencer", "chat support",
+                         "community manager"]
         LX_MALOS = ["rent", "flash", "must-be-in", "in-the-usa", "usa-or-canada",
-                    "uk-only", "account-for", "verify", "kyc"]
+                    "uk-only", "account-for", "verify", "kyc",
+                    "native-chinese", "native-vietnamese", "native-korean",
+                    "native-japanese", "fluent-in-german", "native-german",
+                    "native-french", "native-russian", "voice-over", "voiceover"]
         LX_TRAP_DESC = ["developer account", "anydesk", "old live account",
                         "referral code", "followers for sale", "account with"]
-        LX_SPAM_DESC = ["for hire", "hire me", "for sale", "serious buyer", "time for sale", "don\u0027t hesitate to message"]
-        _radar_est = grupos.get("_radar_lx", {})
-        _vistos = set(_radar_est.get("vistos", []))
+        LX_SPAM_DESC = ["for hire", "hire me", "for sale", "serious buyer",
+                        "time for sale", "don't hesitate to message"]
+        LX_IDIOMAS = ["native chinese", "native vietnamese", "cantonese",
+                      "fluent german", "native korean", "native japanese",
+                      "native german", "native french"]
+        LX_SENIOR = ["10+ years", "8+ years", "senior software",
+                     "full-stack developer", "principal engineer"]
+        _vistos = set(_rad.get("vistos", []))
         _nuevos = []
-        for _q in ("social media", "spanish", "instagram", "content creator",
-                   "community manager", "whatsapp"):
-            try:
-                _rr = urllib.request.Request(
-                    "https://laborx.com/jobs?search=" + _q.replace(" ", "%20"),
-                    headers={"User-Agent": "Mozilla/5.0"})
-                with urllib.request.urlopen(_rr, timeout=20) as _rh:
-                    _hx = _rh.read().decode("utf-8", "ignore")
-                _tmap = {}
-                for _t, _d in re.findall(r'"title":"([^"]{5,120})","description":"([^"]{10,900})"', _hx):
-                    _k = re.sub(r"[^a-z0-9]+", "-", _t.lower()).strip("-")[:30]
-                    _tmap[_k] = (_t, _d)
-                for _sm in re.finditer(r'"slug":"([a-z0-9][a-z0-9-]{7,119})"', _hx):
-                    _s = _sm.group(1)
-                    if _s in _vistos or len(_nuevos) >= 5:
-                        continue
-                    if any(_m in _s for _m in LX_MALOS):
-                        continue
-                    _t = _s.replace("-", " ")
-                    if not any(_v in _t for _v in LX_VERBOS):
-                        continue
-                    _base = re.sub(r"-\d+$", "", _s)
-                    _k = re.sub(r"[^a-z0-9]+", "-", _base.lower()).strip("-")[:30]
-                    _par = _tmap.get(_k)
-                    if _par:
-                        _dl = (_par[1].replace("&#x27;", "'").replace("&#39;", "'")
-                               .replace("&quot;", '"').replace("&amp;", "&")
-                               .replace("\u2019", "'").replace("\\u2019", "'").lower())
-                        _blob = (_par[0] + " " + _par[1]).lower()
-                        if (any(_m in _blob for _m in LX_TRAP_DESC) or
-                                any(_m in _blob for _m in LX_SPAM_DESC) or
-                                any(_m in _dl[:150] for _m in ("i'm a", "i am a", "i help", "i specialize", "i offer"))):
-                            _vistos.add(_s)
-                            continue
-                    _vistos.add(_s)
-                    _nuevos.append((_s, _par))
-            except Exception as _e:
-                print("radar lx fetch fail:", _q, _e)
+        # --- 1) trabajos de precio fijo (los $20 / $100 / $500) ---
+        try:
+            _jobs = ((_api_lx("simple-jobs/list?limit=100").get("result")
+                      or {}).get("jobs") or [])
+            for _j in _jobs:
+                _id = "j%s" % _j.get("id")
+                _slug = _j.get("slug", "")
+                try:
+                    _fpub = datetime.strptime(
+                        _j.get("first_published_at", "2000-01-01 00:00:00"),
+                        "%Y-%m-%d %H:%M:%S")
+                except Exception:
+                    _fpub = _utc_now - timedelta(days=99)
+                _edad = (_utc_now - _fpub).total_seconds()
+                if _id in _vistos or not (-600 < _edad < 26 * 3600):
+                    _vistos.add(_id)
+                    continue
+                _tit = (_slug + " " + _j.get("name", "")).lower()
+                if not any(_v in _tit for _v in LX_VERBOS):
+                    _vistos.add(_id)
+                    continue
+                if any(_m in _slug for _m in LX_MALOS):
+                    _vistos.add(_id)
+                    continue
+                if float(_j.get("budget") or 0) < 15:
+                    _vistos.add(_id)
+                    continue
+                _blob = ("%s %s" % (_j.get("name", ""),
+                                    _j.get("description", ""))).lower()
+                if (any(_m in _blob for _m in LX_TRAP_DESC) or
+                        any(_m in _blob for _m in LX_SPAM_DESC) or
+                        any(_m in _blob[:400] for _m in
+                            ("i'm a", "i am a", "i help", "i specialize",
+                             "i offer")) or
+                        any(_m in _blob for _m in LX_IDIOMAS)):
+                    _vistos.add(_id)
+                    continue
+                _vistos.add(_id)
+                _nuevos.append({"tipo": "job", "slug": _slug,
+                                "titulo": _j.get("name", "") or _slug,
+                                "dinero": "$%.0f" % float(_j.get("budget") or 0),
+                                "edad": max(_edad, 0), "desc": _blob[:400],
+                                "resenas": ((_j.get("user") or {})
+                                            .get("reviews_count", 0) or 0)})
+        except Exception as _e:
+            print("radar lx jobs fail:", _e)
+        # --- 2) vacantes de largo plazo SOLO remotas (ingreso recurrente) ---
+        try:
+            _vacs = ((_api_lx("vacancy/list?limit=100").get("result")
+                      or {}).get("vacancies") or [])
+            for _vac in _vacs:
+                _id = "v%s" % _vac.get("id")
+                _slug = _vac.get("slug", "")
+                try:
+                    _fpub = datetime.strptime(
+                        _vac.get("created_at", "2000-01-01 00:00:00"),
+                        "%Y-%m-%d %H:%M:%S")
+                except Exception:
+                    _fpub = _utc_now - timedelta(days=99)
+                _edad = (_utc_now - _fpub).total_seconds()
+                if _id in _vistos or not (-600 < _edad < 26 * 3600):
+                    _vistos.add(_id)
+                    continue
+                if not _vac.get("position_remote"):
+                    _vistos.add(_id)
+                    continue
+                _blob = ("%s %s" % (_vac.get("name", ""),
+                                    _vac.get("description", ""))).lower()
+                if not any(_k in (_slug + " " + _blob[:300])
+                           for _k in LX_VAC_VERBOS):
+                    _vistos.add(_id)
+                    continue
+                _sa = float(_vac.get("salary_from") or 0)
+                _sb = float(_vac.get("salary_to") or 0)
+                if _sa > 50000:
+                    _vistos.add(_id)
+                    continue
+                if (any(_m in _slug for _m in LX_MALOS) or
+                        any(_m in _blob for _m in LX_TRAP_DESC) or
+                        any(_m in _blob for _m in LX_IDIOMAS) or
+                        any(_m in _blob for _m in LX_SENIOR)):
+                    _vistos.add(_id)
+                    continue
+                _vistos.add(_id)
+                _din = ("$%.0f-$%.0f/a\u00f1o" % (_sa, _sb)) if _sb > 0 \
+                    else "salario a negociar"
+                _nuevos.append({"tipo": "vac", "slug": _slug,
+                                "titulo": _vac.get("name", "") or _slug,
+                                "dinero": _din,
+                                "edad": max(_edad, 0), "desc": _blob[:400],
+                                "resenas": ((_vac.get("user") or {})
+                                            .get("reviews_count", 0) or 0)})
+        except Exception as _e:
+            print("radar lx vac fail:", _e)
+        _nuevos.sort(key=lambda _x: _x["edad"])
         if _nuevos:
             tg("sendMessage", {"chat_id": JEFA, "text":
-                "\U0001F9ED RADAR LABORX — %d trabajo(s) nuevo(s) que te pueden servir "
-                "(te los cuento uno a uno abajo):" % len(_nuevos[:3])})
-        for _s, _par in _nuevos[:3]:
-            _tit = re.sub(r"-\d+$", "", _s).replace("-", " ").title()
-            _msg = "\U0001F4CC %s\n\U0001F517 https://laborx.com/jobs/%s" % (_tit, _s)
-            if _par:
-                _d = re.sub(r"\\u003C.*?\\u003E", " ", _par[1])
-                _d = _d.replace("\\u002F", "/").replace("\\u0026", "&").replace("\\n", " ")
-                _d = _d.replace("&lt;", "<").replace("&gt;", ">").replace("&quot;", '"')
-                _d = _d.replace("&#39;", "'")
-                _d = re.sub(r"<[^>]{0,80}>", " ", _d).replace("&amp;", "&")
-                _d = re.sub(r"\s+", " ", _d).strip()
-                if len(_d) > 30:
-                    _msg += "\n\U0001F4C4 De qué trata: %s..." % _d[:220]
-            _msg += ("\n\n\u00bfTe gusta? P\u00e9gamelo aqu\u00ed y te fabrico la propuesta "
-                     "en ingl\u00e9s lista para enviar. \U0001F680")
+                "\U0001F3F9 CAZA LABORX \u2014 %d trabajo(s) NUEVO(s) que te "
+                "pueden servir (reci\u00e9n publicados):" % len(_nuevos[:3])})
+        for _n in _nuevos[:3]:
+            _mins = int(_n["edad"] / 60)
+            _hace = ("hace %d min" % _mins) if _mins < 90 \
+                else ("hace %d h" % (_mins // 60))
+            _url = ("https://laborx.com/jobs/%s" if _n["tipo"] == "job"
+                    else "https://laborx.com/vacancies/%s") % _n["slug"]
+            _msg = ("\U0001F4CC %s\n\U0001F4B0 %s \u00b7 publicado %s\n"
+                    "\u2b50 cliente: %d rese\u00f1a(s)\n\U0001F517 %s"
+                    % (_n["titulo"], _n["dinero"], _hace, _n["resenas"], _url))
+            _d = re.sub(r"<[^>]{0,120}>", " ", _n["desc"])
+            _d = re.sub(r"\s+", " ", _d).strip()
+            if len(_d) > 40:
+                _msg += "\n\U0001F4C4 De qu\u00e9 trata: %s..." % _d[:200]
+            _msg += ("\n\n\u00bfTe gusta? P\u00e9gamelo aqu\u00ed y te fabrico "
+                     "la propuesta en ingl\u00e9s lista para enviar. \U0001F680")
             tg("sendMessage", {"chat_id": JEFA, "text": _msg})
-        grupos["_radar_lx"] = {"ultima": hoy, "vistos": list(_vistos)[-150:]}
-        print("radar lx:", len(_nuevos), "nuevos")
+        # --- 3) vitrina de la Jefa en LaborX (API publica, sin tocar su cuenta) ---
+        try:
+            _g = (_api_lx("gig/get?id=122772").get("result") or {})
+            _gv = int(_g.get("views") or 0)
+            _gc = int(_g.get("chat_clicks") or 0)
+            _ant = _rad.get("gig") or {}
+            if _ant and (_ant.get("v") != _gv or _ant.get("c") != _gc):
+                tg("sendMessage", {"chat_id": JEFA, "text":
+                    "\U0001F440 Tu vitrina LaborX ('10 ready-to-post social "
+                    "media designs') va en %d vista(s) y %d click(s) al chat. "
+                    "Si te escriben, responde en menos de 1 hora!" % (_gv, _gc)})
+            _rad["gig"] = {"v": _gv, "c": _gc}
+        except Exception as _e:
+            print("radar lx gig fail:", _e)
+        _rad["hora"] = _hora_id
+        _rad["vistos"] = sorted(_vistos)[-500:]
+        grupos["_radar_lx"] = _rad
+        print("radar lx api:", len(_nuevos), "nuevos,", len(_vistos), "vistos")
 except Exception as _e:
     print("radar lx fail:", _e)
 
