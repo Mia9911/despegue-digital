@@ -211,6 +211,24 @@ TXT_PREMIO_OK = (
     "escr\u00edbeme \"premio\" otra vez o b\u00fascala en IG: @despegue_digitalmarketing \U0001F49C"
 )
 
+# ---------------- AUTOVENTA DE PREMIOS (V12.2) ----------------
+# La Jefa crea estos 3 cobros UNA VEZ en qvapay.com (Cobros -> Crear cobro)
+# y los pega aqui -> desde ese momento la ruleta es 100% automatica:
+LINK_PREMIO_PRO1 = ""      # $2.00  - Calculadora PRO con descuento
+LINK_PREMIO_PLANTA10 = ""  # $3.60  - Pack Plantillas con descuento
+LINK_PREMIO_KIT15 = ""     # $7.65  - Kit Express con descuento
+
+TXT_INTAKE_GRANDE = (
+    "\U0001F525 \u00a1GENIAL! Para fabricar tu pedido a la medida necesito 4 datos:\n\n"
+    "1\ufe0f\u20e3 Nombre de tu negocio y qu\u00e9 vendes\n"
+    "2\ufe0f\u20e3 Tu Instagram o WhatsApp (para ver tu estilo)\n"
+    "3\ufe0f\u20e3 Qu\u00e9 colores o estilo te representa\n"
+    "4\ufe0f\u20e3 Para cu\u00e1ndo lo necesitas\n\n"
+    "Escr\u00edbemelos aqu\u00ed mismo, todos juntos o uno por uno. La F\u00c1BRICA arranca en "
+    "cuanto respondas: Mia te escribe para confirmar tu pago y en 24-48 horas tienes "
+    "todo listo. \U0001F680"
+)
+
 # ---------------- POSTS PARA GRUPOS ----------------
 IG = "@despegue_digitalmarketing"
 PROMOS = [
@@ -372,7 +390,46 @@ for u in updates:
     elif bajo.startswith("/vitrina") or "tienda" in bajo:
         r = "🛒 Tienda online: " + VITRINA + "\nPrecios: /precios · Muestra: /muestra"
     elif "premio" in bajo or "ruleta" in bajo or "giré" in bajo or "girar" in bajo:
-        if "premio" in bajo and not es_jefa:
+        _cod = None
+        for _c in ("PRO1", "PLANTA10", "KIT15", "MUESTRA", "CONSUL10"):
+            if _c.lower() in bajo:
+                _cod = _c
+                break
+        if es_jefa:
+            r = TXT_RULETA
+        elif _cod == "MUESTRA":
+            r = TXT_MUESTRA
+            tg("sendMessage", {"chat_id": JEFA, "text":
+                "\U0001F3B0 %s (@%s) gan\u00f3 la MUESTRA en la ruleta \u2014 respondi\u00f3 el "
+                "formulario (su texto queda en la libreta del bot). \U0001F381" % (nombre, username)})
+        elif _cod == "CONSUL10":
+            r = ("\U0001F9D1\u200D\U0001F4BC \u00a1Consulta ganada! Mia te escribe HOY para agendar tus "
+                 "10 minutos de marketing gratis. Ten a mano: qu\u00e9 vendes y tu mayor duda "
+                 "de ventas. \U0001F4AC")
+            tg("sendMessage", {"chat_id": JEFA, "text":
+                "\U0001F3B0 %s (@%s) gan\u00f3 la CONSULTA (10 min) \u2014 agr\u00e9gale d\u00eda y hora "
+                "cuando puedas. \U0001F381" % (nombre, username)})
+        elif _cod in ("PRO1", "PLANTA10", "KIT15"):
+            _l = {"PRO1": LINK_PREMIO_PRO1, "PLANTA10": LINK_PREMIO_PLANTA10,
+                  "KIT15": LINK_PREMIO_KIT15}[_cod]
+            _p = {"PRO1": ("la Calculadora PRO en Excel", "2", "3"),
+                  "PLANTA10": ("el Pack de Plantillas WhatsApp", "3.60", "4"),
+                  "KIT15": ("el Kit Expr\u00e9s Digital", "7.65", "9")}[_cod]
+            if _l:
+                r = ("\U0001F389 Tu premio: " + _p[0] + " \u2014 en vez de $" + _p[2] +
+                     ", pagas $" + _p[1] + ".\n\n"
+                     "Paga aqu\u00ed (descuento ya aplicado):\n" + _l + "\n\n"
+                     "Al pagar escr\u00edbeme: pagu\u00e9 premio " + _cod)
+            else:
+                r = ("\U0001F389 Tu premio: " + _p[0] + " \u2014 en vez de $" + _p[2] +
+                     ", pagas $" + _p[1] + ".\n\n"
+                     "Mia te manda tu link de pago con el descuento en unos minutos "
+                     "\U0001F4B3 (gu\u00e1rdate el c\u00f3digo " + _cod + ").")
+                tg("sendMessage", {"chat_id": JEFA, "text":
+                    ("\U0001F3B0 %s (@%s) gan\u00f3 %s ($%s) \u2014 m\u00e1ndale su link de cobro con "
+                     "descuento YA, o p\u00e9game el link y lo dejo autom\u00e1tico para siempre.") %
+                    (nombre, username, _cod, _p[1])})
+        elif "premio" in bajo:
             r = TXT_PREMIO_OK
             tg("sendMessage", {"chat_id": JEFA, "text":
                 "\U0001F3B0 %s (@%s) gir\u00f3 LA RULETA y gan\u00f3 \u2014 revisa su mensaje y "
@@ -397,6 +454,39 @@ for u in updates:
                     "📦 %s (@%s) pagó el PACK PLANTILLAS ($4) → entregado al instante." % (nombre, username)})
         else:
             r = TXT_PLANTILLAS
+    elif "pagué premio" in bajo or "pague premio" in bajo or "pagado premio" in bajo:
+        _cod2 = None
+        for _c in ("PRO1", "PLANTA10", "KIT15"):
+            if _c.lower() in bajo:
+                _cod2 = _c
+                break
+        if _cod2 == "PRO1":
+            r = TXT_CALCULADORA_OK
+            if not es_jefa:
+                tg("sendMessage", {"chat_id": JEFA, "text":
+                    "\U0001F3C6 VENTA CON PREMIO: %s (@%s) pag\u00f3 la PRO con descuento ($2) \u2192 entregada." % (nombre, username)})
+        elif _cod2 == "PLANTA10":
+            r = TXT_PLANTILLAS_OK
+            if not es_jefa:
+                tg("sendMessage", {"chat_id": JEFA, "text":
+                    "\U0001F3C6 VENTA CON PREMIO: %s (@%s) pag\u00f3 PLANTILLAS con descuento ($3.60) \u2192 entregado." % (nombre, username)})
+        elif _cod2 == "KIT15":
+            _rn = datetime.now(CUBA).strftime("%d%m-%H%M") + str(datetime.now(CUBA).second)
+            r = TXT_KIT_PAGADO + "\n\U0001F9FE RECIBO N\u00ba " + _rn[:9] + " \u2014 gu\u00e1rdalo como prueba de tu compra."
+            if not es_jefa:
+                tg("sendMessage", {"chat_id": JEFA, "text":
+                    "\U0001F3C6 VENTA CON PREMIO: %s (@%s) pag\u00f3 el KIT con descuento ($7.65) \u2192 entregado." % (nombre, username)})
+        else:
+            r = ("\U0001F3B0 \u00bfCu\u00e1l fue tu premio? M\u00e1ndame el c\u00f3digo (PRO1, PLANTA10 o "
+                 "KIT15) y te entrego al segundo. \U0001F680")
+    elif (any(k in bajo for k in ("resurrección", "resurreccion", "vendedor", "kit de ventas", "a medida", "personalizad"))
+          and any(k in bajo for k in ("pagué", "pague", "ya pag", "pagado", "compré", "quiero", "empezar", "me interesa", "listo"))):
+        r = TXT_INTAKE_GRANDE
+        if not es_jefa:
+            tg("sendMessage", {"chat_id": JEFA, "text":
+                "\U0001F525 PEDIDO GRANDE EN CAMINO: %s (@%s) \u2014 le ped\u00ed los 4 datos del brief. "
+                "Sus respuestas caen en la libreta y la f\u00e1brica las recoge en la pr\u00f3xima "
+                "revisi\u00f3n. T\u00fa solo verificas el pago. \U0001F680" % (nombre, username)})
     elif any(k in bajo for k in ("pagué", "pague", "ya pag", "pagado", "pague el", "realicé el pago")):
         recibo_n = datetime.now(CUBA).strftime("%d%m-%H%M") + str(datetime.now(CUBA).second)
         r = TXT_KIT_PAGADO + "\n🧾 RECIBO Nº " + recibo_n[:9] + " — guárdalo como prueba de tu compra." + "\n🎁 BONUS incluido: Pack de Plantillas WhatsApp → " + LINK_PLANTILLAS_PROD
