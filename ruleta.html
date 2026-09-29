@@ -126,8 +126,19 @@ const btn=document.getElementById('btnGirar');
 const msj=document.getElementById('msj');
 const st=cargaLS()||{};
 if(st.ultimo===hoy()){
-  btn.disabled=true;btn.textContent='⏳ YA GIRASTE HOY';
-  msj.textContent='Vuelve mañana para girar otra vez — los premios te esperan 👀';
+  btn.disabled=true;
+  if(st.premio&&st.codigo){
+    document.getElementById('txtPremio').textContent=st.premio;
+    document.getElementById('txtCodigo').textContent='PREMIO '+st.codigo;
+    document.getElementById('btnClaim').href='https://t.me/Despeguedijitalbot?text='+'PREMIO%20'+st.codigo;
+    document.getElementById('resultado').style.display='block';
+    btn.textContent='🎉 TU PREMIO TE ESPERA ABAJO 👇';
+    msj.textContent='Ganaste hoy y tu premio te espera TODO el día — toca el botón y es tuyo.';
+    setTimeout(function(){document.getElementById('resultado').scrollIntoView({behavior:'smooth'})},600);
+  } else {
+    btn.textContent='⏳ YA GIRASTE HOY';
+    msj.textContent='Vuelve mañana para girar otra vez — los premios te esperan 👀';
+  }
 }
 function girar(){
   if(girando||btn.disabled)return;
@@ -138,13 +149,14 @@ function girar(){
   rueda.style.transform='rotate('+rot+'deg)';
   setTimeout(()=>{
     const seg=SEGS[i];
-    salvaLS({ultimo:hoy()});
     if(seg.miss){
+      salvaLS({ultimo:hoy()});
       btn.textContent='😊 ¡Casi! Mañana otra vez';
       msj.textContent='La ruleta no siempre premia — pero mañana tienes otra oportunidad GRATIS.';
     }else{
       document.getElementById('txtPremio').textContent=seg.t;
       const cod=CODIGOS[i];
+      salvaLS({ultimo:hoy(), premio:seg.t, codigo:cod});
       document.getElementById('txtCodigo').textContent='PREMIO '+cod;
       document.getElementById('btnClaim').href='https://t.me/Despeguedijitalbot?text='+'PREMIO%20'+cod;
       document.getElementById('resultado').style.display='block';
