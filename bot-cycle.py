@@ -842,17 +842,22 @@ try:
                      "la propuesta en ingl\u00e9s lista para enviar. \U0001F680")
             tg("sendMessage", {"chat_id": JEFA, "text": _msg})
         # --- 3) vitrina de la Jefa en LaborX (API publica, sin tocar su cuenta) ---
+        # Anti-ruido: click al chat = aviso SIEMPRE (senal de dinero);
+        # las vistas solo se avisan en saltos de 3 o mas (evita spam si despega).
         try:
             _g = (_api_lx("gig/get?id=122772").get("result") or {})
             _gv = int(_g.get("views") or 0)
             _gc = int(_g.get("chat_clicks") or 0)
             _ant = _rad.get("gig") or {}
-            if _ant and (_ant.get("v") != _gv or _ant.get("c") != _gc):
+            _av = int(_ant.get("av", _ant.get("v", 0)) or 0)
+            _ac = int(_ant.get("ac", _ant.get("c", 0)) or 0)
+            if _gc > _ac or _gv >= _av + 3:
                 tg("sendMessage", {"chat_id": JEFA, "text":
                     "\U0001F440 Tu vitrina LaborX ('10 ready-to-post social "
                     "media designs') va en %d vista(s) y %d click(s) al chat. "
                     "Si te escriben, responde en menos de 1 hora!" % (_gv, _gc)})
-            _rad["gig"] = {"v": _gv, "c": _gc}
+                _av, _ac = max(_av, _gv), max(_ac, _gc)
+            _rad["gig"] = {"v": _gv, "c": _gc, "av": _av, "ac": _ac}
         except Exception as _e:
             print("radar lx gig fail:", _e)
         _rad["hora"] = _hora_id
