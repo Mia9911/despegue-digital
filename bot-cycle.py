@@ -212,6 +212,18 @@ TXT_PREMIO_OK = (
     "escr\u00edbeme \"premio\" otra vez o b\u00fascala en IG: @despegue_digitalmarketing \U0001F49C"
 )
 
+TXT_PATROCINIO = (
+    "\U0001F4E1 \u00a1Tu marca en la RED DESPEGUE! \U0001F680\n\n"
+    "Audiencia: emprendedores cubanos \U0001F1E8\U0001F1FA.\n"
+    "\U0001F9FE Espacios (precio de lanzamiento):\n"
+    "\u2022 Menci\u00f3n en LA MINA \u2014 $3/semana\n"
+    "\u2022 Banner en los JUEGOS \u2014 $5/semana\n"
+    "\u2022 Menciones en los GRUPOS \u2014 $5/semana\n"
+    "\u2022 PACK RED COMPLETA \u2014 $20/mes\n\n"
+    "Mia te escribe HOY con los detalles y tu link de pago (QvaPay).\n"
+    "Mientras, cu\u00e9ntame: \u00bfqu\u00e9 promociona tu marca? \U0001F4AC"
+)
+
 # ---------------- AUTOVENTA DE PREMIOS (V12.2) ----------------
 # La Jefa crea estos 3 cobros UNA VEZ en qvapay.com (Cobros -> Crear cobro)
 # y los pega aqui -> desde ese momento la ruleta es 100% automatica:
@@ -412,6 +424,12 @@ for u in updates:
         r = TXT_SOPORTE
     elif bajo.startswith("/vitrina") or "tienda" in bajo:
         r = "🛒 Tienda online: " + VITRINA + "\nPrecios: /precios · Muestra: /muestra"
+    elif any(k in bajo for k in ("patrocinio", "patrocin", "publicidad", "anunciarse", "anunciar", "anunciate", "anunciante")):
+        r = TXT_PATROCINIO
+        if not es_jefa:
+            tg("sendMessage", {"chat_id": JEFA, "text":
+                "\U0001F4E1 PATROCINIO: %s (@%s) quiere anunciarse \u2014 su texto qued\u00f3 en "
+                "la libreta. M\u00e1ndale precios + link de pago. \U0001F4B0" % (nombre, username)})
     elif "premio" in bajo or "ruleta" in bajo or "giré" in bajo or "girar" in bajo:
         _cod = None
         for _c in ("PRO1", "PLANTA10", "KIT15", "MUESTRA", "CONSUL10"):

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>🥥 TROPIQUEST — Atrapa cocos y gana premios reales</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body { font-family: Georgia, 'Times New Roman', serif; background:#0a2926; color:#f2f7ea; text-align:center; overflow-x:hidden; padding:12px; max-width:520px; margin:0 auto; user-select:none; }
+  h1 { font-size:1.4em; color:#f4d35e; margin:8px 0 2px; }
+  .sub { color:#7fd1c1; font-size:.85em; font-style:italic; margin-bottom:10px; }
+  .marcador { display:flex; justify-content:center; gap:12px; margin:8px 0; }
+  .caja { background:#123b36; border:1px solid #f4d35e44; border-radius:12px; padding:8px 13px; }
+  .caja b { display:block; font-size:1.45em; color:#f4d35e; }
+  .caja span { font-size:.68em; color:#7fd1c1; text-transform:uppercase; letter-spacing:1px; }
+  #campo { position:relative; height:300px; margin:10px 0 6px; border-radius:18px; overflow:hidden;
+           background:linear-gradient(180deg,#ffd97a 0%,#ffb56b 26%,#7fd1c1 60%,#0f6b5c 100%); border:1px solid #ffffff22; }
+  .sol { position:absolute; top:14px; right:18px; font-size:2.2em; filter:drop-shadow(0 0 14px rgba(255,220,120,.8)); }
+  .palma { position:absolute; bottom:-6px; font-size:2.6em; opacity:.85; }
+  .palma.izq { left:-4px; transform:scaleX(-1); } .palma.der { right:-4px; }
+  #coco { position:absolute; width:64px; height:64px; border:none; border-radius:50%; font-size:2.2em; line-height:64px;
+          background:radial-gradient(circle at 34% 30%, #fff3d0, #d9a05f 58%, #8a5a33); cursor:pointer;
+          box-shadow:0 8px 18px rgba(0,0,0,.35), inset -3px -5px 0 rgba(90,50,20,.28);
+          transition:left .14s ease, top .14s ease; touch-action:manipulation; }
+  #coco:active { transform:scale(.88); }
+  #coco.dorado { background:radial-gradient(circle at 34% 30%, #fffbe0, #ffe066 55%, #c79a1e);
+                 box-shadow:0 0 22px 6px rgba(255,214,64,.75), inset -3px -5px 0 rgba(150,110,10,.35); }
+  #msg { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:min(260px,86%);
+         background:rgba(10,41,38,.92); border:1px solid #f4d35e66; border-radius:14px; padding:14px; z-index:5; }
+  #msg h3 { color:#f4d35e; font-size:1em; margin-bottom:6px; }
+  #msg p { font-size:.8em; color:#cfe8dd; line-height:1.45; }
+  #msg.oculto { display:none; }
+  #btnjugar { display:block; width:100%; background:linear-gradient(135deg,#f4d35e,#e0a82e); color:#0a2926; font-family:inherit;
+              font-weight:bold; font-size:1.05em; border:none; border-radius:12px; padding:13px; margin:8px 0; cursor:pointer; }
+  #btnjugar:disabled { opacity:.55; }
+  .lbl { font-size:.78em; color:#7fd1c1; margin:4px 0; }
+  .flotante { position:fixed; color:#f4d35e; font-weight:bold; font-size:1.25em; pointer-events:none; animation:sube .9s ease-out forwards; z-index:9; }
+  @keyframes sube { from { opacity:1; transform:translateY(0) } to { opacity:0; transform:translateY(-85px) } }
+  .premios { background:#123b36; border-radius:14px; padding:14px; margin:12px 0; text-align:left; }
+  .premios h2 { color:#f4d35e; font-size:1em; text-align:center; margin-bottom:10px; }
+  .premio { display:flex; align-items:center; gap:10px; padding:10px; border-radius:10px; margin:6px 0; background:#0a2926; border:1px solid #ffffff14; }
+  .premio .ico { font-size:1.7em; }
+  .premio .info { flex:1; }
+  .premio .info b { font-size:.88em; display:block; }
+  .premio .info small { color:#7fd1c1; font-size:.72em; }
+  .premio .estado { font-size:.8em; font-weight:bold; }
+  .bloq { color:#7fd1c1; } .listo { color:#5ddba0; } .reclamado { color:#f4d35e; }
+  .btn { display:block; width:100%; text-align:center; text-decoration:none; font-family:inherit; font-weight:bold; font-size:.92em;
+         border-radius:12px; padding:12px; margin:8px 0; cursor:pointer; border:none; }
+  .oro { background:linear-gradient(135deg,#f4d35e,#e0a82e); color:#0a2926; }
+  .verde { background:#123b36; color:#7fd1c1; border:1px solid #7fd1c155; }
+  .modal { position:fixed; inset:0; background:rgba(4,16,14,.94); z-index:20; display:none; align-items:center; justify-content:center; padding:18px; }
+  .modal.on { display:flex; }
+  .mbox { background:#123b36; border:2px solid #f4d35e; border-radius:16px; padding:20px; max-width:380px; width:100%; }
+  .mbox h3 { color:#f4d35e; margin-bottom:8px; }
+  .mbox p { font-size:.88em; line-height:1.45; margin:8px 0; }
+  .codigo { background:#0a2926; border:1px dashed #f4d35e; border-radius:10px; padding:10px; font-size:1.2em; letter-spacing:2px; color:#f4d35e; font-weight:bold; margin:10px 0; }
+  .nota { font-size:.72em; color:#7fd1c1; margin-top:12px; line-height:1.5; font-style:italic; }
+</style>
+</head>
+<body>
+<h1>🥥 TROPIQUEST</h1>
+<div class="sub">Atrapa los cocos · 25 segundos por ronda · premios REALES de la tienda</div>
+
+<div class="marcador">
+  <div class="caja"><b id="pts">0</b><span>cocos</span></div>
+  <div class="caja"><b id="mejor">0</b><span>mejor ronda</span></div>
+  <div class="caja"><b id="racha">0</b><span>días racha</span></div>
+</div>
+
+<div id="campo">
+  <div class="sol">☀️</div>
+  <div class="palma izq">🌴</div>
+  <div class="palma der">🌴</div>
+  <button id="coco" style="display:none">🥥</button>
+  <div id="msg">
+    <h3>🌴 ¿Listo para cazar?</h3>
+    <p>Cada coco vale <b>+10</b> cocos… y el <b>COCO DORADO</b> vale <b>+50</b> ✨<br>Los cocos se canjean por premios REALES abajo. 🎁</p>
+  </div>
+</div>
+<button id="btnjugar">▶️ ¡Jugar ronda!</button>
+<div class="lbl" id="estado">Vuelve cada día: la racha te regala +50 cocos 🥥</div>
+
+<div class="premios">
+  <h2>🏆 Premios reales (canjea con el bot)</h2>
+  <div class="premio" id="p0">
+    <div class="ico">🎁</div>
+    <div class="info"><b>Muestra gratis de diseños</b><small>2 piezas para tu negocio</small></div>
+    <div class="estado bloq" id="e0">🔒 200</div>
+  </div>
+  <div class="premio" id="p1">
+    <div class="ico">📱</div>
+    <div class="info"><b>Pack Plantillas WhatsApp</b><small>$4.50 en vez de $4... ¡con premio $3.60!</small></div>
+    <div class="estado bloq" id="e1">🔒 1,500</div>
+  </div>
+  <div class="premio" id="p2">
+    <div class="ico">🎒</div>
+    <div class="info"><b>Kit Exprés Digital</b><small>de $9 a solo $7.65</small></div>
+    <div class="estado bloq" id="e2">🔒 6,000</div>
+  </div>
+</div>
+
+<button class="btn oro" onclick="compartir()">📤 Retar a un amigo</button>
+<a class="btn verde" href="https://t.me/Despeguedijitalbot" target="_blank">🤖 Canjear premio con el bot</a>
+<a class="btn verde" href="despegue-tap.html">🚀 Jugar también DESPEGUE TAP</a>
+
+<div class="modal" id="modal">
+  <div class="mbox">
+    <h3 id="mtit">🎉 ¡PREMIO DESBLOQUEADO!</h3>
+    <p id="mtxt"></p>
+    <div class="codigo" id="mcod">MUESTRA</div>
+    <p><b>Cómo canjear:</b> abre el bot <b>@Despeguedijitalbot</b> en Telegram y escríbele:</p>
+    <div class="codigo" style="font-size:.95em">premio MUESTRA</div>
+    <button class="btn oro" onclick="cerrar()">🥥 ¡Voy por el bot!</button>
+  </div>
+</div>
+
+<div class="nota">Ronda de 25 segundos · coco normal +10 · coco dorado +50 · racha diaria +50.<br>
+🥥 TROPIQUEST · Despegue Digital · los cocos se canjean por premios REALES de la tienda — aquí nadie juega en vano.</div>
+
+<script>
+var SEGUNDOS = 25, METAS = [200, 1500, 6000];
+var CODIGOS = ["MUESTRA", "PLANTA10", "KIT15"];
+var ICONOS = ["🎁", "📱", "🎒"];
+var NAMES = ["Muestra gratis de diseños", "Pack Plantillas WhatsApp (¡a $3.60!)", "Kit Exprés Digital (¡a $7.65!)"];
+var S = { pts: 0, mejor: 0, ronda: 0, racha: 0, dia: "", recl: [0,0,0] };
+try { var j = localStorage.getItem("tropiquest_v1"); if (j) { var q = JSON.parse(j);
+  S = { pts:q.pts||0, mejor:q.mejor||0, ronda:q.ronda||0, racha:q.racha||0, dia:q.dia||"", recl:q.recl||[0,0,0] }; } } catch(e) {}
+function save(){ try { localStorage.setItem("tropiquest_v1", JSON.stringify(S)); } catch(e) {} }
+var jugando = false, resta = SEGUNDOS, golpes = 0, timer = null, autoMove = null;
+
+function pintar(){
+  document.getElementById("pts").textContent = S.pts.toLocaleString("es-ES");
+  document.getElementById("mejor").textContent = S.mejor;
+  document.getElementById("racha").textContent = S.racha;
+  for (var i = 0; i < 3; i++) {
+    var e = document.getElementById("e" + i);
+    if (S.recl[i]) { e.className = "estado reclamado"; e.textContent = "✓ canjeado"; }
+    else if (S.pts >= METAS[i]) { e.className = "estado listo"; e.textContent = "🎉 ¡TÓCALO!"; }
+    else { e.className = "estado bloq"; e.textContent = "🔒 " + (METAS[i] - S.pts).toLocaleString("es-ES") + " más"; }
+  }
+}
+function toast(txt){
+  var f = document.createElement("div");
+  f.className = "flotante"; f.textContent = txt;
+  f.style.left = (28 + Math.random() * 44) + "%"; f.style.top = "36%";
+  document.body.appendChild(f);
+  setTimeout(function(){ f.remove(); }, 900);
+}
+function nuevoDia(){
+  var hoy = new Date().toDateString();
+  if (S.dia !== hoy) {
+    var ayer = new Date(Date.now() - 864e5).toDateString();
+    S.racha = (S.dia === ayer) ? S.racha + 1 : 1;
+    S.dia = hoy; S.pts += 50; save();
+    setTimeout(function(){ toast("+50 🥥 bonus de racha (día " + S.racha + ")"); }, 400);
+  }
+}
+function moverCoco(){
+  var c = document.getElementById("coco"), cp = document.getElementById("campo");
+  var w = cp.clientWidth - 76, h = cp.clientHeight - 76;
+  c.style.left = (6 + Math.random() * w) + "px";
+  c.style.top = (6 + Math.random() * h) + "px";
+  var dorado = Math.random() < 0.12;
+  c.classList.toggle("dorado", dorado);
+  c.textContent = dorado ? "✨" : "🥥";
+  c._val = dorado ? 50 : 10;
+}
+document.getElementById("coco").addEventListener("pointerdown", function(){
+  if (!jugando) return;
+  golpes++; S.pts += this._val || 10; save(); pintar();
+  toast("+" + (this._val || 10));
+  if (navigator.vibrate) { try { navigator.vibrate(12); } catch(e) {} }
+  moverCoco();
+  document.getElementById("estado").textContent = golpes + " coco" + (golpes === 1 ? "" : "s") + " esta ronda 🥥";
+});
+function empezar(){
+  if (jugando) return;
+  nuevoDia();
+  jugando = true; golpes = 0; resta = SEGUNDOS;
+  document.getElementById("msg").classList.add("oculto");
+  var b = document.getElementById("btnjugar"); b.disabled = true; b.textContent = "🥥 ¡Atrapa!";
+  document.getElementById("estado").textContent = "¡Cada coco cuenta! El dorado vale 50 ✨";
+  moverCoco();
+  document.getElementById("coco").style.display = "block";
+  timer = setInterval(function(){
+    resta--;
+    if (resta <= 0) return terminar();
+    document.getElementById("btnjugar").textContent = "⏱ " + resta + "s";
+  }, 1000);
+  autoMove = setInterval(function(){ if (jugando) moverCoco(); }, 1500);
+}
+function terminar(){
+  jugando = false;
+  clearInterval(timer); clearInterval(autoMove);
+  document.getElementById("coco").style.display = "none";
+  S.mejor = Math.max(S.mejor, golpes); S.ronda++;
+  var nuevo = -1;
+  for (var i = 0; i < 3; i++) { if (!S.recl[i] && S.pts >= METAS[i]) nuevo = i; }
+  save(); pintar();
+  var msg = document.getElementById("msg");
+  msg.classList.remove("oculto");
+  msg.innerHTML = golpes >= 15
+    ? "<h3>🌴 ¡Ronda de campeona!</h3><p>" + golpes + " cocos atrapados. Total: <b>" + S.pts.toLocaleString("es-ES") + "</b> — sigue sumando premios reales 🎁</p>"
+    : "<h3>🥥 ¡Ronda terminada!</h3><p>" + golpes + " cocos atrapados. Total: <b>" + S.pts.toLocaleString("es-ES") + "</b> — otra ronda y llegas más lejos 🚀</p>";
+  var b = document.getElementById("btnjugar"); b.disabled = false; b.textContent = "▶️ ¡Otra ronda!";
+  document.getElementById("estado").textContent = "Ronda " + S.ronda + " jugada · los cocos se canjean con el bot 🤖";
+  if (nuevo >= 0) abrir(nuevo);
+}
+function abrir(i){
+  document.getElementById("mtit").textContent = "🎉 ¡PREMIO DESBLOQUEADO!";
+  document.getElementById("mtxt").innerHTML = ICONOS[i] + " <b>" + NAMES[i] + "</b><br>Tu código es:";
+  document.getElementById("mcod").textContent = CODIGOS[i];
+  document.getElementById("modal").classList.add("on");
+  S.recl[i] = 1; save(); pintar();
+}
+function cerrar(){ document.getElementById("modal").classList.remove("on"); }
+document.getElementById("btnjugar").addEventListener("click", empezar);
+for (var i = 0; i < 3; i++) {
+  (function(i){
+    document.getElementById("p" + i).addEventListener("click", function(){
+      if (S.pts >= METAS[i] && !S.recl[i]) abrir(i);
+    });
+  })(i);
+}
+function compartir(){
+  var u = "https://mia9911.github.io/despegue-digital/tropiquest.html";
+  var t = "🥥 Estoy cazando cocos en TROPIQUEST — el juego cubano que paga premios REALES (muestras, plantillas, kits). ¡A ver quién atrapa más! 👇";
+  window.open("https://t.me/share/url?url=" + encodeURIComponent(u) + "&text=" + encodeURIComponent(t), "_blank");
+}
+var tgApp = window.Telegram && window.Telegram.WebApp;
+if (tgApp) { try { tgApp.ready(); tgApp.expand(); } catch(e) {} }
+nuevoDia(); pintar();
+</script>
+</body>
+</html>
