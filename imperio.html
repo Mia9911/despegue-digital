@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>💰 MI IMPERIO — El juego del emprendedor cubano</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body { font-family: Georgia, 'Times New Roman', serif; background:#0a0e1a; color:#eef2ff; text-align:center; overflow-x:hidden; padding:12px; max-width:520px; margin:0 auto; user-select:none; }
+  h1 { font-size:1.4em; color:#ffd166; margin:8px 0 2px; }
+  .sub { color:#93a0c4; font-size:.84em; font-style:italic; margin-bottom:8px; }
+  .sponsor { background:#121829; border:1px dashed #2a3555; border-radius:10px; padding:8px 10px; font-size:.74em; color:#93a0c4; margin:8px 0; line-height:1.45; }
+  .sponsor b { color:#00e5a0; }
+  .sponsor a { color:#ffd166; text-decoration:none; }
+  .marcador { display:flex; justify-content:center; gap:10px; margin:8px 0; flex-wrap:wrap; }
+  .caja { background:#121829; border:1px solid #2a3555; border-radius:12px; padding:8px 12px; min-width:96px; }
+  .caja b { display:block; font-size:1.35em; color:#ffd166; }
+  .caja span { font-size:.66em; color:#93a0c4; text-transform:uppercase; letter-spacing:1px; }
+  .caja.cap b { color:#00e5a0; }
+  #tapzone { margin:12px auto 6px; width:150px; height:150px; border-radius:50%; border:none; cursor:pointer;
+             background:radial-gradient(circle at 34% 30%, #1e2b4d, #121829 70%); border:3px solid #ffd16666;
+             font-size:3.4em; line-height:1; box-shadow:0 10px 30px rgba(255,209,102,.18); transition:transform .06s; }
+  #tapzone:active { transform:scale(.9); }
+  .boostbadge { display:inline-block; background:#ffd166; color:#0a0e1a; font-weight:bold; font-size:.78em; border-radius:12px; padding:3px 10px; margin-left:6px; }
+  .lbl { font-size:.78em; color:#93a0c4; }
+  .barra { background:#121829; border-radius:10px; height:14px; width:88%; margin:8px auto 4px; overflow:hidden; border:1px solid #2a3555; }
+  .barra > div { height:100%; background:linear-gradient(90deg,#00e5a0,#00b894); width:0%; transition:width .3s; }
+  .subir { display:block; width:100%; background:linear-gradient(90deg,#00e5a0,#00b894); color:#04121c; font-family:inherit; font-weight:bold; font-size:.95em; border:none; border-radius:12px; padding:12px; margin:6px 0 2px; cursor:pointer; }
+  .subir:disabled { opacity:.45; cursor:wait; }
+  .card { background:#121829; border:1px solid #223052; border-radius:14px; padding:14px; margin:12px 0; text-align:left; }
+  .card h2 { color:#ffd166; font-size:1em; margin-bottom:8px; text-align:center; }
+  .neg { display:flex; align-items:center; gap:10px; padding:7px 4px; border-bottom:1px dashed #223052; font-size:.85em; }
+  .neg:last-child { border-bottom:none; }
+  .neg .ico { font-size:1.5em; width:30px; text-align:center; }
+  .neg b { display:block; font-size:.95em; }
+  .neg small { color:#93a0c4; font-size:.85em; }
+  .neg .estado { margin-left:auto; font-size:.8em; font-weight:bold; }
+  .ok { color:#00e5a0; } .cerrado { color:#5a688a; } .sig { color:#ffd166; }
+  .pitch { border:2px solid #ffd166; background:linear-gradient(135deg,#121829,#1d1a12); }
+  .pitch h2 { color:#ffd166; }
+  .pitch p { font-size:.85em; color:#c9d4f0; line-height:1.5; margin:6px 0; }
+  .btn { display:block; width:100%; background:linear-gradient(90deg,#ffd166,#e0a82e); color:#0a0e1a; font-family:inherit; font-weight:bold; font-size:.95em; border:none; border-radius:12px; padding:12px; margin:8px 0; cursor:pointer; text-decoration:none; text-align:center; }
+  .btn.sec { background:#121829; color:#93a0c4; border:1px solid #2a3555; }
+  .premios { background:#121829; border-radius:14px; padding:14px; margin:12px 0; text-align:left; border:1px solid #223052; }
+  .premios h2 { color:#ffd166; font-size:1em; margin-bottom:10px; text-align:center; }
+  .premio { display:flex; align-items:center; gap:10px; padding:10px; border-radius:10px; margin:6px 0; background:#0a0e1a; border:1px solid #ffffff14; }
+  .premio .ico { font-size:1.7em; }
+  .premio .info { flex:1; }
+  .premio .info b { font-size:.88em; display:block; }
+  .premio .info small { color:#93a0c4; font-size:.72em; }
+  .premio .estado { font-size:.8em; font-weight:bold; }
+  .bloq { color:#93a0c4; } .listo { color:#00e5a0; } .reclamado { color:#ffd166; }
+  .boostrow { display:flex; gap:8px; margin:10px 0 4px; }
+  .boostrow input { flex:1; background:#0a0e1a; border:1px solid #2a3555; border-radius:10px; color:#eef2ff; font-family:inherit; padding:10px; font-size:.9em; text-align:center; letter-spacing:1px; }
+  .boostrow button { background:#ffd166; color:#0a0e1a; border:none; border-radius:10px; font-family:inherit; font-weight:bold; padding:10px 14px; cursor:pointer; }
+  .flotante { position:fixed; color:#ffd166; font-weight:bold; font-size:1.3em; pointer-events:none; animation:sube .9s ease-out forwards; z-index:9; }
+  .flotante.crit { color:#00e5a0; font-size:1.6em; }
+  @keyframes sube { from { opacity:1; transform:translateY(0) } to { opacity:0; transform:translateY(-90px) } }
+  .modal { position:fixed; inset:0; background:rgba(4,8,20,.94); z-index:20; display:none; align-items:center; justify-content:center; padding:18px; }
+  .modal.on { display:flex; }
+  .mbox { background:#121829; border:2px solid #ffd166; border-radius:16px; padding:20px; max-width:380px; width:100%; }
+  .mbox h3 { color:#ffd166; margin-bottom:8px; }
+  .mbox p { font-size:.88em; line-height:1.45; margin:8px 0; }
+  .codigo { background:#0a0e1a; border:1px dashed #ffd166; border-radius:10px; padding:10px; font-size:1.2em; letter-spacing:2px; color:#ffd166; font-weight:bold; margin:10px 0; }
+  .nota { font-size:.72em; color:#93a0c4; margin-top:12px; line-height:1.5; font-style:italic; }
+</style>
+</head>
+<body>
+<h1>💰 MI IMPERIO</h1>
+<div class="sub">El juego del emprendedor cubano — de la cesta de dulces al imperio digital</div>
+
+<div class="sponsor" id="sponsor">📢 Patrocinado por: <b>DESPEGUE DIGITAL</b> — diseño y marketing que venden. <a href="patrocinio.html">¿Tu marca aquí? →</a></div>
+
+<div class="marcador">
+  <div class="caja cap"><b id="caja">$0</b><span>en caja</span></div>
+  <div class="caja"><b id="total">$0</b><span>ganancias</span></div>
+  <div class="caja"><b id="rate">0/s</b><span>pasivo</span></div>
+</div>
+
+<button id="tapzone">🧺</button>
+<div class="lbl" id="nombreneg">🧺 Venta por la casa<span id="boostb"></span></div>
+<div class="lbl" style="margin-top:6px">👆 toca para vender · las ganancias corren solas</div>
+
+<div class="barra"><div id="barra"></div></div>
+<button class="subir" id="btnsubir">⬆️ SUBIR DE NEGOCIO</button>
+<div class="lbl" id="faltan"></div>
+
+<div class="card">
+  <h2>🪜 La escalera de negocios</h2>
+  <div id="negocios"></div>
+</div>
+
+<div class="card pitch">
+  <h2>⚡ PAQUETE EMPRESARIO — $2 una vez</h2>
+  <p><b>Ganancias al DOBLE para siempre.</b> El boost real de emprendedor: apoyas la red cubana y tu imperio crece 2× más rápido (toques, pasivo y bonus).</p>
+  <p class="lbl">Cómo: abre el bot <b>@Despeguedijitalbot</b> → escríbele <b>"imperio"</b> → paga $2 por QvaPay → recibe tu código → pégalo aquí abajo. 1 minuto.</p>
+  <div class="boostrow">
+    <input id="codin" placeholder="PEGA TU CÓDIGO" maxlength="12">
+    <button onclick="activar()">⚡ ACTIVAR</button>
+  </div>
+</div>
+
+<div class="premios">
+  <h2>🏆 Premios reales (con ganancias totales)</h2>
+  <div class="premio" id="p0">
+    <div class="ico">🎁</div>
+    <div class="info"><b>Muestra gratis de diseños</b><small>2 piezas para tu negocio</small></div>
+    <div class="estado bloq" id="e0">🔒 $200</div>
+  </div>
+  <div class="premio" id="p1">
+    <div class="ico">📱</div>
+    <div class="info"><b>Pack Plantillas WhatsApp</b><small>de $4.50 a $3.60 con premio</small></div>
+    <div class="estado bloq" id="e1">🔒 $1,500</div>
+  </div>
+  <div class="premio" id="p2">
+    <div class="ico">🎒</div>
+    <div class="info"><b>Kit Exprés Digital</b><small>de $9 a solo $7.65</small></div>
+    <div class="estado bloq" id="e2">🔒 $6,000</div>
+  </div>
+</div>
+
+<button class="btn" onclick="compartir()">📤 Retar a un amigo</button>
+<a class="btn sec" href="https://t.me/Despeguedijitalbot" target="_blank">🤖 Bot: premios y boost 24/7</a>
+<a class="btn sec" href="index.html">🏪 Visitar la tienda real</a>
+
+<div class="modal" id="modal">
+  <div class="mbox">
+    <h3 id="mtit">🎉 ¡PREMIO DESBLOQUEADO!</h3>
+    <p id="mtxt"></p>
+    <div class="codigo" id="mcod">MUESTRA</div>
+    <p><b>Canjea con el bot</b> @Despeguedijitalbot escribiéndole:</p>
+    <div class="codigo" style="font-size:.95em">premio MUESTRA</div>
+    <button class="btn" onclick="cerrar()">💰 ¡Voy por el bot!</button>
+  </div>
+</div>
+
+<div class="nota">El dinero del juego es de juguete — los PREMIOS, el BOOST y la diversión son 100% reales.<br>
+💰 MI IMPERIO · Despegue Digital · 🇨🇺 <span id="cont"></span></div>
+<img src="https://visitor-badge.laobi.icu/badge?page_id=despegue-imperio" style="display:block;margin:12px auto;max-width:96px;opacity:.75" alt="visitas">
+
+<script>
+var NEGOCIOS = [
+  { i:"🧺", n:"Venta por la casa",   c:0,      p:0    },
+  { i:"🛒", n:"Carrito de dulces",   c:100,    p:1    },
+  { i:"📱", n:"Venta por WhatsApp",  c:500,    p:5    },
+  { i:"🏪", n:"Tienda online",       c:2000,   p:20   },
+  { i:"📸", n:"Marca en Instagram",  c:8000,   p:80   },
+  { i:"🤖", n:"Bot que vende 24/7",  c:30000,  p:300  },
+  { i:"🏢", n:"Agencia de marketing",c:120000, p:1200 },
+  { i:"🚀", n:"IMPERIO DIGITAL",     c:500000, p:5000 }
+];
+var METAS = [200, 1500, 6000];
+var CODIGOS = ["MUESTRA", "PLANTA10", "KIT15"];
+var ICONOS = ["🎁", "📱", "🎒"];
+var NAMES = ["Muestra gratis de diseños", "Pack Plantillas WhatsApp (¡a $3.60!)", "Kit Exprés Digital (¡a $7.65!)"];
+var S = { cash:0, total:0, niv:0, boost:0, racha:0, dia:"", recl:[0,0,0] };
+try { var j = localStorage.getItem("imperio_v1"); if (j) { var q = JSON.parse(j);
+  S = { cash:q.cash||0, total:q.total||0, niv:q.niv||0, boost:q.boost||0, racha:q.racha||0, dia:q.dia||"", recl:q.recl||[0,0,0] }; } } catch(e) {}
+function save(){ try { localStorage.setItem("imperio_v1", JSON.stringify(S)); } catch(e) {} }
+function fmt(n){ return "$" + Math.floor(n).toLocaleString("es-ES"); }
+function mult(){ return S.boost ? 2 : 1; }
+function pasivo(){ var s = 0; for (var k = 1; k <= S.niv; k++) s += NEGOCIOS[k].p; return s * mult(); }
+function toast(txt, crit){
+  var f = document.createElement("div");
+  f.className = "flotante" + (crit ? " crit" : ""); f.textContent = txt;
+  f.style.left = (26 + Math.random() * 46) + "%"; f.style.top = "34%";
+  document.body.appendChild(f);
+  setTimeout(function(){ f.remove(); }, 900);
+}
+var SPONSORS = [
+  '📢 Patrocinado por: <b>DESPEGUE DIGITAL</b> — diseño y marketing que venden. <a href="patrocinio.html">¿Tu marca aquí? →</a>',
+  '📢 <b>¿Tienes un negocio?</b> Plantillas de WhatsApp desde $4 — <a href="index.html">ver la tienda →</a>',
+  '📢 <b>Tu marca frente a emprendedores cubanos</b> — desde $3/semana. <a href="patrocinio.html">Anúnciate →</a>'
+];
+var spI = 0;
+setInterval(function(){
+  spI = (spI + 1) % SPONSORS.length;
+  document.getElementById("sponsor").innerHTML = SPONSORS[spI];
+}, 6000);
+function nuevoDia(){
+  var hoy = new Date().toDateString();
+  if (S.dia !== hoy) {
+    var ayer = new Date(Date.now() - 864e5).toDateString();
+    S.racha = (S.dia === ayer) ? S.racha + 1 : 1;
+    S.dia = hoy;
+    var bonus = 50 * (1 + S.niv) * mult();
+    S.cash += bonus; S.total += bonus; save();
+    setTimeout(function(){ toast("+" + fmt(bonus) + " 🎁 racha día " + S.racha); }, 500);
+  }
+}
+function offline(){
+  var j2 = null;
+  try { j2 = JSON.parse(localStorage.getItem("imperio_ts") || "null"); } catch(e) {}
+  var ahora = Date.now();
+  try { localStorage.setItem("imperio_ts", JSON.stringify(ahora)); } catch(e) {}
+  if (j2 && pasivo() > 0) {
+    var seg = Math.min(8 * 3600, Math.floor((ahora - j2) / 1000));
+    if (seg > 30) {
+      var gan = seg * pasivo();
+      S.cash += gan; S.total += gan; save();
+      setTimeout(function(){ toast("🛏️ Mientras estabas fuera: +" + fmt(gan)); }, 800);
+    }
+  }
+}
+function pintar(){
+  document.getElementById("caja").textContent = fmt(S.cash);
+  document.getElementById("total").textContent = fmt(S.total);
+  document.getElementById("rate").textContent = fmt(pasivo()) + "/s";
+  document.getElementById("tapzone").textContent = NEGOCIOS[S.niv].i;
+  document.getElementById("nombreneg").innerHTML = NEGOCIOS[S.niv].i + " " + NEGOCIOS[S.niv].n +
+    (S.boost ? '<span class="boostbadge">⚡ x2 EMPRESARIO</span>' : "");
+  var sig = NEGOCIOS[S.niv + 1];
+  var b = document.getElementById("btnsubir");
+  if (sig) {
+    b.textContent = "⬆️ SUBIR A: " + sig.i + " " + sig.n + " — " + fmt(sig.c);
+    b.disabled = S.cash < sig.c;
+    document.getElementById("barra").style.width = Math.min(100, S.cash / sig.c * 100) + "%";
+    document.getElementById("faltan").textContent = S.cash < sig.c ? "te faltan " + fmt(sig.c - S.cash) + " (+" + fmt(pasivo()) + "/s)" : "¡listo para subir!";
+  } else {
+    b.textContent = "🚀 IMPERIO COMPLETO — ¡eres leyenda!";
+    b.disabled = true;
+    document.getElementById("barra").style.width = "100%";
+    document.getElementById("faltan").textContent = "llegaste a la cima del imperio digital";
+  }
+  var html = "";
+  for (var k = 0; k < NEGOCIOS.length; k++) {
+    var est = k < S.niv ? '<span class="estado ok">✓ tuyo</span>' : (k === S.niv ? '<span class="estado sig">★ actual</span>' : '<span class="estado cerrado">🔒 ' + fmt(NEGOCIOS[k].c) + '</span>');
+    html += '<div class="neg"><div class="ico">' + NEGOCIOS[k].i + '</div><div><b>' + NEGOCIOS[k].n + '</b><small>+' + fmt(NEGOCIOS[k].p) + '/s' + (k ? ' · cuesta ' + fmt(NEGOCIOS[k].c) : ' · donde empezó todo') + '</small></div>' + est + '</div>';
+  }
+  document.getElementById("negocios").innerHTML = html;
+  for (var m = 0; m < 3; m++) {
+    var e = document.getElementById("e" + m);
+    if (S.recl[m]) { e.className = "estado reclamado"; e.textContent = "✓ canjeado"; }
+    else if (S.total >= METAS[m]) { e.className = "estado listo"; e.textContent = "🎉 ¡TÓCALO!"; }
+    else { e.className = "estado bloq"; e.textContent = "🔒 " + fmt(METAS[m] - S.total) + " más"; }
+  }
+  document.getElementById("cont").textContent = "";
+}
+document.getElementById("tapzone").addEventListener("pointerdown", function(){
+  var v = (1 + S.niv) * mult();
+  var crit = Math.random() < 0.08;
+  if (crit) v *= 10;
+  S.cash += v; S.total += v; save(); pintar();
+  toast(crit ? "¡VENTAZO! +" + fmt(v) + " 🎉" : "+" + fmt(v), crit);
+  if (navigator.vibrate) { try { navigator.vibrate(crit ? 30 : 10); } catch(e) {} }
+  var nuevo = -1;
+  for (var m = 0; m < 3; m++) { if (!S.recl[m] && S.total >= METAS[m]) nuevo = m; }
+  if (nuevo >= 0) abrir(nuevo);
+});
+document.getElementById("btnsubir").addEventListener("click", function(){
+  var sig = NEGOCIOS[S.niv + 1];
+  if (!sig || S.cash < sig.c) return;
+  S.cash -= sig.c; S.niv++; save(); pintar();
+  toast("⬆️ " + sig.i + " " + sig.n.toUpperCase() + " 🎉", true);
+  if (navigator.vibrate) { try { navigator.vibrate([20, 40, 20]); } catch(e) {} }
+});
+function activar(){
+  var v = (document.getElementById("codin").value || "").trim().toUpperCase();
+  if (v === "IMPERIOX2") {
+    if (!S.boost) { S.boost = 1; save(); pintar(); toast("⚡ ¡BOOST x2 ACTIVADO! 🎉", true); }
+    else { toast("⚡ ya eres EMPRESARIO"); }
+    document.getElementById("codin").value = "";
+  } else if (v) {
+    toast("❌ código no válido");
+  }
+}
+function abrir(i){
+  document.getElementById("mtit").textContent = "🎉 ¡PREMIO DESBLOQUEADO!";
+  document.getElementById("mtxt").innerHTML = ICONOS[i] + " <b>" + NAMES[i] + "</b><br>Tu código es:";
+  document.getElementById("mcod").textContent = CODIGOS[i];
+  document.getElementById("modal").classList.add("on");
+  S.recl[i] = 1; save(); pintar();
+}
+function cerrar(){ document.getElementById("modal").classList.remove("on"); }
+for (var m2 = 0; m2 < 3; m2++) {
+  (function(i){
+    document.getElementById("p" + i).addEventListener("click", function(){
+      if (S.total >= METAS[i] && !S.recl[i]) abrir(i);
+    });
+  })(m2);
+}
+function compartir(){
+  var u = "https://mia9911.github.io/despegue-digital/imperio.html";
+  var t = "💰 Estoy construyendo MI IMPERIO — de la cesta de dulces al imperio digital 🇨🇺. El juego cubano con premios REALES. ¡A ver quién llega primero a la agencia! 👇";
+  window.open("https://t.me/share/url?url=" + encodeURIComponent(u) + "&text=" + encodeURIComponent(t), "_blank");
+}
+setInterval(function(){
+  if (pasivo() > 0) { var g = pasivo(); S.cash += g; S.total += g; save(); pintar(); }
+  try { localStorage.setItem("imperio_ts", JSON.stringify(Date.now())); } catch(e) {}
+}, 1000);
+var tgApp = window.Telegram && window.Telegram.WebApp;
+if (tgApp) { try { tgApp.ready(); tgApp.expand(); } catch(e) {} }
+offline(); nuevoDia(); pintar();
+</script>
+</body>
+</html>

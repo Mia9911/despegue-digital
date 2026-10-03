@@ -224,6 +224,23 @@ TXT_PATROCINIO = (
     "Mientras, cu\u00e9ntame: \u00bfqu\u00e9 promociona tu marca? \U0001F4AC"
 )
 
+# ---------------- BOOST MI IMPERIO: PAQUETE EMPRESARIO $2 (V12.6) ----------------
+TXT_IMPERIO = (
+    "\u26a1 PAQUETE EMPRESARIO \u2014 $2 una sola vez.\n\n"
+    "\U0001F4B0 Ganancias al DOBLE para siempre en MI IMPERIO:\n"
+    "\u2022 toques al doble\n"
+    "\u2022 ingresos pasivos al doble\n"
+    "\u2022 bonus de racha al doble\n\n"
+    "Tu link de pago seguro (QvaPay):\n"
+)
+TXT_IMPERIO_OK = (
+    "\u26a1\U0001F911 \u00a1BOOST EMPRESARIO RECIBIDO! Aqu\u00ed est\u00e1 tu c\u00f3digo:\n\n"
+    "IMPERIOX2\n\n"
+    "1\u20e3 Abre MI IMPERIO: https://mia9911.github.io/despegue-digital/imperio.html\n"
+    "2\u20e3 Toca el recuadro del PAQUETE EMPRESARIO, pega el c\u00f3digo y dale ACTIVAR\n\n"
+    "Ganancias al DOBLE para siempre. \U0001F680 \u00a1Gracias por apoyar la red cubana!"
+)
+
 # ---------------- AUTOVENTA DE PREMIOS (V12.2) ----------------
 # La Jefa crea estos 3 cobros UNA VEZ en qvapay.com (Cobros -> Crear cobro)
 # y los pega aqui -> desde ese momento la ruleta es 100% automatica:
@@ -430,6 +447,17 @@ for u in updates:
             tg("sendMessage", {"chat_id": JEFA, "text":
                 "\U0001F4E1 PATROCINIO: %s (@%s) quiere anunciarse \u2014 su texto qued\u00f3 en "
                 "la libreta. M\u00e1ndale precios + link de pago. \U0001F4B0" % (nombre, username)})
+    elif "imperio" in bajo and not any(k in bajo for k in ("pagué", "pague", "pagado", "ya pag")):
+        if es_jefa:
+            r = TXT_IMPERIO + "(modo Jefa: no genero el cobro \u2014 tu c\u00f3digo de prueba es IMPERIOX2)"
+        else:
+            _rid = "boost-imperio-" + datetime.now(CUBA).strftime("%d%m%H%M%S")
+            _url = crear_cobro_qvapay(2, "BOOST MI IMPERIO x2 PERMANENTE", _rid)
+            r = TXT_IMPERIO + (_url or "(Mia te manda tu link de pago en unos minutos \U0001F4B3)")
+            tg("sendMessage", {"chat_id": JEFA, "text":
+                "\u26a1 BOOST: %s (@%s) quiere el PAQUETE EMPRESARIO ($2) \u2014 %s. "
+                "Cuando pague salta la alarma. \U0001F680" % (nombre, username,
+                "le gener\u00e9 SU link" if _url else "m\u00e1ndale el link de cobro")})
     elif "premio" in bajo or "ruleta" in bajo or "giré" in bajo or "girar" in bajo:
         _cod = None
         for _c in ("PRO1", "PLANTA10", "KIT15", "MUESTRA", "CONSUL10"):
@@ -501,6 +529,12 @@ for u in updates:
                     "📦 %s (@%s) pagó el PACK PLANTILLAS ($4) → entregado al instante." % (nombre, username)})
         else:
             r = TXT_PLANTILLAS
+    elif any(k in bajo for k in ("pagué imperio", "pague imperio", "pagado imperio", "pagué el imperio", "pague el imperio")):
+        r = TXT_IMPERIO_OK
+        if not es_jefa:
+            tg("sendMessage", {"chat_id": JEFA, "text":
+                "\U0001F3C6 VENTA BOOST: %s (@%s) pag\u00f3 el PAQUETE EMPRESARIO ($2) \u2192 c\u00f3digo "
+                "IMPERIOX2 entregado. \U0001F4B0" % (nombre, username)})
     elif "pagué premio" in bajo or "pague premio" in bajo or "pagado premio" in bajo:
         _cod2 = None
         for _c in ("PRO1", "PLANTA10", "KIT15"):
