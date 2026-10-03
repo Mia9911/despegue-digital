@@ -92,6 +92,22 @@
   .btn-close-d{background:transparent;border:1px solid #2a3555;color:var(--muted)}
   .d-center{text-align:center;margin-top:14px}
   .wa-float{position:fixed;right:16px;bottom:16px;z-index:40;background:#25d366;color:#06281a;width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;text-decoration:none;box-shadow:0 8px 24px rgba(37,211,102,.4)}
+  /* ═══ PORTAL: fusión con juegos, mina y patrocinio (2/10) ═══ */
+  .portal{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:18px 0 4px}
+  .portal a{display:block;background:var(--card);border:1px solid #223052;border-radius:12px;padding:10px 4px;text-align:center;text-decoration:none;color:var(--text);font-size:11.5px;font-weight:800}
+  .portal a span{display:block;font-size:20px;margin-bottom:3px}
+  .portal a em{display:block;font-style:normal;color:var(--muted);font-weight:600;font-size:9.5px;margin-top:2px}
+  .game-card{background:var(--card2);border:1px solid #223052;border-radius:18px;padding:18px;margin-bottom:12px;display:flex;gap:14px;align-items:center}
+  .game-card .gi{font-size:44px}
+  .game-card b{display:block;font-size:15px}
+  .game-card p{color:var(--muted);font-size:12.5px;margin:4px 0 8px}
+  .game-card a{display:inline-block;background:linear-gradient(90deg,var(--accent2),#5b3fd6);color:#fff;font-size:12.5px;font-weight:900;padding:9px 14px;border-radius:10px;text-decoration:none}
+  .door2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0 6px}
+  .door2 a{display:block;background:var(--card);border:1px solid #2a3555;border-radius:16px;padding:16px;text-decoration:none;color:var(--text)}
+  .door2 .big{font-size:26px;display:block;margin-bottom:6px}
+  .door2 a b{display:block;font-size:14px}
+  .door2 a p{color:var(--muted);font-size:12px;margin:4px 0 0}
+  @media(max-width:520px){.portal{grid-template-columns:repeat(2,1fr)}.door2{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -109,6 +125,13 @@
     <a href="#packs" class="hero-btn">VER LOS PACKS ↓</a>
     <p class="hero-note">Tarjeta · PayPal · USDT — paga desde cualquier país</p>
   </section>
+
+  <nav class="portal">
+    <a href="#juega"><span>🎮</span>JUEGA Y GANA<em>premios reales</em></a>
+    <a href="ruleta.html"><span>🎰</span>LA RULETA<em>1 giro gratis al día</em></a>
+    <a href="mina.html"><span>⛏️</span>GANA CRIPTO<em>sin estafas</em></a>
+    <a href="patrocinio.html"><span>📢</span>ANÚNCIATE<em>tu marca aquí</em></a>
+  </nav>
 
   <div class="steps">
     <div class="step"><div class="n">👆</div><b>1. TOCA</b><span>Elige tu pack</span></div>
@@ -232,6 +255,32 @@
     </ul>
     <button class="btn-buy main" onclick="comprar('packA')">COMPRAR — $250</button>
     <p class="delivery-note">Entrega: 24-48 HORAS · 50% ahora, 50% al aprobar</p>
+  </div>
+
+  <!-- 🎮 EL PORTAL DESPEGUE: juegos, ruleta, mina, patrocinio y bot (fusión 2/10) -->
+  <h2 id="juega">🎮 JUEGA Y GANA PREMIOS REALES</h2>
+  <p class="h2sub">Los juegos de LA CASA — cada premio se canjea de verdad en esta tienda</p>
+  <div class="game-card">
+    <div class="gi">🥥</div>
+    <div>
+      <b>TROPIQUEST — caza cocos</b>
+      <p>25 segundos por ronda y el coco dorado vale 50 ✨. Suma cocos y canjea premios: muestra gratis, plantillas a $3.60, kit a $7.65.</p>
+      <a href="tropiquest.html">▶️ JUGAR AHORA</a>
+    </div>
+  </div>
+  <div class="game-card">
+    <div class="gi">🚀</div>
+    <div>
+      <b>DESPEGUE TAP — toca el cohete</b>
+      <p>Cada toque suma turbulencias y sube tu altura. Racha diaria de +50 y los mismos premios reales canjeables con el bot.</p>
+      <a href="despegue-tap.html">▶️ JUGAR AHORA</a>
+    </div>
+  </div>
+  <div class="door2">
+    <a href="ruleta.html"><span class="big">🎰</span><b>La Ruleta de la Suerte</b><p>1 giro gratis al día — descuentos y premios de la tienda</p></a>
+    <a href="patrocinio.html"><span class="big">📢</span><b>Anúnciate en la Red</b><p>Tu marca frente a emprendedores cubanos — desde $3</p></a>
+    <a href="mina.html"><span class="big">⛏️</span><b>LA MINA</b><p>Gana cripto de verdad — solo plataformas auditadas</p></a>
+    <a href="https://t.me/Despeguedijitalbot"><span class="big">🤖</span><b>El Bot en Telegram</b><p>Precios, muestras y canje de premios 24/7</p></a>
   </div>
 
   <!-- ⭐ RESEÑAS REALES (se llenan solas desde resenas.json en el repo) -->
