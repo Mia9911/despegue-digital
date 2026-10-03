@@ -264,6 +264,20 @@ TXT_DONAR = (
     "Tu link de pago:"
 )
 
+# ---------------- PAGO SEGURO: escrow a mano entre cubanos (V12.8) ----------------
+TXT_PAGO_SEGURO = (
+    "\U0001F4B3 PAGO SEGURO DESPEGUE \u2014 compra y vende SIN miedo.\n\n"
+    "\U0001F512 As\u00ed funciona:\n"
+    "1\u20e3 El comprador paga a DESPEGUE (link QvaPay seguro)\n"
+    "2\u20e3 El vendedor entrega (con captura como prueba)\n"
+    "3\u20e3 El comprador confirma\n"
+    "4\u20e3 El vendedor cobra en menos de 24h (menos 10% de comisi\u00f3n)\n\n"
+    "\U0001F4B0 Comisi\u00f3n: 10% (m\u00ednimo $0.30) \u00b7 M\u00e1ximo $50 por transacci\u00f3n (fase piloto)\n"
+    "\U0001F6E1 Si algo sale mal, DESPEGUE decide con la evidencia de ambos.\n\n"
+    "Para arrancar, cu\u00e9ntame: \u00bfqu\u00e9 quieres comprar o vender, y por cu\u00e1nto? \U0001F4AC\n"
+    "Mia te escribe HOY para montar la transacci\u00f3n. \U0001F91D"
+)
+
 # ---------------- AUTOVENTA DE PREMIOS (V12.2) ----------------
 # La Jefa crea estos 3 cobros UNA VEZ en qvapay.com (Cobros -> Crear cobro)
 # y los pega aqui -> desde ese momento la ruleta es 100% automatica:
@@ -462,6 +476,12 @@ for u in updates:
         r = TXT_GARANTIA
     elif bajo.startswith("/soporte"):
         r = TXT_SOPORTE
+    elif any(k in bajo for k in ("pago seguro", "pagoseguro", "escrow", "intermediario", "transaccion segura", "transacción segura")):
+        r = TXT_PAGO_SEGURO
+        if not es_jefa:
+            tg("sendMessage", {"chat_id": JEFA, "text":
+                "\U0001F91D PAGO SEGURO: %s (@%s) quiere usar el servicio \u2014 su texto qued\u00f3 en "
+                "la libreta. Escr\u00edbele y arma la transacci\u00f3n (max $50, comisi\u00f3n 10%%). \U0001F4B3" % (nombre, username)})
     elif bajo.startswith("/vitrina") or "tienda" in bajo:
         r = "🛒 Tienda online: " + VITRINA + "\nPrecios: /precios · Muestra: /muestra"
     elif any(k in bajo for k in ("patrocinio", "patrocin", "publicidad", "anunciarse", "anunciar", "anunciate", "anunciante")):
