@@ -1,0 +1,8 @@
+{
+  "pool": 0.0,
+  "moneda": "QUSD (pagos por QvaPay)",
+  "reglas": "Top 3 semanal 50/30/20. Cierra domingo 8pm Cuba. Pago contra verificacion (captura/video). Jugar es gratis siempre.",
+  "log": [
+    {"fecha": "03/10 01:30", "txt": "Apertura de LA ARENA - la bolsa arranca en $0 y crece con patrocinios, donaciones y aportes de la red", "amt": 0.0}
+  ]
+}

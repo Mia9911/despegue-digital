@@ -241,6 +241,29 @@ TXT_IMPERIO_OK = (
     "Ganancias al DOBLE para siempre. \U0001F680 \u00a1Gracias por apoyar la red cubana!"
 )
 
+# ---------------- LA ARENA: torneo con bolsa REAL (V12.7) ----------------
+def bolsa_actual():
+    try:
+        _b, _ = gh_get_file("bolsa.json")
+        return float(_b.get("pool", 0))
+    except Exception:
+        return 0.0
+
+def txt_arena():
+    return ("\U0001F3DF LA ARENA \u2014 el torneo que paga PLATA REAL.\n\n"
+            "\U0001F4B0 Bolsa de la semana: $%.2f\n"
+            "\U0001F3C6 Se reparte DOMINGO 8pm (Cuba) entre los 3 mejores: 50%% / 30%% / 20%% \u2014 pagado por QvaPay.\n\n"
+            "1\u20e3 Juega gratis: https://mia9911.github.io/arena-plata/\n"
+            "2\u20e3 Reporta tu marca: \"arena 3470\" (con captura; video si eres top 3)\n"
+            "3\u20e3 Domingo cierra la semana y Mia paga a los ganadores.\n\n"
+            "\U0001F91D Jugar es GRATIS siempre. La bolsa es p\u00fablica: si dice $0, es $0 \u2014 cero humo.") % bolsa_actual()
+
+TXT_DONAR = (
+    "\U0001F331 ECHA UNA MANO A LA BOLSA \u2014 $1.\n\n"
+    "Tu apoyo entra al premio semanal de LA ARENA y se ve en el contador p\u00fablico de la web.\n"
+    "Tu link de pago:"
+)
+
 # ---------------- AUTOVENTA DE PREMIOS (V12.2) ----------------
 # La Jefa crea estos 3 cobros UNA VEZ en qvapay.com (Cobros -> Crear cobro)
 # y los pega aqui -> desde ese momento la ruleta es 100% automatica:
@@ -535,6 +558,52 @@ for u in updates:
             tg("sendMessage", {"chat_id": JEFA, "text":
                 "\U0001F3C6 VENTA BOOST: %s (@%s) pag\u00f3 el PAQUETE EMPRESARIO ($2) \u2192 c\u00f3digo "
                 "IMPERIOX2 entregado. \U0001F4B0" % (nombre, username)})
+    elif es_jefa and bajo.startswith("bolsa"):
+        _amt = 0.0
+        try:
+            _nums = [p for p in bajo.split() if p.startswith("+")]
+            _amt = float(_nums[0][1:]) if _nums else 0.0
+        except Exception:
+            _amt = 0.0
+        if _amt > 0:
+            try:
+                _b, _sh = gh_get_file("bolsa.json")
+            except Exception:
+                _b, _sh = {"pool": 0.0, "log": []}, None
+            _b["pool"] = round(float(_b.get("pool", 0)) + _amt, 2)
+            _b.setdefault("log", []).append({"fecha": datetime.now(CUBA).strftime("%d/%m %H:%M"),
+                                             "txt": "aporte de la Jefa", "amt": _amt})
+            try:
+                gh_put_file("bolsa.json", _b, _sh, "bolsa +%.2f" % _amt)
+                r = "\u2705 BOLSA ACTUALIZADA: $%.2f \u2014 ya se ve en LA ARENA y en el bot." % _b["pool"]
+            except Exception:
+                r = ("\u26a0 No pude guardar la bolsa ahora (la subo en el pr\u00f3ximo ciclo). "
+                     "Quedar\u00eda en $%.2f." % _b["pool"])
+        else:
+            r = ("\U0001F4B0 La bolsa de LA ARENA va en $%.2f.\nPara sumarle: \"bolsa +5\" (en d\u00f3lares). "
+                 "Se ve al instante en la web y en \"arena\".") % bolsa_actual()
+    elif "arena" in bajo or "bolsa" in bajo:
+        _score = None
+        for _p in bajo.split():
+            if _p.isdigit() and len(_p) >= 2:
+                _score = int(_p)
+                break
+        if _score and "arena" in bajo and not es_jefa:
+            r = ("\U0001F3C6 \u00a1Marca registrada! Tu mejor ronda: %d puntos.\n"
+                 "M\u00e1ndame tambi\u00e9n una CAPTURA de tu ronda aqu\u00ed (y video si quedas top 3 \u2014 se pide para pagar).\n"
+                 "Domingo 8pm cierra la semana. \u00a1Suerte! \U0001F340") % _score
+            tg("sendMessage", {"chat_id": JEFA, "text":
+                "\U0001F3DF ARENA: %s (@%s) report\u00f3 %d puntos \u2014 p\u00eddele captura/video antes de pagar. "
+                "Semana del %s" % (nombre, username, _score, datetime.now(CUBA).strftime("%d/%m"))})
+        else:
+            r = txt_arena()
+    elif "donar" in bajo:
+        _rid = "donar-arena-" + datetime.now(CUBA).strftime("%d%m%H%M%S")
+        _url = crear_cobro_qvapay(1, "APOYO BOLSA LA ARENA", _rid)
+        r = TXT_DONAR + "\n" + (_url or "(Mia te manda el link en unos minutos \U0001F64F)")
+        if not es_jefa:
+            tg("sendMessage", {"chat_id": JEFA, "text":
+                "\U0001F331 DONACI\u00d3N: %s (@%s) quiere apoyar la bolsa de LA ARENA ($1)." % (nombre, username)})
     elif "pagué premio" in bajo or "pague premio" in bajo or "pagado premio" in bajo:
         _cod2 = None
         for _c in ("PRO1", "PLANTA10", "KIT15"):
