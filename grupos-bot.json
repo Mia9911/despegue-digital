@@ -4,12 +4,12 @@
    "title": "Despegue Digital Negocios Cuba",
    "username": "DespegueDigitalCuba",
    "activo": true,
-   "ultima": "2026-10-05",
-   "posts": 13
+   "ultima": "2026-10-06",
+   "posts": 14
   }
  },
  "_canal": {
-  "ultima": "2026-10-05"
+  "ultima": "2026-10-06"
  },
  "_pagos": {
   "total": 0
@@ -92,6 +92,7 @@
    "j104983",
    "j104984",
    "j104994",
+   "j105010",
    "j84007",
    "j94635",
    "j94873",
@@ -310,15 +311,21 @@
    "v19451",
    "v19452",
    "v19453",
+   "v19454",
+   "v19455",
+   "v19456",
+   "v19457",
+   "v19458",
+   "v19459",
    "video-editor-and-graphic-designer-96026",
    "web3-marketing-87098"
   ],
   "gig": {
-   "v": 81,
+   "v": 82,
    "c": 0,
    "av": 81,
    "ac": 0
   },
-  "hora": "2026-10-06T19"
+  "hora": "2026-10-06T23"
  }
 }
