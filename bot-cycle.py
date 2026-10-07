@@ -68,7 +68,8 @@ TXT_START = (
     "⚡ Kit de Ventas Exprés — $125 (24 horas)\n"
     "🚀 Pack Resurrección IG + WhatsApp — $250 (24-48h) — el más pedido\n\n"
     "✅ Garantía: plazo incumplido = reembolso total.\n"
-    "🛒 Tienda online: " + VITRINA + "\n\n"
+    "🛒 Tienda online: " + VITRINA + "\n"
+    "🎲 Juega GRATIS y gana premios reales: https://mia9911.github.io/despegue-digital/juegos.html\n\n"
     "Cuéntame: ¿cuál es tu negocio y qué vendes? 😊"
 )
 TXT_PRECIOS = (
@@ -774,25 +775,55 @@ CAPTIONS_IG = [
      "¿Hablamos esta semana? Te leo 💛\n\n"
      "#EmprendedoresCuba #NegociosOnline #MarketingDigital #Cuba"),
 ]
-if hora >= 8 and grupos.get("_agenda", {}).get("ultima") != hoy:
+if grupos.get("_agenda", {}).get("ultima") != hoy:
     try:
         img, cap = CAPTIONS_IG[ahora_cuba.weekday() % 7]
-        _paso1 = "1️⃣ IG (2 min) — publica con la imagen '%s':\n\n%s" % (img, cap)
         try:
             tg("sendPhoto", {"chat_id": JEFA,
                 "photo": "https://raw.githubusercontent.com/Mia9911/despegue-digital/main/imagenes/" + img,
                 "caption": cap})
-            _paso1 = ("1️⃣ IG (2 min) — la FOTO y el CAPTION ya te llegaron arriba ⬆️ "
-                      "(guárdalas en tu teléfono y publica).")
         except Exception:
             pass
-        tg("sendMessage", {"chat_id": JEFA, "text":
-            "☀️ TU PLAN DE HOY (10-15 minutos en total):\n\n"
-            + _paso1 +
-            "\n\n2️⃣ Revisa Telegram: yo te avisé de cada interesado (si hay).\n"
-            "3️⃣ Murales pendientes (5 min c/u): los que te falten.\n"
-            "4️⃣ LaborX (2 min): revisa tus propuestas y mensajes → laborx.com/dashboard\n5️⃣ Recuerda: Revolico se renueva cada 3-4 días — yo te aviso.\n\n"
-            "El resto del día, la máquina trabaja sola. 🤖\n— Tu Económico"})
+        # ---- REPORTE DIARIO DE LA PRUEBA 7 DÍAS (V12.9): la torre rinde cuentas ----
+        _met = grupos.get("_metricas") or {}
+        _prev = _met.get("badge") or {}
+        _nuevos = {}
+        _lineas = []
+        for _pid, _nom in (("despegue-tienda", "\U0001F3EA tienda"), ("despegue-sala", "\U0001F3B2 sala"),
+                           ("despegue-imperio", "\U0001F4B0 imperio"), ("despegue-mina", "\u26CF\uFE0F mina"),
+                           ("arena-plata", "\U0001F3DF arena"), ("despegue-domino", "domin\u00f3"),
+                           ("despegue-bingo", "bingo"), ("despegue-cartas", "cartas")):
+            try:
+                _r2 = urllib.request.urlopen("https://visitor-badge.laobi.icu/badge?page_id=" + _pid, timeout=10)
+                _m2 = re.search(r">(\d+)<", _r2.read().decode("utf-8", "ignore"))
+                if _m2:
+                    _n = int(_m2.group(1))
+                    _nuevos[_pid] = _n
+                    _d = _n - int(_prev.get(_pid, _n))
+                    _lineas.append("\u2022 %s: %d%s" % (_nom, _n, ("  (+%d)" % _d) if _d > 0 else ""))
+            except Exception:
+                pass
+        try:
+            _prov2, _ = gh_get_file("prospectos.json")
+            _n_int = len(_prov2.get("mensajes", []))
+        except Exception:
+            _n_int = len(libreta_nueva)
+        try:
+            _ini = datetime.strptime(os.environ.get("INICIO_PRUEBA", "2026-10-07"), "%Y-%m-%d").date()
+        except Exception:
+            _ini = datetime(2026, 10, 7).date()
+        _dia_n = (datetime.now(CUBA).date() - _ini).days + 1
+        _enviar_rep = (1 <= _dia_n <= 7) or os.environ.get("PRUEBA_TEST") == "1"
+        if _enviar_rep and _lineas:
+            _rep = ("\U0001F4CA D\u00cdA %d/7 DE LA PRUEBA \u2014 reporte de la torre\n\n" % max(_dia_n, 1) +
+                    "Visitas acumuladas de la red:\n" + "\n".join(_lineas) + "\n\n" +
+                    "\U0001F4B0 Cobrado hasta hoy: $%.2f\n" % float(grupos.get("_pagos", {}).get("total", 0) or 0) +
+                    "\U0001F4DD Interesados grabados en la libreta: %d" % _n_int)
+            if _dia_n >= 7:
+                _rep += "\n\n\U0001F3C1 \u00daltimo d\u00eda \u2014 ma\u00f1ana te traigo el VEREDICTO con estos n\u00fameros."
+            _rep += "\n\nT\u00fa no haces nada: la m\u00e1quina trabaja y te rinde cuentas. \U0001F916\n\u2014 Tu Econ\u00f3mico"
+            tg("sendMessage", {"chat_id": JEFA, "text": _rep})
+        grupos["_metricas"] = {"fecha": hoy, "badge": _nuevos}
         grupos["_agenda"] = {"ultima": hoy}
     except Exception as e:
         print("agenda fail:", e)
