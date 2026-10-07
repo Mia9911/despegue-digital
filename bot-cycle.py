@@ -322,6 +322,13 @@ TXT_INTAKE_GRANDE = (
 # ---------------- POSTS PARA GRUPOS ----------------
 IG = "@despegue_digitalmarketing"
 PROMOS = [
+    ("📝 ¿Vendes por WhatsApp? Estos 30 mensajes listos para copiar y pegar "
+     "te van a salvar horas (primer contacto, seguimiento, cliente indeciso, "
+     "cierre, recuperar clientes...). Gratis, en español:\n"
+     "👉 https://mia9911.github.io/despegue-digital/mensajes-whatsapp.html\n\n"
+     "🎁 ¿Quieres 20 más con imágenes listas? Pack $4 en la tienda.\n"
+     "🤖 Muestra GRATIS → t.me/Despeguedijitalbot\n"
+     "🛒 " + VITRINA),
     ("🚀 ¿Tu negocio vende por WhatsApp... pero tu Instagram parece abandonado?\n"
      "Eso te está costando clientes TODOS los días.\n\n"
      "En DESPEGUE DIGITAL lo arreglamos en 24-48h: contenido que vende + WhatsApp "
