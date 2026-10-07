@@ -74,6 +74,9 @@ TXT_START = (
 )
 TXT_PRECIOS = (
     "💰 PRECIOS — DESPEGUE DIGITAL\n\n"
+    "🍽️ Kit Menú PRO — $7 USD\n"
+    "10 plantillas de Canva editables (menús, precios, promos, combos, flyer de "
+    "apertura). Entrega inmediata al pagar. Escribe \"kit de menú\".\n\n"
     "🎁 Kit Exprés Digital — $9 USD\n"
     "30 respuestas rápidas de WhatsApp + 10 fórmulas de bio + 7 plantillas de posts. "
     "Entrega inmediata al pagar.\n\n"
@@ -165,6 +168,24 @@ TXT_PLANTILLAS_OK = (
     "Guárdalo en favoritos — es tuyo para siempre.\n"
     "💡 Tip: cópialas a tus \"Respuestas rápidas\" y atiendes en segundos.\n"
     "Cualquier duda, aquí estoy. ¡A vender! 💰"
+)
+
+# ---------------- PRODUCTO: KIT MENÚ PRO $7 (8/10, link creado por la torre con la API QvaPay) ----------------
+LINK_KIT_PAGO = "https://www.qvapay.com/pay/6df3c031-8589-4cb0-ad64-cff5006f2a38"
+LINK_KIT_PROD = "https://mia9911.github.io/despegue-digital/kit-menu-pro/"
+TXT_KIT = (
+    "\U0001F37D\uFE0F KIT MENÚ PRO — $7 USD (10 plantillas de Canva):\n\n"
+    "Menús, lista de precios, promos, combos, flyer de apertura y tarjeta "
+    "de fidelidad — TODO editable en Canva gratis en 2 minutos, para tu "
+    "negocio de comida. Formato para Instagram, WhatsApp e imprimir.\n\n"
+    "\U0001F4B3 Paga aquí (QvaPay seguro):\n" + LINK_KIT_PAGO + "\n\n"
+    "Cuando pagues, escríbeme \"pagué kit\" y te lo entrego al segundo. \U0001F680"
+)
+TXT_KIT_OK = (
+    "\U0001F389 ¡RECIBIDO! Aquí está tu KIT MENÚ PRO:\n\n"
+    "\U0001F4E6 " + LINK_KIT_PROD + "\n\n"
+    "Los 10 archivos + la guía de instalación paso a paso. "
+    "Cualquier duda, me escribes. ¡A vender! \U0001F680"
 )
 
 # ---------------- PRODUCTO: CALCULADORA (25/9, idea de la Jefa) ----------------
@@ -484,7 +505,7 @@ for u in updates:
         if not es_jefa:
             tg("sendMessage", {"chat_id": JEFA, "text":
                 "👀 VISITA NUEVA: %s (@%s) — ya la atiendo (y queda en la libreta)." % (nombre, username)})
-    elif bajo.startswith("/precios") or "precio" in bajo or "cuanto" in bajo or "cuánto" in bajo:
+    elif (bajo.startswith("/precios") or "precio" in bajo or "cuanto" in bajo or "cuánto" in bajo) and not any(k in bajo for k in ("kit menú", "kit menu", "kit de menú", "kit de menu", "canva", "menú pro", "menu pro", "plantilla canva")):
         r = TXT_PRECIOS
     elif bajo.startswith("/muestra") or "muestra" in bajo or "gratis" in bajo:
         r = TXT_MUESTRA
@@ -580,6 +601,14 @@ for u in updates:
                     "\U0001F9EE %s (@%s) pagó la CALCULADORA PRO ($3) → entregada al instante." % (nombre, username)})
         else:
             r = TXT_CALCULADORA
+    elif any(k in bajo for k in ("kit menú", "kit menu", "kit de menú", "kit de menu", "plantillas de canva", "plantilla canva", "menú pro", "menu pro", "canva")):
+        if any(k in bajo for k in ("pagué", "pague", "ya pag", "pagado", "realizé el pago", "realicé el pago")):
+            r = TXT_KIT_OK
+            if not es_jefa:
+                tg("sendMessage", {"chat_id": JEFA, "text":
+                    "\U0001F37D\uFE0F %s (@%s) pagó el KIT MENÚ PRO ($7) → entregado al instante." % (nombre, username)})
+        else:
+            r = TXT_KIT
     elif "plantilla" in bajo:
         if any(k in bajo for k in ("pagué", "pague", "ya pag", "pagado", "pague el", "realizé el pago", "realicé el pago")):
             r = TXT_PLANTILLAS_OK
