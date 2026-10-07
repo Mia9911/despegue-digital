@@ -322,6 +322,14 @@ TXT_INTAKE_GRANDE = (
 # ---------------- POSTS PARA GRUPOS ----------------
 IG = "@despegue_digitalmarketing"
 PROMOS = [
+    ("🤖 ¿Cuántas ventas pierdes mientras duermes?\n\n"
+     "Un VENDEDOR IA 24/7 atiende tu negocio en Telegram: responde precios, "
+     "toma pedidos, cobra y publica tu promo TODOS los días — solo.\n\n"
+     "🧪 Pruébalo GRATIS (demo interactivo, sin comprar nada):\n"
+     "👉 https://mia9911.github.io/despegue-digital/vendedor-ia.html\n\n"
+     "Lo montamos TODO por ti en 48h · $49 una sola vez.\n"
+     "🤖 Atención inmediata 24/7 → t.me/Despeguedijitalbot\n"
+     "🛒 " + VITRINA),
     ("📝 ¿Vendes por WhatsApp? Estos 30 mensajes listos para copiar y pegar "
      "te van a salvar horas (primer contacto, seguimiento, cliente indeciso, "
      "cierre, recuperar clientes...). Gratis, en español:\n"
