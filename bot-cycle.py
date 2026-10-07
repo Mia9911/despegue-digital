@@ -601,7 +601,7 @@ for u in updates:
                     "\U0001F9EE %s (@%s) pagó la CALCULADORA PRO ($3) → entregada al instante." % (nombre, username)})
         else:
             r = TXT_CALCULADORA
-    elif any(k in bajo for k in ("kit menú", "kit menu", "kit de menú", "kit de menu", "plantillas de canva", "plantilla canva", "menú pro", "menu pro", "canva")):
+    elif any(k in bajo for k in ("kit menú", "kit menu", "kit de menú", "kit de menu", "plantillas de canva", "plantilla canva", "menú pro", "menu pro", "canva", "pagué kit", "pague kit", "pagué el kit", "pague el kit", "ya pague el kit", "ya pagué el kit", "pagado kit", "compré el kit", "compre el kit")):
         if any(k in bajo for k in ("pagué", "pague", "ya pag", "pagado", "realizé el pago", "realicé el pago")):
             r = TXT_KIT_OK
             if not es_jefa:
