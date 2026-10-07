@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>🃏 CARTAS — Escoba del 15, el juego de mesa cubano</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body { font-family: Georgia, 'Times New Roman', serif; background:#0a2926; color:#f2f7ea; text-align:center; overflow-x:hidden; padding:12px; max-width:520px; margin:0 auto; user-select:none; }
+  h1 { font-size:1.35em; color:#f4d35e; margin:8px 0 2px; }
+  .sub { color:#7fd1c1; font-size:.84em; font-style:italic; margin-bottom:8px; }
+  .sponsor { background:#123b36; border:1px dashed #f4d35e44; border-radius:10px; padding:8px 10px; font-size:.74em; color:#7fd1c1; margin:8px 0; line-height:1.45; }
+  .sponsor b { color:#f4d35e; } .sponsor a { color:#f4d35e; }
+  .marcador { display:flex; justify-content:center; gap:10px; margin:8px 0; flex-wrap:wrap; }
+  .caja { background:#123b36; border:1px solid #f4d35e44; border-radius:12px; padding:8px 12px; min-width:88px; }
+  .caja b { display:block; font-size:1.3em; color:#f4d35e; }
+  .caja span { font-size:.64em; color:#7fd1c1; text-transform:uppercase; letter-spacing:1px; }
+  .lbl { font-size:.78em; color:#7fd1c1; margin:4px 0; }
+  #mesa { background:linear-gradient(135deg,#0f4d42,#0a3830); border:2px solid #f4d35e33; border-radius:16px; min-height:150px; padding:12px 6px; margin:8px 0; display:flex; flex-wrap:wrap; gap:6px; align-content:flex-start; justify-content:center; }
+  .carta { display:flex; flex-direction:column; align-items:center; justify-content:center; width:46px; height:64px; background:#fdf6e3; color:#1a3c36; border:1px solid #b8a24e; border-radius:8px; font-weight:bold; font-size:1.15em; }
+  .carta small { font-size:.55em; font-weight:normal; }
+  .oro { color:#c98a00; } .copa { color:#a33b3b; } .espada { color:#3a5a8c; } .basto { color:#3d7a3d; }
+  #mano { display:flex; gap:10px; justify-content:center; padding:10px 4px; margin:6px 0; }
+  #mano .carta { width:56px; height:78px; cursor:pointer; font-size:1.35em; transition:transform .1s; border-width:2px; }
+  #mano .carta.jugable { box-shadow:0 0 12px 2px rgba(244,211,94,.5); border-color:#f4d35e; }
+  #mano .carta:active { transform:scale(.92); }
+  .cpurow { display:flex; gap:6px; justify-content:center; margin:4px 0; }
+  .cpurow .carta { background:#1d5a4d; color:#7fd1c1; border-color:#7fd1c155; font-size:.8em; }
+  .acciones { display:flex; gap:10px; margin:6px 0; }
+  .btn { flex:1; background:linear-gradient(135deg,#f4d35e,#e0a82e); color:#0a2926; font-family:inherit; font-weight:bold; font-size:.95em; border:none; border-radius:12px; padding:12px; cursor:pointer; }
+  .btn.sec { background:#123b36; color:#7fd1c1; border:1px solid #7fd1c155; }
+  .premios { background:#123b36; border-radius:14px; padding:14px; margin:12px 0; text-align:left; border:1px solid #f4d35e33; }
+  .premios h2 { color:#f4d35e; font-size:1em; margin-bottom:10px; text-align:center; }
+  .premio { display:flex; align-items:center; gap:10px; padding:10px; border-radius:10px; margin:6px 0; background:#0a2926; border:1px solid #ffffff14; }
+  .premio .ico { font-size:1.7em; }
+  .premio .info { flex:1; }
+  .premio .info b { font-size:.88em; display:block; }
+  .premio .info small { color:#7fd1c1; font-size:.72em; }
+  .premio .estado { font-size:.8em; font-weight:bold; }
+  .bloq { color:#7fd1c1; } .listo { color:#5ddba0; } .reclamado { color:#f4d35e; }
+  .modal { position:fixed; inset:0; background:rgba(4,16,14,.94); z-index:20; display:none; align-items:center; justify-content:center; padding:18px; }
+  .modal.on { display:flex; }
+  .mbox { background:#123b36; border:2px solid #f4d35e; border-radius:16px; padding:20px; max-width:380px; width:100%; }
+  .mbox h3 { color:#f4d35e; margin-bottom:8px; }
+  .mbox p { font-size:.88em; line-height:1.45; margin:8px 0; }
+  .codigo { background:#0a2926; border:1px dashed #f4d35e; border-radius:10px; padding:10px; font-size:1.2em; letter-spacing:2px; color:#f4d35e; font-weight:bold; margin:10px 0; }
+  .flotante { position:fixed; color:#f4d35e; font-weight:bold; font-size:1.25em; pointer-events:none; animation:sube .9s ease-out forwards; z-index:9; }
+  @keyframes sube { from { opacity:1; transform:translateY(0) } to { opacity:0; transform:translateY(-85px) } }
+  .nota { font-size:.72em; color:#7fd1c1; margin-top:12px; line-height:1.5; font-style:italic; }
+  .vacio { color:#7fd1c1; font-size:.85em; font-style:italic; }
+  .reglas { font-size:.8em; color:#cfe8dd; text-align:left; line-height:1.6; background:#123b36; border-radius:12px; padding:12px; margin:8px 0; border:1px solid #f4d35e22; }
+  .reglas b { color:#f4d35e; }
+</style>
+</head>
+<body>
+<h1>🃏 CARTAS — ESCOBA DEL 15</h1>
+<div class="sub">El clásico de mesa cubano · suma 15, barre la mesa, gana fichas reales</div>
+
+<div class="sponsor" id="sponsor">📢 Patrocinado por: <b>DESPEGUE DIGITAL</b> — diseño y marketing que venden. <a href="patrocinio.html">¿Tu marca aquí? →</a></div>
+
+<div class="marcador">
+  <div class="caja"><b id="fichas">0</b><span>fichas premio</span></div>
+  <div class="caja"><b id="mias">0</b><span>mis cartas</span></div>
+  <div class="caja"><b id="escobas">0</b><span>🧹 escobas</span></div>
+</div>
+
+<div class="cpurow" id="cpuMano"></div>
+<div class="lbl" id="mazo">🤖 cartas del teléfono + mazo</div>
+
+<div id="mesa"></div>
+
+<div id="mano"></div>
+<div class="lbl" id="turno">TU TURNO — toca una carta: si suma 15 con las de la mesa, ¡te las llevas!</div>
+
+<div class="acciones">
+  <button class="btn" id="btnMesa">🧹 NUEVA MESA</button>
+</div>
+
+<div class="reglas">
+  <b>Cómo se juega:</b> toca una de tus cartas. Si junto a cartas de la mesa <b>suma exactamente 15</b>, te las llevas todas (tu carta + las de la mesa). Si te llevas <b>toda la mesa de golpe → ¡ESCOBA! +5 fichas</b> 🧹. Si no sumas 15, tu carta queda en la mesa.<br>
+  <b>Al final de la mesa</b> gana puntos: quien más cartas, quien más 🪙oros, quien tenga el 7 de oro, y cada escoba. <b>Ganar la mesa: +15 fichas.</b>
+</div>
+
+<div class="premios">
+  <h2>🏆 Canjea tus fichas por premios REALES</h2>
+  <div class="premio" id="p0">
+    <div class="ico">🎁</div>
+    <div class="info"><b>Muestra gratis de diseños</b><small>2 piezas para tu negocio</small></div>
+    <div class="estado bloq" id="e0">🔒 200</div>
+  </div>
+  <div class="premio" id="p1">
+    <div class="ico">📱</div>
+    <div class="info"><b>Pack Plantillas WhatsApp</b><small>de $4 a $3.60 con premio</small></div>
+    <div class="estado bloq" id="e1">🔒 1,500</div>
+  </div>
+  <div class="premio" id="p2">
+    <div class="ico">🎒</div>
+    <div class="info"><b>Kit Exprés Digital</b><small>de $9 a solo $7.65</small></div>
+    <div class="estado bloq" id="e2">🔒 6,000</div>
+  </div>
+</div>
+
+<button class="btn" style="flex:none;width:100%" onclick="compartir()">📤 Invitar a un amigo</button>
+<a class="btn sec" style="flex:none" href="https://t.me/Despeguedijitalbot" target="_blank">🤖 Canjear premio con el bot</a>
+
+<div class="modal" id="modal">
+  <div class="mbox">
+    <h3 id="mtit">🃏</h3>
+    <p id="mtxt"></p>
+    <div class="codigo" id="mcod" style="display:none"></div>
+    <button class="btn" id="mbtn" style="width:100%">SEGUIR</button>
+  </div>
+</div>
+
+<div class="nota">🃏 ESCOBA DEL 15 · Despegue Digital · 🇨🇺<br>+5 fichas por escoba · +15 por ganar la mesa · +10 por volver cada día<br>Jugar es 100% gratis, siempre.</div>
+<img src="https://visitor-badge.laobi.icu/badge?page_id=despegue-cartas" style="display:block;margin:12px auto;max-width:96px;opacity:.75" alt="visitas">
+
+<script>
+// ===CORE_START===
+function nuevaBaraja(){
+  var d = [];
+  for (var palo = 0; palo < 4; palo++) for (var v = 1; v <= 10; v++) d.push({ p: palo, v: v });
+  for (var i = d.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = d[i]; d[i] = d[j]; d[j] = t; }
+  return d;
+}
+function barajaValida(d){
+  if (!d || d.length !== 40) return false;
+  var seen = {};
+  for (var i = 0; i < d.length; i++) {
+    var c = d[i];
+    if (c.v < 1 || c.v > 10 || c.p < 0 || c.p > 3) return false;
+    var k = c.p + "-" + c.v;
+    if (seen[k]) return false;
+    seen[k] = 1;
+  }
+  return true;
+}
+function capturas(v, mesa){
+  var res = [], n = mesa.length;
+  for (var mask = 1; mask < (1 << n); mask++) {
+    var s = 0, ids = [];
+    for (var b = 0; b < n; b++) if (mask & (1 << b)) { s += mesa[b].v; ids.push(b); }
+    if (s === 15 - v) res.push(ids);
+  }
+  return res;
+}
+function mejorCaptura(v, mesa){
+  var caps = capturas(v, mesa);
+  if (!caps.length) return null;
+  var best = caps[0];
+  for (var i = 1; i < caps.length; i++) if (caps[i].length > best.length) best = caps[i];
+  return best;
+}
+function esEscoba(captura, mesa){ return captura.length === mesa.length && mesa.length > 0; }
+// ===CORE_END===
+
+var S = { fichas: 0, racha: 0, dia: "", recl: [0,0,0] };
+try { var _j = JSON.parse(localStorage.getItem("cartas_v1") || "{}");
+  S = { fichas:_j.fichas||0, racha:_j.racha||0, dia:_j.dia||"", recl:_j.recl||[0,0,0] }; } catch(e) {}
+function save(){ try { localStorage.setItem("cartas_v1", JSON.stringify(S)); } catch(e) {} }
+var METAS = [200, 1500, 6000];
+var CODIGOS = ["MUESTRA", "PLANTA10", "KIT15"];
+var ICONOS = ["🎁", "📱", "🎒"];
+var NAMES = ["Muestra gratis de diseños", "Pack Plantillas WhatsApp (¡a $3.60!)", "Kit Exprés Digital (¡a $7.65!)"];
+var PALOS = [["oro", "🪙"], ["copa", "🏆"], ["espada", "⚔️"], ["basto", "🌳"]];
+var mazo, mesa, yo, cpu, mioPile, cpuPile, escobasYo, escobasCPU, turno, finMesa, cpuTimer, ultimoCaptor;
+
+function cartaHTML(c, extra){
+  var p = PALOS[c.p];
+  return '<div class="carta ' + p[0] + (extra ? " " + extra : "") + '">' + c.v + "<small>" + p[1] + "</small></div>";
+}
+function toast(t){
+  var f = document.createElement("div");
+  f.className = "flotante"; f.textContent = t;
+  f.style.left = (26 + Math.random() * 46) + "%"; f.style.top = "30%";
+  document.body.appendChild(f); setTimeout(function(){ f.remove(); }, 900);
+}
+function pintar(){
+  document.getElementById("fichas").textContent = S.fichas.toLocaleString("es-ES");
+  document.getElementById("mias").textContent = mioPile.length;
+  document.getElementById("escobas").textContent = escobasYo;
+  document.getElementById("mazo").textContent = "🤖 cartas del teléfono: " + cpu.length + " · mazo: " + mazo.length;
+  document.getElementById("mesa").innerHTML = mesa.length ? mesa.map(function(c){ return cartaHTML(c); }).join("") : '<div class="vacio">mesa limpia — 🧹 ¡escoba!</div>';
+  document.getElementById("cpuMano").innerHTML = cpu.map(function(){ return '<div class="carta">🂠</div>'; }).join("");
+  document.getElementById("mano").innerHTML = yo.map(function(c, i){
+    return '<div data-i="' + i + '" style="cursor:pointer">' + cartaHTML(c, "jugable") + "</div>";
+  }).join("");
+  Array.prototype.forEach.call(document.querySelectorAll("#mano > div"), function(el){
+    el.addEventListener("pointerdown", function(){ jugarCarta(parseInt(el.getAttribute("data-i"), 10)); });
+  });
+  document.getElementById("turno").textContent = finMesa ? "mesa terminada" :
+    (turno === "yo" ? "TU TURNO — toca una carta" : "🤖 el teléfono está pensando…");
+  for (var p = 0; p < 3; p++) {
+    var e = document.getElementById("e" + p);
+    if (S.recl[p]) { e.className = "estado reclamado"; e.textContent = "✓ canjeado"; }
+    else if (S.fichas >= METAS[p]) { e.className = "estado listo"; e.textContent = "🎉 ¡TÓCALO!"; }
+    else { e.className = "estado bloq"; e.textContent = "🔒 " + (METAS[p] - S.fichas).toLocaleString("es-ES") + " más"; }
+  }
+}
+function nuevaMesa(){
+  clearTimeout(cpuTimer);
+  mazo = nuevaBaraja();
+  mesa = mazo.splice(0, 4);
+  yo = mazo.splice(0, 3);
+  cpu = mazo.splice(0, 3);
+  mioPile = []; cpuPile = [];
+  escobasYo = 0; escobasCPU = 0;
+  ultimoCaptor = null;
+  turno = "yo"; finMesa = false;
+  pintar();
+}
+function repartirSiHaceFalta(){
+  if (yo.length === 0 && cpu.length === 0) {
+    while (yo.length < 3 && mazo.length) yo.push(mazo.shift());
+    while (cpu.length < 3 && mazo.length) cpu.push(mazo.shift());
+  }
+}
+function capturar(who, card, ids){
+  var pile = who === "yo" ? mioPile : cpuPile;
+  pile.push(card);
+  var escoba = esEscoba(ids, mesa);
+  for (var i = ids.length - 1; i >= 0; i--) pile.push(mesa[ids[i]]);
+  mesa = mesa.filter(function(_, idx){ return ids.indexOf(idx) < 0; });
+  ultimoCaptor = who;
+  if (who === "yo" && escoba) { escobasYo++; S.fichas += 5; save(); toast("🧹 ¡ESCOBA! +5"); }
+  if (who === "cpu" && escoba) { escobasCPU++; toast("🤖 el teléfono hizo escoba"); }
+}
+function jugarCarta(i){
+  if (finMesa || turno !== "yo") return;
+  var card = yo.splice(i, 1)[0];
+  var ids = mejorCaptura(card.v, mesa);
+  if (ids) { capturar("yo", card, ids); toast(ids.length >= 3 ? "¡+" + (ids.length + 1) + " cartas!" : "¡cartas!"); }
+  else { mesa.push(card); toast("➕ al mesa"); }
+  if (navigator.vibrate) { try { navigator.vibrate(10); } catch(e) {} }
+  repartirSiHaceFalta();
+  if (yo.length === 0 && cpu.length === 0 && mazo.length === 0) return finDeMesa();
+  if (cpu.length) { turno = "cpu"; pintar(); cpuTimer = setTimeout(jugarCPU, 900); }
+  else { turno = "yo"; pintar(); }
+}
+function jugarCPU(){
+  if (finMesa) return;
+  var bestI = -1, bestLen = -1;
+  for (var i = 0; i < cpu.length; i++) {
+    var cap = mejorCaptura(cpu[i].v, mesa);
+    if (cap && cap.length > bestLen) { bestLen = cap.length; bestI = i; }
+  }
+  if (bestI < 0) {
+    var card = cpu.splice(0, 1)[0];
+    mesa.push(card);
+  } else {
+    var c2 = cpu.splice(bestI, 1)[0];
+    var ids = mejorCaptura(c2.v, mesa);
+    capturar("cpu", c2, ids);
+  }
+  repartirSiHaceFalta();
+  if (yo.length === 0 && cpu.length === 0 && mazo.length === 0) return finDeMesa();
+  turno = "yo"; pintar();
+}
+function finDeMesa(){
+  if (ultimoCaptor === "cpu" && mesa.length) { cpuPile = cpuPile.concat(mesa); mesa = []; }
+  else if (ultimoCaptor === "yo" && mesa.length) { mioPile = mioPile.concat(mesa); mesa = []; }
+  var misOros = 0, cpuOros = 0, siete = mioPile.some(function(c){ return c.p === 0 && c.v === 7; });
+  mioPile.forEach(function(c){ if (c.p === 0) misOros++; });
+  cpuPile.forEach(function(c){ if (c.p === 0) cpuOros++; });
+  var ptsYo = escobasYo + (mioPile.length > cpuPile.length ? 1 : 0) + (misOros > cpuOros ? 1 : 0) + (siete ? 1 : 0);
+  var ptsCPU = escobasCPU + (cpuPile.length > mioPile.length ? 1 : 0) + (cpuOros > misOros ? 1 : 0);
+  var gane = ptsYo > ptsCPU, empate = ptsYo === ptsCPU;
+  S.fichas += empate ? 10 : (gane ? 15 : 5);
+  save();
+  finMesa = true; turno = "fin"; pintar(); chequearPremios();
+  var detalle = "Cartas: " + mioPile.length + "–" + cpuPile.length + " · Oros: " + misOros + "–" + cpuOros +
+    " · 🧹 " + escobasYo + "–" + escobasCPU + (siete ? " · 7🪙 tuyo" : "") +
+    "\nPuntos: " + ptsYo + "–" + ptsCPU;
+  modal(gane ? "🎉 ¡GANASTE LA MESA!" : (empate ? "🤝 Empate" : "🤖 El teléfono ganó la mesa"),
+        detalle + "\nFichas: " + (empate ? "+10" : (gane ? "+15" : "+5")), "🃏 OTRA MESA", nuevaMesa);
+}
+function chequearPremios(){
+  for (var i = 0; i < 3; i++) if (!S.recl[i] && S.fichas >= METAS[i]) return abrirPremio(i);
+}
+function abrirPremio(i){
+  var m = document.getElementById("modal");
+  document.getElementById("mtit").textContent = "🎉 ¡PREMIO DESBLOQUEADO!";
+  document.getElementById("mtxt").innerHTML = ICONOS[i] + " <b>" + NAMES[i] + "</b><br>Tu código:";
+  var c = document.getElementById("mcod"); c.style.display = "block"; c.textContent = CODIGOS[i];
+  document.getElementById("mbtn").textContent = "🏆 ¡Lo tengo!";
+  document.getElementById("mbtn").onclick = function(){ m.classList.remove("on"); c.style.display = "none"; };
+  m.classList.add("on");
+  S.recl[i] = 1; save(); pintar();
+}
+function modal(tit, txt, btn, accion){
+  var m = document.getElementById("modal");
+  document.getElementById("mtit").textContent = tit;
+  document.getElementById("mtxt").textContent = txt;
+  var c = document.getElementById("mcod"); c.style.display = "none";
+  document.getElementById("mbtn").textContent = btn;
+  document.getElementById("mbtn").onclick = function(){ m.classList.remove("on"); accion(); };
+  m.classList.add("on");
+}
+document.getElementById("btnMesa").addEventListener("click", nuevaMesa);
+for (var pm = 0; pm < 3; pm++) {
+  (function(i){
+    document.getElementById("p" + i).addEventListener("click", function(){
+      if (S.fichas >= METAS[i] && !S.recl[i]) abrirPremio(i);
+    });
+  })(pm);
+}
+function nuevoDia(){
+  var hoy = new Date().toDateString();
+  if (S.dia !== hoy) {
+    var ayer = new Date(Date.now() - 864e5).toDateString();
+    S.racha = (S.dia === ayer) ? S.racha + 1 : 1;
+    S.dia = hoy; S.fichas += 10; save();
+    setTimeout(function(){ toast("🎁 +10 fichas por volver (día " + S.racha + ")"); }, 600);
+  }
+}
+function compartir(){
+  var u = "https://mia9911.github.io/despegue-digital/cartas.html";
+  var t = "🃏 Estoy jugando ESCOBA DEL 15 contra el teléfono — y las fichas se canjean por premios REALES 🇨🇺. ¡A ver quién barre la mesa! 👇";
+  window.open("https://t.me/share/url?url=" + encodeURIComponent(u) + "&text=" + encodeURIComponent(t), "_blank");
+}
+var SPONSORS = [
+  '📢 Patrocinado por: <b>DESPEGUE DIGITAL</b> — diseño y marketing que venden. <a href="patrocinio.html">¿Tu marca aquí? →</a>',
+  '📢 <b>¿Vendes algo?</b> Plantillas de WhatsApp desde $4 — <a href="index.html">ver la tienda →</a>',
+  '📢 <b>Tu marca en las cartas de los cubanos</b> — <a href="patrocinio.html">patrocina desde $3 →</a>'
+];
+var spI = 0;
+setInterval(function(){ spI = (spI + 1) % SPONSORS.length; document.getElementById("sponsor").innerHTML = SPONSORS[spI]; }, 6000);
+var tgApp = window.Telegram && window.Telegram.WebApp;
+if (tgApp) { try { tgApp.ready(); tgApp.expand(); } catch(e) {} }
+nuevoDia(); nuevaMesa();
+</script>
+</body>
+</html>
