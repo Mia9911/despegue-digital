@@ -15,7 +15,7 @@
   "total": 0
  },
  "_agenda": {
-  "ultima": "2026-10-11"
+  "ultima": "2026-10-12"
  },
  "_radar_lx": {
   "ultima": "2026-09-29",
@@ -363,24 +363,24 @@
    "web3-marketing-87098"
   ],
   "gig": {
-   "v": 126,
+   "v": 127,
    "c": 0,
    "av": 125,
    "ac": 0
   },
-  "hora": "2026-10-12T01"
+  "hora": "2026-10-12T06"
  },
  "_metricas": {
-  "fecha": "2026-10-11",
+  "fecha": "2026-10-12",
   "badge": {
-   "despegue-tienda": 96,
-   "despegue-sala": 28,
-   "despegue-imperio": 23,
-   "despegue-mina": 20,
-   "arena-plata": 26,
-   "despegue-domino": 8,
-   "despegue-bingo": 19,
-   "despegue-cartas": 29
+   "despegue-tienda": 98,
+   "despegue-sala": 29,
+   "despegue-imperio": 24,
+   "despegue-mina": 21,
+   "arena-plata": 27,
+   "despegue-domino": 9,
+   "despegue-bingo": 20,
+   "despegue-cartas": 30
   }
  }
 }
