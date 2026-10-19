@@ -4,12 +4,12 @@
    "title": "Despegue Digital Negocios Cuba",
    "username": "DespegueDigitalCuba",
    "activo": true,
-   "ultima": "2026-10-18",
-   "posts": 26
+   "ultima": "2026-10-19",
+   "posts": 27
   }
  },
  "_canal": {
-  "ultima": "2026-10-18"
+  "ultima": "2026-10-19"
  },
  "_pagos": {
   "total": 0
@@ -132,6 +132,8 @@
    "j105128",
    "j105133",
    "j105139",
+   "j105147",
+   "j105148",
    "j84007",
    "j93887",
    "j93888",
@@ -424,7 +426,7 @@
    "av": 208,
    "ac": 0
   },
-  "hora": "2026-10-19T20"
+  "hora": "2026-10-19T22"
  },
  "_metricas": {
   "fecha": "2026-10-19",
