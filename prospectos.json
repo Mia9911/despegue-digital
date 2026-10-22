@@ -55,6 +55,34 @@
    "username": "tony7610",
    "texto": "/start",
    "ts": "2026-10-18T17:06:51.902279-04:00"
+  },
+  {
+   "chat_id": 6573532039,
+   "nombre": "Kenia",
+   "username": "",
+   "texto": "/start",
+   "ts": "2026-10-22T06:32:59.268785-04:00"
+  },
+  {
+   "chat_id": 6573532039,
+   "nombre": "Kenia",
+   "username": "",
+   "texto": "/start",
+   "ts": "2026-10-22T06:33:00.682272-04:00"
+  },
+  {
+   "chat_id": 6573532039,
+   "nombre": "Kenia",
+   "username": "",
+   "texto": "Juego",
+   "ts": "2026-10-22T06:33:01.666807-04:00"
+  },
+  {
+   "chat_id": 6573532039,
+   "nombre": "Kenia",
+   "username": "",
+   "texto": "/soporte",
+   "ts": "2026-10-22T06:33:02.130963-04:00"
   }
  ]
 }
