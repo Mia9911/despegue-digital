@@ -83,6 +83,20 @@
    "username": "",
    "texto": "/soporte",
    "ts": "2026-10-22T06:33:02.130963-04:00"
+  },
+  {
+   "chat_id": 8600965049,
+   "nombre": "Carlos👑",
+   "username": "carlosernesto45",
+   "texto": "/start",
+   "ts": "2026-10-23T18:24:05.174948-04:00"
+  },
+  {
+   "chat_id": 8600965049,
+   "nombre": "Carlos👑",
+   "username": "carlosernesto45",
+   "texto": "/precios",
+   "ts": "2026-10-23T18:24:06.401324-04:00"
   }
  ]
 }
