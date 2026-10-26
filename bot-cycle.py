@@ -188,6 +188,22 @@ TXT_KIT_OK = (
     "Cualquier duda, me escribes. ¡A vender! \U0001F680"
 )
 
+# ---------------- ARENA 2.1: PASE VIP $1.99/semana (link creado por la torre con la API QvaPay) ----------------
+LINK_VIP_PAGO = "https://www.qvapay.com/pay/36a1b674-6253-41a0-aa4a-f729874b6cc2"
+LINK_KIT_EXPRESS = "https://mia9911.github.io/despegue-digital/kit-express.html"
+TXT_VIP = (
+    "\U0001F451 PASE VIP DE LA ARENA — $1.99/semana:\n\n"
+    "\u2705 Multiplicador x2 en TODOS los desaf\u00edos de l\u00f3gica\n"
+    "\u2705 Corona \U0001F451 junto a tu nombre en los resultados\n"
+    "\u2705 Insignia VIP en el ranking semanal de tu grupo\n\n"
+    "Se activa al segundo. Paga aqu\u00ed (QvaPay seguro):\n" + LINK_VIP_PAGO + "\n\n"
+    "Cuando pagues, escr\u00edbeme \"pagu\u00e9 vip\" (aqu\u00ed o en tu grupo) y lo activo ya. \u2694\ufe0f"
+)
+TXT_VIP_OK = (
+    "\U0001F451 ¡VIP ACTIVADO por 7 días! A partir del próximo desafío tus puntos "
+    "cuentan x2 y tu nombre sale con corona \U0001F451 ¡A romper el ranking! \u2694\ufe0f"
+)
+
 # ---------------- PRODUCTO: CALCULADORA (25/9, idea de la Jefa) ----------------
 LINK_CALC_PAGO = "https://www.qvapay.com/pay/63b2090d-b3a7-4214-a64d-fa8f85d50c71"
 LINK_CALC_WEB = "https://mia9911.github.io/despegue-digital/calculadora.html"
@@ -480,8 +496,8 @@ def registrar_respuesta(retos, cid, uid, nombre, opt, ts):
     rt.setdefault("respuestas", {})[str(uid)] = {"nombre": nombre, "opt": int(opt), "ts": ts or 0}
     return True
 
-def puntuar_reto(rt, racha_prev):
-    """Correcto +10 · primero en acertar +5 · racha +min(racha,5). Fallar resetea la racha."""
+def puntuar_reto(rt, racha_prev, vip=None):
+    """Correcto +10 · primero en acertar +5 · racha +min(racha,5). VIP = x2. Fallar resetea la racha."""
     k = rt["k"]; res = rt.get("respuestas") or {}
     orden = sorted(res.items(), key=lambda kv: (kv[1].get("ts") or 0))
     deltas = {}; primero = True
@@ -491,6 +507,8 @@ def puntuar_reto(rt, racha_prev):
         pts = 0
         if ok:
             pts = 10 + (5 if primero else 0) + min(rc, 5)
+            if vip and uid in vip:
+                pts *= 2
             primero = False
         deltas[uid] = {"nombre": r["nombre"], "ok": ok, "puntos": pts, "racha": rc}
     return deltas
@@ -722,6 +740,30 @@ for u in updates:
         else:
             r = ("\U0001F4B0 La bolsa de LA ARENA va en $%.2f.\nPara sumarle: \"bolsa +5\" (en d\u00f3lares). "
                  "Se ve al instante en la web y en \"arena\".") % bolsa_actual()
+    elif es_jefa and bajo.startswith("patrocinador "):
+        _sp = texto[len("patrocinador "):].strip()
+        if _sp.lower() in ("quitar", "ninguno", "off", "no"):
+            grupos.pop("_sponsor", None)
+            r = "✅ Patrocinador de la liga quitado."
+        else:
+            grupos["_sponsor"] = {"nombre": _sp, "desde": hoy}
+            r = "✅ Liga patrocinada por: %s — saldrá en los próximos desafíos. (Para quitar: 'patrocinador quitar')" % _sp
+    elif "vip" in bajo or "moneda" in bajo:
+        if any(k in bajo for k in ("pagué", "pague", "ya pag", "pagado", "compré", "compre")):
+            try:
+                _uid_v = str((m.get("from") or {}).get("id") or m.get("message_id"))
+                _vipd = grupos.get("_vip") or {}
+                _vipd[_uid_v] = {"nombre": nombre,
+                                 "expira": (datetime.now(CUBA) + timedelta(days=7)).strftime("%Y-%m-%d")}
+                grupos["_vip"] = _vipd
+            except Exception as _e:
+                print("vip reg fail:", _e)
+            r = TXT_VIP_OK
+            if not es_jefa:
+                tg("sendMessage", {"chat_id": JEFA, "text":
+                    "\U0001F4B0 %s (@%s) compró el PASE VIP ARENA ($1.99) → activado 7 días. \U0001F451" % (nombre, username)})
+        else:
+            r = TXT_VIP
     elif "arena" in bajo or "bolsa" in bajo:
         _score = None
         for _p in bajo.split():
@@ -859,17 +901,29 @@ try:
     _rk = grupos.get("_ranking_sem") or {}
     if _rk.get("semana") != _sem:
         for _gid, _pos in ((_rk.get("grupos") or {}) or {}).items():
-            _top = sorted((_pos or {}).items(), key=lambda kv: -kv[1].get("puntos", 0))[:1]
-            if _top and _top[0][1].get("puntos", 0) > 0:
+            _t3 = [(v.get("nombre", "?"), v.get("puntos", 0))
+                   for _, v in sorted((_pos or {}).items(), key=lambda kv: -kv[1].get("puntos", 0))[:3]
+                   if v.get("puntos", 0) > 0]
+            if _t3:
                 try:
                     tg("sendMessage", {"chat_id": int(_gid), "text":
                         "👑 ARENA — CAMPEÓN SEMANAL: %s con %d puntos 🏆\n"
                         "El ranking semanal arranca de CERO hoy. ¡A recuperar el trono! ⚔️" %
-                        (_top[0][1].get("nombre", "?"), _top[0][1]["puntos"])})
+                        (_t3[0][0], _t3[0][1])})
+                    _prem = ["🎁 PREMIOS DE LA LIGA (" + _sem + "):"]
+                    _links3 = [LINK_KIT_EXPRESS, LINK_KIT_PROD, LINK_PLANTILLAS_PROD]
+                    _med3 = ["🥇", "🥈", "🥉"]
+                    for _i, (_nm, _pt) in enumerate(_t3):
+                        _prem.append("%s %s (%d pts) → %s" % (_med3[_i], _nm, _pt, _links3[_i]))
+                    _prem.append("¡Los enlaces son suyos! ¿Premios en EFECTIVO? Que un negocio "
+                                 "patrocine la bolsa: escríbeme \"patrocinio\" 🤝")
+                    tg("sendMessage", {"chat_id": int(_gid), "text": "\n".join(_prem)})
                 except Exception:
                     pass
         _rk = {"semana": _sem, "grupos": {}}
     grupos["_ranking_sem"] = _rk
+    _vips = {u for u, v in (grupos.get("_vip") or {}).items()
+             if (v or {}).get("expira", "0000-00-00") >= hoy}
     _retos = grupos.get("_retos") or {}
     for cid, g in grupos["grupos"].items():
         if not g.get("activo"):
@@ -883,7 +937,7 @@ try:
             if rt.get("respuestas"):
                 # ---- cerrar y puntuar ----
                 racha_prev = {u: v.get("racha", 0) for u, v in ((_rk["grupos"].get(cid) or {}) or {}).items()}
-                deltas = puntuar_reto(rt, racha_prev)
+                deltas = puntuar_reto(rt, racha_prev, _vips)
                 _posg = _rk["grupos"].setdefault(cid, {})
                 _med = ["🥇", "🥈", "🥉"]
                 _lines = []; _mi = 0
@@ -893,7 +947,8 @@ try:
                     p["racha"] = d["racha"]; p["partidas"] = p.get("partidas", 0) + 1
                     if d["ok"]:
                         p["aciertas"] = p.get("aciertas", 0) + 1
-                        _lines.append("%s %s +%d%s" % (_med[_mi] if _mi < 3 else "✅", d["nombre"], d["puntos"],
+                        _lines.append("%s %s%s +%d%s" % (_med[_mi] if _mi < 3 else "✅",
+                                      ("👑 " if uid in _vips else ""), d["nombre"], d["puntos"],
                                       (" · racha 🔥%d" % d["racha"]) if d["racha"] > 1 else ""))
                         _mi += 1
                     else:
@@ -925,12 +980,15 @@ try:
                            "rondas": rt.get("rondas", 0) + 1, "proximo": None})
                 _retos[cid] = nr
                 _opts = "\n".join("%d️⃣ %s" % (i + 1, o) for i, o in enumerate(nr["opts"]))
+                _spon = (grupos.get("_sponsor") or {}).get("nombre")
+                _pie = ("\n🏆 Liga patrocinada por: %s" % _spon) if _spon else \
+                       ("\n📢 ¿Quieres TU marca patrocinando la liga? Escríbeme \"patrocinio\"") if (nr["rondas"] % 3 == 0) else ""
                 try:
                     tg("sendMessage", {"chat_id": int(cid), "text":
-                        "⚔️ DESAFÍO DE LA ARENA — lógica rápida\n\n🧠 %s\n\n%s\n\n"
+                        ("⚔️ DESAFÍO DE LA ARENA — lógica rápida\n\n🧠 %s\n\n%s\n\n"
                         "👉 Responde aquí solo con 1, 2 o 3.\n"
                         "⏱️ Cierra en el próximo round · el primero en acertar gana bonus.\n"
-                        "Ranking semanal con campeón cada lunes. Arena by Despegue Digital 🚀" % (nr["q"], _opts)})
+                        "Ranking semanal con campeón cada lunes. Arena by Despegue Digital 🚀" % (nr["q"], _opts)) + _pie})
                 except Exception as _e:
                     print("reto open fail:", _e)
     grupos["_retos"] = _retos
