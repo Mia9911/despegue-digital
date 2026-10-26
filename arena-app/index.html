@@ -200,6 +200,7 @@ var LINK_MONEDAS="https://www.qvapay.com/pay/13f51518-694b-4065-a83d-0afaf4d32bd
 var LINK_VIP="https://www.qvapay.com/pay/36a1b674-6253-41a0-aa4a-f729874b6cc2";
 function comprar(item){
  var url=item=="vip"?LINK_VIP:LINK_MONEDAS, desc=item=="vip"?"Pase VIP Arena 7 días":"+5 monedas Arena";
+ LS.set("ultimo_item",item);
  try{
   if(window.QvaPay&&typeof window.QvaPay.pay==="function"){
    window.QvaPay.pay({amount:item=="vip"?1.99:0.99,description:desc}).then(function(){
@@ -212,7 +213,7 @@ function comprar(item){
  document.getElementById("msjT").textContent="Pago abierto en QvaPay — al terminar vuelve y toca “ya pagué”.";
 }
 function yaPague(){
- var p=new URLSearchParams(location.search), item=p.get("item")||p.get("remote_id")||"";
+ var p=new URLSearchParams(location.search), item=p.get("item")||LS.get("ultimo_item","monedas");
  if(item.indexOf("vip")>=0){acreditar("vip");return}
  acreditar("monedas");
 }
@@ -225,7 +226,7 @@ function acreditar(item){
 // parámetros de retorno de pago (?pago=ok&item=vip)
 (function(){
  var p=new URLSearchParams(location.search);
- if(p.get("pago")=="ok"){acreditar(p.get("item")||"monedas");mostrar("pTienda")}
+ if(p.get("pago")=="ok"){acreditar(p.get("item")||LS.get("ultimo_item","monedas"));mostrar("pTienda")}
 })();
 pintarHUD();
 </script>
