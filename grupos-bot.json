@@ -491,5 +491,19 @@
    "rondas": 1,
    "proximo": null
   }
+ },
+ "_guerra": {
+  "semana": "2026-W44",
+  "activa": true,
+  "hp": {
+   "caiman": 500,
+   "gavilan": 500
+  },
+  "clanes": {
+   "caiman": {},
+   "gavilan": {}
+  },
+  "ronda": 0,
+  "reinicia": null
  }
 }
