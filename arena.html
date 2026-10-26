@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>🏟️ LA ARENA — El torneo que paga plata REAL</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body { font-family: Georgia, 'Times New Roman', serif; background:#0e0a04; color:#fdf6e3; text-align:center; overflow-x:hidden; padding:12px; max-width:520px; margin:0 auto; user-select:none; }
+  h1 { font-size:1.4em; color:#ffd166; margin:8px 0 2px; }
+  .sub { color:#c9a84c; font-size:.84em; font-style:italic; margin-bottom:8px; }
+  .bolsa { background:linear-gradient(135deg,#1d1503,#2b1e05); border:2px solid #ffd166; border-radius:16px; padding:14px; margin:10px 0; }
+  .bolsa .lbl { font-size:.72em; color:#c9a84c; text-transform:uppercase; letter-spacing:2px; }
+  .bolsa .monto { font-size:2.6em; font-weight:bold; color:#ffd166; line-height:1.1; }
+  .bolsa small { color:#c9a84c; font-size:.76em; }
+  .marcador { display:flex; justify-content:center; gap:10px; margin:8px 0; flex-wrap:wrap; }
+  .caja { background:#1d1503; border:1px solid #ffd16644; border-radius:12px; padding:8px 12px; min-width:100px; }
+  .caja b { display:block; font-size:1.3em; color:#ffd166; }
+  .caja span { font-size:.66em; color:#c9a84c; text-transform:uppercase; letter-spacing:1px; }
+  #campo { position:relative; height:310px; margin:10px 0 6px; border-radius:18px; overflow:hidden;
+           background:radial-gradient(circle at 50% 0%, #3b2c10, #171005 75%); border:1px solid #ffd16633; }
+  .billete { position:absolute; width:56px; height:56px; border:none; border-radius:12px; font-size:1.9em; line-height:56px; cursor:pointer;
+             background:radial-gradient(circle at 35% 30%, #2b3a1d, #1a2408); border:1px solid #ffd16655;
+             animation:encoge 1.5s ease-in forwards; touch-action:manipulation; }
+  .billete.dorado { background:radial-gradient(circle at 35% 30%, #4d3a08, #2b1e05); border-color:#ffd166;
+                    box-shadow:0 0 18px 4px rgba(255,209,102,.55); }
+  @keyframes encoge { 0%{transform:scale(1)} 75%{transform:scale(1)} 100%{transform:scale(.25); opacity:.15} }
+  #msg { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:min(270px,88%);
+         background:rgba(20,13,3,.95); border:1px solid #ffd16666; border-radius:14px; padding:16px; z-index:5; }
+  #msg h3 { color:#ffd166; font-size:1em; margin-bottom:6px; }
+  #msg p { font-size:.82em; color:#e8d9a8; line-height:1.5; }
+  #msg.oculto { display:none; }
+  #btnjugar { display:block; width:100%; background:linear-gradient(90deg,#ffd166,#e0a82e); color:#1d1503; font-family:inherit;
+              font-weight:bold; font-size:1.05em; border:none; border-radius:12px; padding:13px; margin:8px 0; cursor:pointer; }
+  #btnjugar:disabled { opacity:.55; }
+  .lbl { font-size:.78em; color:#c9a84c; margin:4px 0; }
+  .combo { color:#ffd166; font-weight:bold; }
+  .card { background:#1d1503; border:1px solid #ffd16633; border-radius:14px; padding:14px; margin:12px 0; text-align:left; }
+  .card h2 { color:#ffd166; font-size:1em; margin-bottom:8px; text-align:center; }
+  .paso { display:flex; gap:10px; padding:7px 0; border-bottom:1px dashed #ffd16622; font-size:.85em; align-items:flex-start; }
+  .paso:last-child { border-bottom:none; }
+  .paso .n { background:#ffd166; color:#1d1503; font-weight:bold; border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:.85em; }
+  .btn { display:block; width:100%; background:linear-gradient(90deg,#ffd166,#e0a82e); color:#1d1503; font-family:inherit; font-weight:bold;
+         font-size:.95em; border:none; border-radius:12px; padding:12px; margin:8px 0; cursor:pointer; text-decoration:none; text-align:center; }
+  .btn.sec { background:#1d1503; color:#c9a84c; border:1px solid #ffd16644; }
+  .flotante { position:fixed; color:#ffd166; font-weight:bold; font-size:1.3em; pointer-events:none; animation:sube .8s ease-out forwards; z-index:9; }
+  @keyframes sube { from { opacity:1; transform:translateY(0) } to { opacity:0; transform:translateY(-80px) } }
+  .sponsor { background:#1d1503; border:1px dashed #ffd16644; border-radius:10px; padding:8px 10px; font-size:.74em; color:#c9a84c; margin:8px 0; line-height:1.45; }
+  .sponsor b { color:#ffd166; } .sponsor a { color:#ffd166; }
+  .nota { font-size:.72em; color:#c9a84c; margin-top:12px; line-height:1.5; font-style:italic; }
+</style>
+</head>
+<body>
+<h1>🏟️ LA ARENA</h1>
+<div class="sub">El torneo cubano que paga plata REAL — gratis jugar, sin trampas</div>
+
+<div class="bolsa">
+  <div class="lbl">💰 Bolsa de la semana</div>
+  <div class="monto" id="bolsa">—</div>
+  <small>se reparte DOMINGO 8pm entre los 3 mejores · 50% / 30% / 20% · pagado por QvaPay</small>
+</div>
+
+<div class="marcador">
+  <div class="caja"><b id="pts">0</b><span>esta ronda</span></div>
+  <div class="caja"><b id="mejor">0</b><span>mejor de la semana</span></div>
+  <div class="caja"><b id="combo">x1</b><span>combo</span></div>
+</div>
+
+<div id="campo">
+  <div id="msg">
+    <h3>💵 ATRAPA LA PLATA</h3>
+    <p>Toca los billetes antes de que se esfumen (30 segundos).<br>El <b style="color:#ffd166">BILLETE DORADO 💰 vale 30</b> · toques al aire rompen el combo.<br><b>Tu mejor ronda de la semana es la que cuenta.</b></p>
+  </div>
+</div>
+<button id="btnjugar">▶️ ¡ENTRAR A LA ARENA!</button>
+<div class="lbl" id="estado">Jugar es 100% GRATIS — jamás se paga por participar</div>
+
+<div class="sponsor" id="sponsor">📢 Patrocinado por: <b>DESPEGUE DIGITAL</b> — diseño y marketing que venden. <a href="https://mia9911.github.io/despegue-digital/patrocinio.html">¿Tu marca aquí? →</a></div>
+
+<div class="card">
+  <h2>🏆 Cómo cobras si ganas</h2>
+  <div class="paso"><div class="n">1</div><div>Juega toda la semana — solo cuenta tu <b>mejor ronda</b></div></div>
+  <div class="paso"><div class="n">2</div><div>Manda tu marca al bot <b>@Despeguedijitalbot</b>: <b>"arena 3470"</b> + captura (y video si quedas top 3 — así nadie hace trampa)</div></div>
+  <div class="paso"><div class="n">3</div><div>Domingo 8pm cierra la semana. Los <b>top 3 se reparten la bolsa</b> (50/30/20) y Mia les paga por QvaPay</div></div>
+</div>
+
+<div class="card">
+  <h2>🌱 De dónde sale la plata (sin humo)</h2>
+  <div class="paso"><div class="n">💵</div><div>La bolsa la alimentan los <b>patrocinadores</b> y quien quiera echarle una mano ($1) — cada peso entra al contador público de arriba</div></div>
+  <div class="paso"><div class="n">📢</div><div>Si tienes un negocio: <b>patrocina LA ARENA</b> y tu marca sale aquí y en los juegos de la red — desde $3</div></div>
+  <div class="paso"><div class="n">🤝</div><div><b>Regla de la casa:</b> la bolsa es pública siempre. Si dice $0, es $0. Aquí nadie promete plata que no existe — por eso cuando hay plata, es de verdad.</div></div>
+</div>
+
+<button class="btn" onclick="compartir()">📤 Invitar a un amigo al torneo</button>
+<a class="btn sec" href="https://t.me/Despeguedijitalbot" target="_blank">🤖 Reportar mi marca al bot</a>
+<a class="btn sec" href="https://mia9911.github.io/despegue-digital/">🏪 Conocer la red DESPEGUE</a>
+
+<div class="nota">🏟️ LA ARENA · Despegue Digital · 🇨🇺<br>Un jugador por persona · la organización no compite · premios pagados contra verificación (captura/video).<br>Si la bolsa está en $0 esta semana, el torneo abre cuando crezca — y aquí siempre se ve la verdad.</div>
+<img src="https://visitor-badge.laobi.icu/badge?page_id=arena-plata" style="display:block;margin:12px auto;max-width:96px;opacity:.75" alt="visitas">
+
+<script>
+var SEGUNDOS = 30, enJuego = false, pts = 0, resta = 0, timer = null, spawner = null, combo = 1, aciertos = 0;
+function semana(){ var d = new Date(), uno = new Date(d.getFullYear(),0,1); var sem = Math.ceil((((d - uno)/864e5) + uno.getDay()+1)/7); return d.getFullYear()+"S"+sem; }
+function clave(){ return "arena_"+semana(); }
+var S = {};
+try { S = JSON.parse(localStorage.getItem(clave()) || "{}"); } catch(e) { S = {}; }
+S.mejor = S.mejor || 0; S.enviado = S.enviado || 0;
+function save(){ try { localStorage.setItem(clave(), JSON.stringify(S)); } catch(e) {} }
+function pintar(){
+  document.getElementById("pts").textContent = pts.toLocaleString("es-ES");
+  document.getElementById("mejor").textContent = (S.mejor||0).toLocaleString("es-ES");
+  document.getElementById("combo").textContent = "x" + combo;
+}
+function toast(t){
+  var f = document.createElement("div");
+  f.className = "flotante"; f.textContent = t;
+  f.style.left = (26 + Math.random()*46) + "%"; f.style.top = "34%";
+  document.body.appendChild(f); setTimeout(function(){ f.remove(); }, 800);
+}
+function cargarBolsa(){
+  fetch("https://raw.githubusercontent.com/Mia9911/despegue-digital/main/bolsa.json", { cache: "no-store" })
+    .then(function(r){ return r.json(); })
+    .then(function(d){ document.getElementById("bolsa").textContent = "$" + (Number(d.pool)||0).toFixed(2); })
+    .catch(function(){ document.getElementById("bolsa").textContent = "$0.00"; });
+}
+function nuevoBillete(){
+  var c = document.getElementById("campo");
+  var b = document.createElement("button");
+  var dorado = Math.random() < 0.15;
+  b.className = "billete" + (dorado ? " dorado" : "");
+  b.textContent = dorado ? "💰" : "💵";
+  b._v = dorado ? 30 : 10;
+  var w = c.clientWidth - 64, h = c.clientHeight - 64;
+  b.style.left = (4 + Math.random()*w) + "px";
+  b.style.top = (4 + Math.random()*h) + "px";
+  b.addEventListener("pointerdown", function(ev){
+    ev.stopPropagation();
+    if (!enJuego) return;
+    aciertos++; combo = Math.min(5, 1 + Math.floor(aciertos/5));
+    pts += b._v * combo;
+    pintar(); toast("+" + (b._v * combo));
+    if (navigator.vibrate) { try { navigator.vibrate(10); } catch(e) {} }
+    b.remove();
+  });
+  c.appendChild(b);
+  setTimeout(function(){ if (b.parentNode) b.remove(); }, 1500);
+}
+document.getElementById("campo").addEventListener("pointerdown", function(){
+  if (!enJuego) return;
+  combo = 1; aciertos = 0; pintar();
+});
+function empezar(){
+  if (enJuego) return;
+  enJuego = true; pts = 0; resta = SEGUNDOS; combo = 1; aciertos = 0;
+  document.getElementById("msg").classList.add("oculto");
+  var btn = document.getElementById("btnjugar"); btn.disabled = true; btn.textContent = "⏱ 30s";
+  pintar();
+  timer = setInterval(function(){
+    resta--;
+    btn.textContent = "⏱ " + resta + "s";
+    if (resta <= 0) terminar();
+  }, 1000);
+  spawner = setInterval(function(){ if (enJuego) { nuevoBillete(); if (Math.random()<.3) setTimeout(nuevoBillete, 400); } }, 650);
+}
+function terminar(){
+  enJuego = false;
+  clearInterval(timer); clearInterval(spawner);
+  var bs = document.querySelectorAll(".billete");
+  for (var i=0;i<bs.length;i++) bs[i].remove();
+  var record = false;
+  if (pts > (S.mejor||0)) { S.mejor = pts; record = true; save(); }
+  pintar();
+  var m = document.getElementById("msg");
+  m.classList.remove("oculto");
+  m.innerHTML = record && pts > 0
+    ? "<h3>🔥 ¡NUEVO RECORD SEMANAL!</h3><p><b style='color:#ffd166'>" + pts.toLocaleString("es-ES") + " puntos</b><br>Mándaselo al bot: <b style='color:#ffd166'>arena " + pts + "</b> + captura.<br>Si la bolsa tiene plata, los top 3 la reparten el domingo. 🏆</p>"
+    : "<h3>💵 Ronda terminada</h3><p><b>" + pts.toLocaleString("es-ES") + " puntos</b> · tu mejor marca: " + (S.mejor||0).toLocaleString("es-ES") + "<br>Otra ronda y superas tu marca 😉</p>";
+  var btn = document.getElementById("btnjugar"); btn.disabled = false; btn.textContent = "▶️ ¡OTRA RONDA!";
+  document.getElementById("estado").textContent = record ? "🔥 récord: " + S.mejor + " — repórtalo al bot: 'arena " + S.mejor + "'" : "solo cuenta tu mejor ronda de la semana";
+}
+document.getElementById("btnjugar").addEventListener("click", empezar);
+var SPONSORS = [
+  '📢 Patrocinado por: <b>DESPEGUE DIGITAL</b> — diseño y marketing que venden. <a href="https://mia9911.github.io/despegue-digital/patrocinio.html">¿Tu marca aquí? →</a>',
+  '📢 <b>¿Vendes algo?</b> Plantillas de WhatsApp desde $4 — <a href="https://mia9911.github.io/despegue-digital/">ver la tienda →</a>',
+  '📢 <b>Patrocina LA ARENA</b> y tu marca sale ante todos los jugadores — <a href="https://mia9911.github.io/despegue-digital/patrocinio.html">desde $3 →</a>'
+];
+var spI = 0;
+setInterval(function(){ spI=(spI+1)%SPONSORS.length; document.getElementById("sponsor").innerHTML = SPONSORS[spI]; }, 6000);
+function compartir(){
+  var u = "https://mia9911.github.io/arena-plata/";
+  var t = "🏟️ LA ARENA — el torneo cubano que paga plata REAL 🇨🇺. Atrapa billetes 30 segundos y los 3 mejores de la semana se reparten la bolsa. ¡Entra tú también! 👇";
+  window.open("https://t.me/share/url?url=" + encodeURIComponent(u) + "&text=" + encodeURIComponent(t), "_blank");
+}
+var tgApp = window.Telegram && window.Telegram.WebApp;
+if (tgApp) { try { tgApp.ready(); tgApp.expand(); } catch(e) {} }
+cargarBolsa(); pintar();
+</script>
+</body>
+</html>
