@@ -513,6 +513,19 @@ def puntuar_reto(rt, racha_prev, vip=None):
         deltas[uid] = {"nombre": r["nombre"], "ok": ok, "puntos": pts, "racha": rc}
     return deltas
 
+# ---------------- GUERRA DE CLANES 🏰 ( Clash a turnos: los aciertos de la arena = daño al enemigo ) ----------------
+GUERRA_HP = int(os.environ.get("GUERRA_HP", "500"))
+CLANES = {"caiman": "🐊 CAIMANES", "gavilan": "🦅 GAVILANES"}
+
+def nueva_guerra(hp_ini):
+    return {"semana": None, "activa": True,
+            "hp": {"caiman": hp_ini, "gavilan": hp_ini},
+            "clanes": {"caiman": {}, "gavilan": {}}, "ronda": 0, "reinicia": None}
+
+def barra_hp(hp, maxi):
+    n = max(0, min(10, int(round(10.0 * max(hp, 0) / float(maxi)))))
+    return "█" * n + "░" * (10 - n)
+
 # ---------------- RONDA DE ATENCIÓN ----------------
 res = tg("getUpdates", {"timeout": 0, "offset": offset})
 updates = res.get("result", [])
@@ -591,6 +604,31 @@ for u in updates:
                                 nombre, int(texto[0]), m.get("date") or 0)
         except Exception as _e:
             print("reto capture fail:", _e)
+        continue
+
+    # ---- GUERRA DE CLANES: unirse con "clan caiman" / "clan gavilan" ----
+    if (m["chat"].get("type") in ("group", "supergroup") and "clan" in bajo and len(bajo) < 30
+            and any(x in bajo for x in ("caiman", "caimán", "gavilan", "gavilán"))):
+        try:
+            _cl = "caiman" if ("caiman" in bajo or "caimán" in bajo) else "gavilan"
+            _uid_c = str((m.get("from") or {}).get("id") or m.get("message_id"))
+            _grr = grupos.get("_guerra") or nueva_guerra(GUERRA_HP)
+            _leal = None
+            for _c in CLANES:
+                if _c != _cl and _uid_c in (_grr["clanes"].get(_c) or {}):
+                    _leal = _c
+            if _leal:
+                tg("sendMessage", {"chat_id": chat_id, "text":
+                    "🛡 ¡Ya peleas por %s! Leal al clan — no hay cambio de bando 😄" % CLANES[_leal]})
+            else:
+                _grr["clanes"][_cl][_uid_c] = {"nombre": nombre, "daño": 0}
+                grupos["_guerra"] = _grr
+                tg("sendMessage", {"chat_id": chat_id, "text":
+                    "⚔️ %s se unió a %s!\n🐊 CAIMANES: %d guerreros · 🦅 GAVILANES: %d guerreros\n"
+                    "🧠 Acertar los RETOS DE LA ARENA hace DAÑO al castillo enemigo. ¡A la guerra!" %
+                    (nombre, CLANES[_cl], len(_grr["clanes"]["caiman"]), len(_grr["clanes"]["gavilan"]))})
+        except Exception as _e:
+            print("clan join fail:", _e)
         continue
 
     if bajo.startswith("/start"):
@@ -954,12 +992,34 @@ try:
                     else:
                         _lines.append("❌ %s — falló esta vez" % d["nombre"])
                     _posg[uid] = p
+                # GUERRA DE CLANES: cada acierto = daño al castillo enemigo
+                _grr = grupos.get("_guerra")
+                _war_extra = ""
+                if _grr and _grr.get("activa"):
+                    _dano = {"caiman": 0, "gavilan": 0}
+                    for uid, d in deltas.items():
+                        if not d["ok"]:
+                            continue
+                        _c = None
+                        for _cc in CLANES:
+                            if uid in (_grr["clanes"].get(_cc) or {}):
+                                _c = _cc
+                        if _c:
+                            _otro = "gavilan" if _c == "caiman" else "caiman"
+                            _dano[_otro] += d["puntos"]
+                            _grr["clanes"][_c][uid]["daño"] = _grr["clanes"][_c][uid].get("daño", 0) + d["puntos"]
+                    if _dano["caiman"] or _dano["gavilan"]:
+                        _grr["hp"]["caiman"] = max(0, _grr["hp"]["caiman"] - _dano["caiman"])
+                        _grr["hp"]["gavilan"] = max(0, _grr["hp"]["gavilan"] - _dano["gavilan"])
+                        grupos["_guerra"] = _grr
+                        _war_extra = ("\n⚔️ GUERRA DE CLANES: 🐊 -%d HP · 🦅 -%d HP" %
+                                      (_dano["caiman"], _dano["gavilan"]))
                 _top3 = sorted(_posg.items(), key=lambda kv: -kv[1].get("puntos", 0))[:3]
                 _rank = " · ".join("%s %d" % ((v.get("nombre") or "?").split()[0], v.get("puntos", 0)) for _, v in _top3 if v.get("puntos", 0) > 0)
                 try:
                     tg("sendMessage", {"chat_id": int(cid), "text":
-                        "🏆 RESULTADOS DEL DESAFÍO\n🧠 %s\n✅ Correcta: %s\n\n%s\n\n📊 Ranking semanal: %s\n⚔️ Próximo desafío en %d horas. ¡Sigue pendiente!" %
-                        (rt.get("q", ""), (rt.get("opts") or ["?"])[rt["k"]], "\n".join(_lines), _rank or "—", RETO_CADA_H)})
+                        ("🏆 RESULTADOS DEL DESAFÍO\n🧠 %s\n✅ Correcta: %s\n\n%s\n\n📊 Ranking semanal: %s\n⚔️ Próximo desafío en %d horas. ¡Sigue pendiente!" %
+                        (rt.get("q", ""), (rt.get("opts") or ["?"])[rt["k"]], "\n".join(_lines), _rank or "—", RETO_CADA_H)) + _war_extra})
                 except Exception as _e:
                     print("reto result fail:", _e)
                 rt["abierta"] = None; rt["respuestas"] = {}
@@ -994,6 +1054,62 @@ try:
     grupos["_retos"] = _retos
 except Exception as _e:
     print("retos fail:", _e)
+
+# ---- GUERRA DE CLANES: estado, victoria y renacer ----
+try:
+    _grr = grupos.get("_guerra")
+    if _grr is None and grupos["grupos"]:
+        _grr = nueva_guerra(GUERRA_HP)
+        grupos["_guerra"] = _grr
+    if _grr:
+        if _grr.get("semana") != _sem:
+            _grr = nueva_guerra(GUERRA_HP)
+            _grr["semana"] = _sem
+            grupos["_guerra"] = _grr
+        if not _grr.get("activa"):
+            try:
+                if ahora_cuba >= datetime.fromisoformat(_grr.get("reinicia") or "2000-01-01"):
+                    _grr = nueva_guerra(GUERRA_HP)
+                    _grr["semana"] = _sem
+                    grupos["_guerra"] = _grr
+            except Exception:
+                pass
+        if _grr.get("activa"):
+            _n1 = len(_grr["clanes"]["caiman"]); _n2 = len(_grr["clanes"]["gavilan"])
+            _fin = [c for c in ("caiman", "gavilan") if _grr["hp"][c] <= 0]
+            if _fin and _n1 and _n2:
+                _perdedor = _fin[0]; _ganador = "gavilan" if _perdedor == "caiman" else "caiman"
+                _mvpl = sorted(_grr["clanes"][_ganador].items(),
+                               key=lambda kv: -kv[1].get("daño", 0)) or [(None, {})]
+                _mvp = _mvpl[0][1] or {}
+                for _gid, g in grupos["grupos"].items():
+                    if g.get("activo"):
+                        try:
+                            tg("sendMessage", {"chat_id": int(_gid), "text":
+                                "🏆🏆🏆 ¡VICTORIA DE CLAN! 🏆🏆🏆\n\n%s GANAN LA GUERRA 🏰\n\n🥇 MVP de la guerra: %s (%d de daño)\n\n"
+                                "Los premios van para el TOP del ranking semanal. Nueva guerra en 24 horas — los clanes se conservan. ¡Preparen tropas! ⚔️" %
+                                (CLANES[_ganador], _mvp.get("nombre", "—"), _mvp.get("daño", 0))})
+                        except Exception:
+                            pass
+                _grr["activa"] = False
+                _grr["reinicia"] = (ahora_cuba + timedelta(hours=24)).isoformat()
+                grupos["_guerra"] = _grr
+            elif (_n1 and _n2):
+                _grr["ronda"] = _grr.get("ronda", 0) + 1
+                if _grr["ronda"] % 2 == 1:
+                    for _gid, g in grupos["grupos"].items():
+                        if g.get("activo"):
+                            try:
+                                tg("sendMessage", {"chat_id": int(_gid), "text":
+                                    "🏰 GUERRA DE CLANES — ronda %d\n🐊 CAIMANES %s %d HP (%d guerreros)\n🦅 GAVILANES %s %d HP (%d guerreros)\n\n"
+                                    "💡 Acertar los retos = DAÑO al castillo enemigo · VIP = daño x2 👑\nÚnete escribiendo: clan caiman / clan gavilan" %
+                                    (_grr["ronda"], barra_hp(_grr["hp"]["caiman"], GUERRA_HP), _grr["hp"]["caiman"], _n1,
+                                     barra_hp(_grr["hp"]["gavilan"], GUERRA_HP), _grr["hp"]["gavilan"], _n2)})
+                            except Exception:
+                                pass
+                    grupos["_guerra"] = _grr
+except Exception as _e:
+    print("guerra fail:", _e)
 
 # ---------------- V8: AGENDA MATUTINA A LA JEFA (8-10 AM Cuba) ----------------
 CAPTIONS_IG = [

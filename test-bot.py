@@ -126,6 +126,7 @@ os.environ.setdefault("TELEGRAM_BOT_TOKEN", "test:test")
 os.environ.setdefault("PRUEBA_TEST", "1")
 os.environ.setdefault("QVAPAY_APP_ID", "qa-id")
 os.environ.setdefault("QVAPAY_APP_SECRET", "qa-secret")
+os.environ.setdefault("GUERRA_HP", "30")   # guerra de prueba: 1 acierto VIP la decide
 src = open(os.path.join(os.path.dirname(__file__), "bot-cycle.py"), encoding="utf-8").read()
 G = {"__name__": "__main__"}
 try:
@@ -140,6 +141,8 @@ try:
     _k = int(((G.get("grupos") or {}).get("_retos") or {}).get("-100999", {}).get("k", 0))
     _ok = str(_k + 1)                 # la respuesta correcta (1, 2 o 3)
     _mal = str((_k + 1) % 3 + 1)      # una incorrecta
+    UPDATES.append(msg(9040, "clan caiman", chat_id=-100999, chat_type="supergroup", nombre="Lina", username="lina"))
+    UPDATES.append(msg(9041, "clan gavilan", chat_id=-100999, chat_type="supergroup", nombre="Pedro", username="pedro2"))
     UPDATES.append(msg(9040, "pagué vip", chat_id=-100999, chat_type="supergroup", nombre="Lina", username="lina"))
     UPDATES.append(msg(9040, _ok, chat_id=-100999, chat_type="supergroup", nombre="Lina", username="lina"))
     UPDATES.append(msg(9041, _mal, chat_id=-100999, chat_type="supergroup", nombre="Pedro", username="pedro2"))
@@ -201,6 +204,10 @@ _rg = (((G.get("grupos") or {}).get("_ranking_sem") or {}).get("grupos") or {}).
 t("31c. VIP x2 + 1ra correcta: Lina +32 · Pedro (falló) +0", _rg.get("9040", {}).get("puntos") == 32 and _rg.get("9041", {}).get("puntos") == 0)
 t("32. 'vip' → info PASE VIP + link $1.99", any("PASE VIP" in x and "1.99" in x for x in r))
 t("32b. 'pagué vip' en grupo → VIP activado + registro + alerta Jefa", any("VIP ACTIVADO" in x for x in to(GRUPO)) and "9040" in ((G.get("grupos") or {}).get("_vip") or {}) and any("PASE VIP ARENA ($1.99)" in x for x in to(JEFA)))
+t("33. 'clan caiman/gavilan' → se unen y anuncian", any("se unió a 🐊 CAIMANES" in x for x in to(GRUPO)) and any("se unió a 🦅 GAVILANES" in x for x in to(GRUPO)))
+_gu = (G.get("grupos") or {}).get("_guerra") or {}
+t("33b. Acierto VIP = daño enemigo (castillo GAVILANES de 30 → 0)", _gu.get("hp", {}).get("gavilan") == 0)
+t("33c. VICTORIA DE CLAN (CAIMANES) + MVP Lina", any("VICTORIA DE CLAN" in x and "CAIMANES" in x for x in to(GRUPO)) and any("MVP de la guerra: Lina" in x for x in to(GRUPO)))
 LXAL = [x for x in to(JEFA) if "laborx.com/jobs/" in x or "laborx.com/vacancies/" in x]
 t("18. Radar LaborX API: job NUEVO que matchea → alerta con link y $", any("community-moderator-for-crypto" in x and "$20" in x for x in LXAL))
 t("18b. …la trampa 'developer account' NO se alerta", not any("telegram-growth-helper" in x for x in LXAL))
