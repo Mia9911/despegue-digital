@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="description" content="Arena Lógica: retos de lógica de 15 segundos. Juega gratis, compite en el ranking semanal, desbloquea monedas y el Pase VIP.">
+<title>Arena Lógica — retos de 15 segundos</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:Georgia,'Times New Roman',serif;background:#0A2926;color:#F2F7EA;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:14px;max-width:480px;margin:0 auto}
+h1{font-size:1.35em;color:#F4D35E;margin:8px 0 2px;text-align:center}
+.sub{color:#7FD1C1;font-style:italic;font-size:.85em;text-align:center;margin-bottom:12px}
+#hud{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:10px}
+.chip{background:#123B36;border:1px solid #f4d35e33;border-radius:20px;padding:6px 12px;font-size:.8em;color:#F4D35E}
+#barra{width:100%;height:10px;background:#123B36;border-radius:6px;overflow:hidden;margin:6px 0 12px}
+#barra>div{height:100%;background:linear-gradient(90deg,#F4D35E,#E05C5C);width:100%;transition:width 1s linear}
+.card{background:#123B36;border:1px solid #f4d35e33;border-radius:16px;padding:16px;width:100%;margin:6px 0}
+.pregunta{font-size:1.15em;color:#F2F7EA;text-align:center;margin:8px 0 14px;line-height:1.45}
+.opt{display:block;width:100%;background:#0F4D42;color:#F2F7EA;border:1px solid #7fd1c155;border-radius:12px;padding:14px;font-size:1em;font-family:inherit;margin:8px 0;cursor:pointer;text-align:center}
+.opt:active{background:#1D6E4F}
+.opt.ok{background:#1D6E4F;border-color:#F4D35E}
+.opt.mal{background:#8A2E2E}
+.grande{font-size:1.6em;color:#F4D35E;text-align:center;margin:10px 0}
+.btn{display:block;width:100%;background:linear-gradient(135deg,#F4D35E,#E0A82E);color:#0A2926;border:none;border-radius:12px;padding:14px;font-size:1em;font-weight:bold;font-family:inherit;margin:10px 0;cursor:pointer;text-align:center;text-decoration:none}
+.btn.sec{background:#123B36;color:#7FD1C1;border:1px solid #7fd1c155;font-weight:normal}
+.msj{font-size:.85em;color:#7FD1C1;text-align:center;margin:6px 0;min-height:1.2em}
+.corona{color:#F4D35E}
+#rank li{font-size:.9em;margin:6px 0;color:#CFE8DD}
+.nota{font-size:.7em;color:#7FD1C1;text-align:center;margin-top:14px;font-style:italic;line-height:1.5}
+.oculto{display:none!important}
+</style>
+</head>
+<body>
+<h1>⚔️ ARENA LÓGICA</h1>
+<div class="sub">5 retos · 15 segundos cada uno · ¿cuánta lógica tienes?</div>
+<div id="hud">
+  <span class="chip" id="chipEnergia">🪙 Monedas: 5</span>
+  <span class="chip" id="chipRacha">🔥 Racha: 0</span>
+  <span class="chip" id="chipVip">👑 VIP: no</span>
+</div>
+
+<!-- ═══ PANTALLA INICIO ═══ -->
+<div id="pInicio" class="card">
+  <p class="pregunta">Juego gratis hoy: <b id="runsTxt">5 partidas</b><br><span style="font-size:.8em;color:#7FD1C1">gana puntos: correcto +10 · rapidez hasta +15 · racha +5</span></p>
+  <button class="btn" onclick="empezar()">▶️ JUGAR AHORA</button>
+  <button class="btn sec" onclick="mostrar('pTienda')">🪙 Tienda (monedas + VIP)</button>
+  <button class="btn sec" onclick="mostrar('pRank')">🏆 Ranking</button>
+  <div class="msj" id="msjIni"></div>
+</div>
+
+<!-- ═══ PANTALLA JUEGO ═══ -->
+<div id="pJuego" class="card oculto">
+  <div style="text-align:center;font-size:.8em;color:#7FD1C1" id="progreso">Reto 1 de 5</div>
+  <div id="barra"><div id="bar"></div></div>
+  <p class="pregunta" id="qTxt">…</p>
+  <button class="opt" id="o0" onclick="responder(0)">…</button>
+  <button class="opt" id="o1" onclick="responder(1)">…</button>
+  <button class="opt" id="o2" onclick="responder(2)">…</button>
+  <div class="msj" id="msjJ"></div>
+</div>
+
+<!-- ═══ PANTALLA RESULTADO ═══ -->
+<div id="pFin" class="card oculto">
+  <p class="pregunta">🏁 RESULTADO DE LA RONDA</p>
+  <div class="grande" id="puntosFin">0 pts</div>
+  <p class="msj" id="detalleFin"></p>
+  <button class="btn" onclick="empezar()">▶️ OTRA RONDA</button>
+  <button class="btn sec" onclick="mostrar('pTienda')">🪙 ¿Sin monedas? Recarga</button>
+</div>
+
+<!-- ═══ PANTALLA TIENDA ═══ -->
+<div id="pTienda" class="card oculto">
+  <p class="pregunta">🪙 TIENDA DE LA ARENA</p>
+  <p style="font-size:.82em;color:#CFE8DD;text-align:center">Las monedas sirven para seguir jugando y competir.<br><b>No se pueden canjear por dinero.</b></p>
+  <button class="btn" onclick="comprar('monedas')">🪙 +5 MONEDAS — $0.99</button>
+  <button class="btn" onclick="comprar('vip')">👑 PASE VIP 7 DÍAS — $1.99<br><span style="font-size:.75em">x2 puntos + corona</span></button>
+  <p style="font-size:.75em;color:#7FD1C1;text-align:center;margin-top:8px">Al pagar, vuelve y toca “ya pagué”.</p>
+  <button class="btn sec" onclick="yaPague()">✅ Ya pagué</button>
+  <button class="btn sec" onclick="mostrar('pInicio')">← Volver</button>
+  <div class="msj" id="msjT"></div>
+</div>
+
+<!-- ═══ PANTALLA RANKING ═══ -->
+<div id="pRank" class="card oculto">
+  <p class="pregunta">🏆 RANKING SEMANAL</p>
+  <ol id="rank" style="padding-left:22px"></ol>
+  <p style="font-size:.75em;color:#7FD1C1;text-align:center">Ranking de tu dispositivo — el ranking global Top 100<br>se enciende al publicar la app en el catálogo de QvaPay 🚀</p>
+  <button class="btn sec" onclick="mostrar('pInicio')">← Volver</button>
+</div>
+
+<div class="nota">Arena Lógica by Despegue Digital 🇨🇺 · Jugar es gratis, siempre.<br>Las monedas y el VIP son ventajas de juego — nunca dinero canjeable.</div>
+
+<script>
+// ===CORE_START===
+var BANK=[
+ ["¿Qué sigue? 2, 4, 8, 16, …",["24","32","20"],1],
+ ["Si 5 máquinas hacen 5 piezas en 5 minutos, ¿cuánto tarda 1 máquina en 1 pieza?",["1 minuto","5 minutos","25 minutos"],1],
+ ["¿Qué pesa más: 1 kg de hierro o 1 kg de plumas?",["El hierro","Las plumas","Pesan igual"],2],
+ ["Si hoy es miércoles, ¿qué día fue hace 3 días?",["Domingo","Lunes","Martes"],0],
+ ["Completa: 1, 1, 2, 3, 5, 8, …",["11","13","12"],1],
+ ["En una carrera, adelantas al 2do. ¿En qué puesto vas?",["1ro","2do","3ro"],1],
+ ["¿Cuántos lados tiene un hexágono?",["5","6","7"],1],
+ ["Si un litro cuesta $2, ¿cuánto cuestan 3.5 litros?",["$6.50","$7.00","$6.00"],1],
+ ["La mitad de 2, más 2. ¿Cuánto es?",["3","2","4"],0],
+ ["Completa: 100, 81, 64, 49, …",["36","25","38"],0],
+ ["Si 3 gatos cazan 3 ratones en 3 horas, ¿cuánto tardan 6 gatos en 6 ratones?",["3 horas","6 horas","1.5 horas"],0],
+ ["¿Qué sigue? Z, X, C, V, …",["B","N","A"],0],
+ ["Un ladrillo pesa 1 kg más medio ladrillo. ¿Cuánto pesa?",["1 kg","1.5 kg","2 kg"],2]
+];
+function genPregunta(i){
+ var r=(Math.random()*100000+Date.now()%9973+i*137)%1e9;
+ r=Math.sin(r)*10000; r=r-Math.floor(r); // pseudo-random determinista
+ if(r<0.55){var b=BANK[Math.floor(r*1000)%BANK.length];return{q:b[0],opts:b[1].slice(),k:b[2]}}
+ var a=2+Math.floor(r*97)%8, d=2+Math.floor(r*891)%8, s=[a];
+ for(var j=1;j<6;j++)s.push(s[j-1]+d);
+ var corr=s[5], pool=[corr,corr+d,corr-d,corr+2*d];
+ var idx=Math.floor(r*777)%4, opts=[pool[idx]]; pool.splice(idx,1);
+ while(opts.length<3)opts.push(pool.pop());
+ var k=opts.indexOf(corr);
+ if(k<0){k=Math.floor(r*333)%3; opts[k]=corr}   // guardián: la correcta SIEMPRE está
+ return {q:"¿Qué sigue? "+s.slice(0,5).join(", ")+", …",opts:opts.map(String),k:k}
+}
+function puntuar(esCorrecta,segundosRestantes,rachaAntes,vip){
+ if(!esCorrecta)return{puntos:0,racha:0};
+ var p=10+Math.max(0,Math.min(15,segundosRestantes))+5*Math.min(rachaAntes,4);
+ if(vip)p*=2;
+ return{puntos:p,racha:rachaAntes+1}
+}
+// ===CORE_END===
+
+// ── estado ──
+var LS={get:function(k,d){try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}},
+        set:function(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+var S={preg:[],i:0,racha:0,puntos:0,t:15,timer:null,vip:LS.get("vip_hasta","")>hoyISO()};
+function hoyISO(){return new Date().toISOString().slice(0,10)}
+function energia(){var e=LS.get("energia",null);var h=hoyISO();
+ if(!e||e.d!=h){e={d:h,n:5};LS.set("energia",e)} return e}
+function gastaEnergia(){var e=energia();if(e.n<=0)return false;e.n--;LS.set("energia",e);return true}
+function pintarHUD(){
+ document.getElementById("chipEnergia").textContent="🪙 Monedas: "+energia().n;
+ document.getElementById("chipRacha").textContent="🔥 Racha: "+S.racha;
+ document.getElementById("chipVip").textContent=S.vip?"👑 VIP: sí":"👑 VIP: no";
+ document.getElementById("runsTxt").textContent=energia().n+" partidas";
+}
+function mostrar(id){
+ ["pInicio","pJuego","pFin","pTienda","pRank"].forEach(function(p){
+  document.getElementById(p).classList.toggle("oculto",p!=id)});
+ if(id=="pRank")pintarRank();
+}
+function pintarRank(){
+ var rk=LS.get("rank",[]).sort(function(a,b){return b.p-a.p}).slice(0,10);
+ document.getElementById("rank").innerHTML=rk.length?rk.map(function(x,i){
+  return "<li>"+(i==0?"🥇":i==1?"🥈":i==2?"🥉":"▫️")+" "+(x.v?"<span class='corona'>👑</span> ":"")+
+   escapeHtml(x.n)+" — <b>"+x.p+" pts</b></li>"}).join("")
+  :"<li style='color:#7FD1C1'>Aún no hay partidas — ¡sé el primero!</li>";
+}
+function escapeHtml(s){return String(s).replace(/[<>&"]/g,function(c){return{"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;"}[c]})}
+function empezar(){
+ if(!gastaEnergia()){mostrar("pTienda");document.getElementById("msjT").textContent="🪙 Se te acabaron las monedas de hoy — recarga arriba o vuelve mañana (5 gratis).";return}
+ S.preg=[];for(var i=0;i<5;i++)S.preg.push(genPregunta(i));
+ S.i=0;S.racha=0;S.puntos=0;pintarHUD();mostrar("pJuego");pregunta();
+}
+function pregunta(){
+ var p=S.preg[S.i];
+ document.getElementById("progreso").textContent="Reto "+(S.i+1)+" de 5";
+ document.getElementById("qTxt").textContent=p.q;
+ for(var j=0;j<3;j++){var b=document.getElementById("o"+j);b.textContent=(j+1)+") "+p.opts[j];b.className="opt"}
+ document.getElementById("msjJ").textContent="";
+ S.t=15;document.getElementById("bar").style.width="100%";
+ clearInterval(S.timer);
+ S.timer=setInterval(function(){
+  S.t--;document.getElementById("bar").style.width=(S.t/15*100)+"%";
+  if(S.t<=0){clearInterval(S.timer);responder(-1)}
+ },1000);
+}
+function responder(j){
+ clearInterval(S.timer);
+ var p=S.preg[S.i],ok=j==p.k,boton=null;
+ if(j>=0){boton=document.getElementById("o"+j);boton.className="opt "+(ok?"ok":"mal")}
+ if(!ok){var b=document.getElementById("o"+p.k);if(b)b.className="opt ok"}
+ var r=puntuar(ok,S.t,S.racha,S.vip);
+ S.puntos+=r.puntos;S.racha=r.racha;pintarHUD();
+ document.getElementById("msjJ").textContent=ok?("✅ ¡Correcto! +"+r.puntos+(S.vip?" (x2 VIP 👑)":"")+(S.racha>1?" · racha 🔥"+S.racha:"")):"❌ "+(j<0?"¡Tiempo! ":"")+"La correcta era: "+p.opts[p.k];
+ setTimeout(function(){
+  S.i++;
+  if(S.i<5)pregunta();else fin()
+ },1300);
+}
+function fin(){
+ var rk=LS.get("rank",[]);
+ rk.push({n:"Tú",p:S.puntos,v:S.vip,d:hoyISO()});
+ LS.set("rank",rk);
+ document.getElementById("puntosFin").textContent=S.puntos+" pts";
+ var mejor=LS.get("mejor",0);if(S.puntos>mejor){LS.set("mejor",S.puntos);mejor=S.puntos}
+ document.getElementById("detalleFin").textContent="Tu mejor marca: "+mejor+" pts · Monedas restantes: "+energia().n;
+ pintarHUD();mostrar("pFin");
+}
+// ── pagos: SDK QvaPay (dentro de la app) con fallback a link directo ──
+var LINK_MONEDAS="https://www.qvapay.com/pay/13f51518-694b-4065-a83d-0afaf4d32bd5";
+var LINK_VIP="https://www.qvapay.com/pay/36a1b674-6253-41a0-aa4a-f729874b6cc2";
+function comprar(item){
+ var url=item=="vip"?LINK_VIP:LINK_MONEDAS, desc=item=="vip"?"Pase VIP Arena 7 días":"+5 monedas Arena";
+ try{
+  if(window.QvaPay&&typeof window.QvaPay.pay==="function"){
+   window.QvaPay.pay({amount:item=="vip"?1.99:0.99,description:desc}).then(function(){
+    acreditar(item);document.getElementById("msjT").textContent="✅ ¡Pago recibido por la app! Acreditado al instante."
+   }).catch(function(e){window.open(url,"_blank")});
+   return
+  }
+ }catch(e){}
+ window.open(url,"_blank");
+ document.getElementById("msjT").textContent="Pago abierto en QvaPay — al terminar vuelve y toca “ya pagué”.";
+}
+function yaPague(){
+ var p=new URLSearchParams(location.search), item=p.get("item")||p.get("remote_id")||"";
+ if(item.indexOf("vip")>=0){acreditar("vip");return}
+ acreditar("monedas");
+}
+function acreditar(item){
+ if(item=="vip"){var d=new Date();d.setDate(d.getDate()+7);LS.set("vip_hasta",d.toISOString().slice(0,10));S.vip=true;
+  document.getElementById("msjT").textContent="👑 ¡VIP activado 7 días! Puntos x2 y corona desde ya."}
+ else{var e=energia();e.n+=5;LS.set("energia",e);document.getElementById("msjT").textContent="🪙 +5 monedas acreditadas. ¡A jugar!"}
+ pintarHUD();
+}
+// parámetros de retorno de pago (?pago=ok&item=vip)
+(function(){
+ var p=new URLSearchParams(location.search);
+ if(p.get("pago")=="ok"){acreditar(p.get("item")||"monedas");mostrar("pTienda")}
+})();
+pintarHUD();
+</script>
+</body>
+</html>
