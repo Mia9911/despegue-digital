@@ -4,8 +4,8 @@
    "title": "Despegue Digital Negocios Cuba",
    "username": "DespegueDigitalCuba",
    "activo": true,
-   "ultima": "2026-10-25",
-   "posts": 33
+   "ultima": "2026-10-26",
+   "posts": 34
   },
   "8600965049": {
    "title": "",
@@ -16,7 +16,7 @@
   }
  },
  "_canal": {
-  "ultima": "2026-10-25"
+  "ultima": "2026-10-26"
  },
  "_pagos": {
   "total": 0
@@ -156,6 +156,7 @@
    "j105189",
    "j105214",
    "j105216",
+   "j105223",
    "j84007",
    "j93887",
    "j93888",
@@ -456,12 +457,12 @@
    "web3-marketing-87098"
   ],
   "gig": {
-   "v": 279,
+   "v": 280,
    "c": 0,
    "av": 278,
    "ac": 0
   },
-  "hora": "2026-10-26T19"
+  "hora": "2026-10-26T21"
  },
  "_metricas": {
   "fecha": "2026-10-26",
