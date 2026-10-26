@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="description" content="Arena Lógica: retos de lógica de 15 segundos. Juega gratis, compite en el ranking semanal, desbloquea monedas y el Pase VIP.">
 <title>Arena Lógica — retos de 15 segundos</title>
+<script src="https://www.qvapay.com/miniapps/sdk-sim.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{font-family:Georgia,'Times New Roman',serif;background:#0A2926;color:#F2F7EA;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:14px;max-width:480px;margin:0 auto}
@@ -198,14 +199,20 @@ function fin(){
 // ── pagos: SDK QvaPay (dentro de la app) con fallback a link directo ──
 var LINK_MONEDAS="https://www.qvapay.com/pay/69fe9056-fd88-4cd4-99ba-f18532813114";
 var LINK_VIP="https://www.qvapay.com/pay/2747d44d-1714-4eb6-8c26-b5697c0e1f26";
+var UUID_COBRO={monedas:"69fe9056-fd88-4cd4-99ba-f18532813114",vip:"2747d44d-1714-4eb6-8c26-b5697c0e1f26"};
 function comprar(item){
- var url=item=="vip"?LINK_VIP:LINK_MONEDAS, desc=item=="vip"?"Pase VIP Arena 7 días":"+5 monedas Arena";
+ var url=item=="vip"?LINK_VIP:LINK_MONEDAS;
  LS.set("ultimo_item",item);
  try{
-  if(window.QvaPay&&typeof window.QvaPay.pay==="function"){
-   window.QvaPay.pay({amount:item=="vip"?1.99:0.99,description:desc}).then(function(){
-    acreditar(item);document.getElementById("msjT").textContent="✅ ¡Pago recibido por la app! Acreditado al instante."
-   }).catch(function(e){window.open(url,"_blank")});
+  var Q=window.QvaPay;
+  if(Q&&Q.payments&&typeof Q.payments.payInvoice==="function"){
+   Q.payments.payInvoice(UUID_COBRO[item]).then(function(r){
+    if(r&&r.status=="paid"){acreditar(item);document.getElementById("msjT").textContent="✅ ¡Pago recibido! Acreditado al instante."}
+    else{document.getElementById("msjT").textContent="Pago: "+(r&&r.status?r.status:"en proceso")+". Al confirmar queda acreditado."}
+   }).catch(function(e){
+    if(e&&e.code=="USER_CANCELLED"){return}
+    window.open(url,"_blank");
+   });
    return
   }
  }catch(e){}
