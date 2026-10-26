@@ -196,8 +196,8 @@ function fin(){
  pintarHUD();mostrar("pFin");
 }
 // ── pagos: SDK QvaPay (dentro de la app) con fallback a link directo ──
-var LINK_MONEDAS="https://www.qvapay.com/pay/13f51518-694b-4065-a83d-0afaf4d32bd5";
-var LINK_VIP="https://www.qvapay.com/pay/36a1b674-6253-41a0-aa4a-f729874b6cc2";
+var LINK_MONEDAS="https://www.qvapay.com/pay/69fe9056-fd88-4cd4-99ba-f18532813114";
+var LINK_VIP="https://www.qvapay.com/pay/2747d44d-1714-4eb6-8c26-b5697c0e1f26";
 function comprar(item){
  var url=item=="vip"?LINK_VIP:LINK_MONEDAS, desc=item=="vip"?"Pase VIP Arena 7 días":"+5 monedas Arena";
  LS.set("ultimo_item",item);
@@ -226,7 +226,10 @@ function acreditar(item){
 // parámetros de retorno de pago (?pago=ok&item=vip)
 (function(){
  var p=new URLSearchParams(location.search);
- if(p.get("pago")=="ok"){acreditar(p.get("item")||LS.get("ultimo_item","monedas"));mostrar("pTienda")}
+ if(p.get("pago")=="ok"){
+  acreditar(p.get("item")||LS.get("ultimo_item","monedas"));mostrar("pTienda");
+  try{history.replaceState(null,"",location.pathname)}catch(e){}  // evita doble crédito al recargar
+ }
 })();
 pintarHUD();
 </script>
