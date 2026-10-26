@@ -430,6 +430,71 @@ try:
 except Exception as e:
     print("muestras:", e)
 
+# ---------------- ARENA 2.0: RETOS DE LÓGICA EN GRUPOS (async, cierra en el round siguiente) ----------------
+RETO_OPCIONES_TXT = {"1", "2", "3", "1)", "2)", "3)", "1.", "2.", "3."}
+RETO_CADA_H = int(os.environ.get("RETO_CADA_H", "3"))   # horas entre desafíos por grupo
+
+RETO_BANK = [
+    ("¿Qué sigue? 2, 4, 8, 16, …", ["24", "32", "20"], 1),
+    ("Si 5 máquinas hacen 5 piezas en 5 minutos, ¿cuánto tarda 1 máquina en 1 pieza?", ["1 minuto", "5 minutos", "25 minutos"], 1),
+    ("¿Qué pesa más: 1 kg de hierro o 1 kg de plumas?", ["El hierro", "Las plumas", "Pesan igual"], 2),
+    ("Si hoy es miércoles, ¿qué día fue hace 3 días?", ["Domingo", "Lunes", "Martes"], 0),
+    ("Completa: 1, 1, 2, 3, 5, 8, …", ["11", "13", "12"], 1),
+    ("En una carrera, adelantas al 2do. ¿En qué puesto vas?", ["1ro", "2do", "3ro"], 1),
+    ("¿Cuántos lados tiene un hexágono?", ["5", "6", "7"], 1),
+    ("Si un litro cuesta $2, ¿cuánto cuestan 3.5 litros?", ["$6.50", "$7.00", "$6.00"], 1),
+    ("La mitad de 2, más 2. ¿Cuánto es?", ["3", "2", "4"], 0),
+    ("Completa: 100, 81, 64, 49, …", ["36", "25", "38"], 0),
+    ("Si 3 gatos cazan 3 ratones en 3 horas, ¿cuánto tardan 6 gatos en 6 ratones?", ["3 horas", "6 horas", "1.5 horas"], 0),
+    ("¿Qué sigue? Z, X, C, V, …", ["B", "N", "A"], 0),
+    ("Si tienes 3 manzanas y te comes 1, ¿cuántas te quedan?", ["3", "2", "1"], 1),
+    ("Un ladrillo pesa 1 kg más medio ladrón... digo, medio ladrillo. ¿Cuánto pesa?", ["1 kg", "1.5 kg", "2 kg"], 2),
+]
+
+def gen_reto(yday, cid, rondas):
+    """Desafío determinista por (día, grupo, ronda): 60% banco + 40% secuencias infinitas."""
+    import random as _r
+    rr = _r.Random((yday * 10000) + (rondas * 137) + (abs(int(cid)) % 997))
+    if rr.random() < 0.6:
+        q, ops, k = rr.choice(RETO_BANK)
+        return {"q": q, "opts": list(ops), "k": k}
+    a = rr.randint(2, 9); d = rr.randint(2, 9)
+    s = [a]
+    for _ in range(5):
+        s.append(s[-1] + d)
+    corr = s[-1]
+    pool = sorted({corr, corr + d, corr - d, corr + 2 * d})
+    ops = rr.sample(pool, 3)
+    if corr not in ops:
+        ops[rr.randrange(3)] = corr
+    return {"q": "¿Qué sigue? " + ", ".join(str(x) for x in s[:5]) + ", …",
+            "opts": [str(o) for o in ops], "k": ops.index(corr)}
+
+def registrar_respuesta(retos, cid, uid, nombre, opt, ts):
+    """Anota la respuesta 1/2/3 de un jugador si hay desafío abierto. La primera cuenta, las demás no."""
+    rt = (retos or {}).get(str(cid))
+    if not rt or not rt.get("abierta"):
+        return False
+    if str(uid) in (rt.get("respuestas") or {}):
+        return False
+    rt.setdefault("respuestas", {})[str(uid)] = {"nombre": nombre, "opt": int(opt), "ts": ts or 0}
+    return True
+
+def puntuar_reto(rt, racha_prev):
+    """Correcto +10 · primero en acertar +5 · racha +min(racha,5). Fallar resetea la racha."""
+    k = rt["k"]; res = rt.get("respuestas") or {}
+    orden = sorted(res.items(), key=lambda kv: (kv[1].get("ts") or 0))
+    deltas = {}; primero = True
+    for uid, r in orden:
+        ok = int(r["opt"]) == (int(k) + 1)   # opt del jugador: 1/2/3 · k: índice 0-based
+        rc = ((racha_prev or {}).get(uid, 0) + 1) if ok else 0
+        pts = 0
+        if ok:
+            pts = 10 + (5 if primero else 0) + min(rc, 5)
+            primero = False
+        deltas[uid] = {"nombre": r["nombre"], "ok": ok, "puntos": pts, "racha": rc}
+    return deltas
+
 # ---------------- RONDA DE ATENCIÓN ----------------
 res = tg("getUpdates", {"timeout": 0, "offset": offset})
 updates = res.get("result", [])
@@ -499,6 +564,16 @@ for u in updates:
         libreta_nueva.append({"chat_id": chat_id, "nombre": nombre,
                               "username": username, "texto": texto[:500],
                               "ts": datetime.now(CUBA).isoformat()})
+
+    # ---- ARENA 2.0: capturar respuestas 1/2/3 de grupos con desafío abierto ----
+    if m["chat"].get("type") in ("group", "supergroup") and texto in RETO_OPCIONES_TXT:
+        try:
+            _uid = (m.get("from") or {}).get("id") or m.get("message_id")
+            registrar_respuesta(grupos.get("_retos") or {}, chat_id, _uid,
+                                nombre, int(texto[0]), m.get("date") or 0)
+        except Exception as _e:
+            print("reto capture fail:", _e)
+        continue
 
     if bajo.startswith("/start"):
         r = TXT_JEFA if es_jefa else TXT_START
@@ -776,6 +851,91 @@ if 17 <= hora < 23:
                 "📢 Post diario publicado en el CANAL @DespegueDigitalMia."})
         except Exception as e:
             print("canal post fail:", e)
+
+# ---- ARENA 2.0: apertura y cierre de desafíos por grupo (en cada corrida) ----
+try:
+    _iso = ahora_cuba.isocalendar()
+    _sem = "%d-W%02d" % (_iso[0], _iso[1])
+    _rk = grupos.get("_ranking_sem") or {}
+    if _rk.get("semana") != _sem:
+        for _gid, _pos in ((_rk.get("grupos") or {}) or {}).items():
+            _top = sorted((_pos or {}).items(), key=lambda kv: -kv[1].get("puntos", 0))[:1]
+            if _top and _top[0][1].get("puntos", 0) > 0:
+                try:
+                    tg("sendMessage", {"chat_id": int(_gid), "text":
+                        "👑 ARENA — CAMPEÓN SEMANAL: %s con %d puntos 🏆\n"
+                        "El ranking semanal arranca de CERO hoy. ¡A recuperar el trono! ⚔️" %
+                        (_top[0][1].get("nombre", "?"), _top[0][1]["puntos"])})
+                except Exception:
+                    pass
+        _rk = {"semana": _sem, "grupos": {}}
+    grupos["_ranking_sem"] = _rk
+    _retos = grupos.get("_retos") or {}
+    for cid, g in grupos["grupos"].items():
+        if not g.get("activo"):
+            continue
+        rt = _retos.get(cid) or {}
+        if rt.get("abierta"):
+            try:
+                _edad = (ahora_cuba - datetime.fromisoformat(rt["abierta"])).total_seconds() / 3600.0
+            except Exception:
+                _edad = 99
+            if rt.get("respuestas"):
+                # ---- cerrar y puntuar ----
+                racha_prev = {u: v.get("racha", 0) for u, v in ((_rk["grupos"].get(cid) or {}) or {}).items()}
+                deltas = puntuar_reto(rt, racha_prev)
+                _posg = _rk["grupos"].setdefault(cid, {})
+                _med = ["🥇", "🥈", "🥉"]
+                _lines = []; _mi = 0
+                for uid, d in deltas.items():
+                    p = _posg.get(uid) or {"nombre": d["nombre"], "puntos": 0, "racha": 0, "aciertas": 0, "partidas": 0}
+                    p["nombre"] = d["nombre"]; p["puntos"] = p.get("puntos", 0) + d["puntos"]
+                    p["racha"] = d["racha"]; p["partidas"] = p.get("partidas", 0) + 1
+                    if d["ok"]:
+                        p["aciertas"] = p.get("aciertas", 0) + 1
+                        _lines.append("%s %s +%d%s" % (_med[_mi] if _mi < 3 else "✅", d["nombre"], d["puntos"],
+                                      (" · racha 🔥%d" % d["racha"]) if d["racha"] > 1 else ""))
+                        _mi += 1
+                    else:
+                        _lines.append("❌ %s — falló esta vez" % d["nombre"])
+                    _posg[uid] = p
+                _top3 = sorted(_posg.items(), key=lambda kv: -kv[1].get("puntos", 0))[:3]
+                _rank = " · ".join("%s %d" % ((v.get("nombre") or "?").split()[0], v.get("puntos", 0)) for _, v in _top3 if v.get("puntos", 0) > 0)
+                try:
+                    tg("sendMessage", {"chat_id": int(cid), "text":
+                        "🏆 RESULTADOS DEL DESAFÍO\n🧠 %s\n✅ Correcta: %s\n\n%s\n\n📊 Ranking semanal: %s\n⚔️ Próximo desafío en %d horas. ¡Sigue pendiente!" %
+                        (rt.get("q", ""), (rt.get("opts") or ["?"])[rt["k"]], "\n".join(_lines), _rank or "—", RETO_CADA_H)})
+                except Exception as _e:
+                    print("reto result fail:", _e)
+                rt["abierta"] = None; rt["respuestas"] = {}
+                rt["proximo"] = (ahora_cuba + timedelta(hours=RETO_CADA_H)).isoformat()
+            elif _edad >= 20:
+                rt["abierta"] = None; rt["respuestas"] = {}
+                rt["proximo"] = (ahora_cuba + timedelta(hours=24)).isoformat()
+        if not rt.get("abierta"):
+            _ok_abrir = True
+            if rt.get("proximo"):
+                try:
+                    _ok_abrir = ahora_cuba >= datetime.fromisoformat(rt["proximo"])
+                except Exception:
+                    _ok_abrir = True
+            if _ok_abrir:
+                nr = gen_reto(ahora_cuba.timetuple().tm_yday, cid, rt.get("rondas", 0))
+                nr.update({"abierta": ahora_cuba.isoformat(), "respuestas": {},
+                           "rondas": rt.get("rondas", 0) + 1, "proximo": None})
+                _retos[cid] = nr
+                _opts = "\n".join("%d️⃣ %s" % (i + 1, o) for i, o in enumerate(nr["opts"]))
+                try:
+                    tg("sendMessage", {"chat_id": int(cid), "text":
+                        "⚔️ DESAFÍO DE LA ARENA — lógica rápida\n\n🧠 %s\n\n%s\n\n"
+                        "👉 Responde aquí solo con 1, 2 o 3.\n"
+                        "⏱️ Cierra en el próximo round · el primero en acertar gana bonus.\n"
+                        "Ranking semanal con campeón cada lunes. Arena by Despegue Digital 🚀" % (nr["q"], _opts)})
+                except Exception as _e:
+                    print("reto open fail:", _e)
+    grupos["_retos"] = _retos
+except Exception as _e:
+    print("retos fail:", _e)
 
 # ---------------- V8: AGENDA MATUTINA A LA JEFA (8-10 AM Cuba) ----------------
 CAPTIONS_IG = [

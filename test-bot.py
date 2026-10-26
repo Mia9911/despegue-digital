@@ -19,6 +19,9 @@ def msg(uid, text, chat_id=111, chat_type="private", nombre="Pedro", username="p
     return {"update_id": uid, "message": m}
 
 UPDATES = [
+    {"update_id": 8000, "my_chat_member": {   # ARENA: el bot entra al grupo de prueba
+        "chat": {"id": -100999, "type": "supergroup", "title": "Grupo Test"},
+        "new_chat_member": {"status": "member"}}},
     msg(9001, "/start"),                                          # 1 cliente nuevo
     msg(9002, "precio"),                                          # 2 precios
     msg(9003, "cuanto cuesta el kit"),                            # 3 precios (variante)
@@ -63,6 +66,10 @@ def fake_urlopen(req, timeout=None):
     if "sendMessage" in url:
         SENT.append(json.loads(req.data.decode()))
         return FakeResp(json.dumps({"ok": True, "result": {"message_id": len(SENT)}}))
+    if "grupos-bot.json" in url and getattr(req, "get_method", lambda: "GET")() != "PUT":
+        # ARENA: persistencia entre corridas (simula grupos-bot.json del repo)
+        import base64 as _b64
+        return FakeResp(json.dumps({"content": _b64.b64encode(json.dumps(PERSIST).encode()).decode(), "sha": "persist"}))
     if "api.github.com" in url:
         raise urllib.error.HTTPError(url, 404, "Not Found", {}, io.BytesIO(b'{"message":"Not Found"}'))
     if "create_invoice" in url:
@@ -112,17 +119,32 @@ def fake_urlopen(req, timeout=None):
     return real_urlopen(req, timeout=timeout)
 
 # ------------------ EJECUTAR EL CEREBRO REAL ------------------
+PERSIST = {"grupos": {}}   # ARENA: estado que "sobrevive" entre corridas (como grupos-bot.json)
 urllib.request.urlopen = fake_urlopen
 os.environ.setdefault("TELEGRAM_BOT_TOKEN", "test:test")
 os.environ.setdefault("PRUEBA_TEST", "1")
 os.environ.setdefault("QVAPAY_APP_ID", "qa-id")
 os.environ.setdefault("QVAPAY_APP_SECRET", "qa-secret")
 src = open(os.path.join(os.path.dirname(__file__), "bot-cycle.py"), encoding="utf-8").read()
+G = {"__name__": "__main__"}
 try:
-    exec(compile(src, "bot-cycle.py", "exec"), {"__name__": "__main__"})
+    exec(compile(src, "bot-cycle.py", "exec"), G)
     CRASH = None
 except Exception as e:
     CRASH = "%s: %s" % (type(e).__name__, e)
+
+# ---- ARENA 2.0: SEGUNDA CORRIDA del ciclo (simula el round siguiente del guardián) ----
+try:
+    PERSIST.clear(); PERSIST.update(G.get("grupos") or {})
+    _k = int(((G.get("grupos") or {}).get("_retos") or {}).get("-100999", {}).get("k", 0))
+    _ok = str(_k + 1)                 # la respuesta correcta (1, 2 o 3)
+    _mal = str((_k + 1) % 3 + 1)      # una incorrecta
+    UPDATES.append(msg(9040, _ok, chat_id=-100999, chat_type="supergroup", nombre="Lina", username="lina"))
+    UPDATES.append(msg(9041, _mal, chat_id=-100999, chat_type="supergroup", nombre="Pedro", username="pedro2"))
+    exec(compile(src, "bot-cycle.py", "exec"), G)
+except Exception as e:
+    CRASH = "%s (2da corrida): %s" % (type(e).__name__, e)
+
 urllib.request.urlopen = real_urlopen
 
 # ------------------ EVALUACIÓN ------------------
@@ -171,6 +193,10 @@ t("28. REPORTE DIARIO de la prueba (visitas + cobrado) a la Jefa", any("DE LA PR
 t("29. /start promociona la SALA de juegos", any("juegos.html" in x for x in r))
 t("30. 'kit de menú' → info KIT MENÚ PRO + link $7", any("KIT MENÚ PRO" in x and "6df3c031" in x for x in r))
 t("30b. 'pagué kit' → ENTREGA al instante + aviso $7 a la Jefa", any("kit-menu-pro" in x for x in r) and any("KIT MENÚ PRO" in x and "$7" in x for x in to(JEFA)))
+t("31. Grupo activo → abre DESAFÍO DE LA ARENA (round 1)", any("DESAFÍO DE LA ARENA" in x for x in to(GRUPO)))
+t("31b. Respuestas 1/2/3 → RESULTADOS + medallas + nueva correcta", any("RESULTADOS DEL DESAFÍO" in x and "🥇" in x for x in to(GRUPO)))
+_rg = (((G.get("grupos") or {}).get("_ranking_sem") or {}).get("grupos") or {}).get("-100999") or {}
+t("31c. Puntuación exacta: Lina (1ra correcta) +16 · Pedro (falló) +0", _rg.get("9040", {}).get("puntos") == 16 and _rg.get("9041", {}).get("puntos") == 0)
 LXAL = [x for x in to(JEFA) if "laborx.com/jobs/" in x or "laborx.com/vacancies/" in x]
 t("18. Radar LaborX API: job NUEVO que matchea → alerta con link y $", any("community-moderator-for-crypto" in x and "$20" in x for x in LXAL))
 t("18b. …la trampa 'developer account' NO se alerta", not any("telegram-growth-helper" in x for x in LXAL))
