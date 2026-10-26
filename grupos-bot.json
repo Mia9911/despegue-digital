@@ -452,12 +452,12 @@
    "web3-marketing-87098"
   ],
   "gig": {
-   "v": 271,
+   "v": 272,
    "c": 0,
-   "av": 269,
+   "av": 272,
    "ac": 0
   },
-  "hora": "2026-10-26T01"
+  "hora": "2026-10-26T03"
  },
  "_metricas": {
   "fecha": "2026-10-25",
@@ -470,6 +470,25 @@
    "despegue-domino": 26,
    "despegue-bingo": 34,
    "despegue-cartas": 44
+  }
+ },
+ "_ranking_sem": {
+  "semana": "2026-W43",
+  "grupos": {}
+ },
+ "_retos": {
+  "-1003939536300": {
+   "q": "En una carrera, adelantas al 2do. ¿En qué puesto vas?",
+   "opts": [
+    "1ro",
+    "2do",
+    "3ro"
+   ],
+   "k": 1,
+   "abierta": "2026-10-25T23:57:04.409194-04:00",
+   "respuestas": {},
+   "rondas": 1,
+   "proximo": null
   }
  }
 }
