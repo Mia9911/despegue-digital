@@ -512,5 +512,8 @@
   },
   "ronda": 0,
   "reinicia": null
+ },
+ "_pagos_arena": {
+  "total": 1
  }
 }
