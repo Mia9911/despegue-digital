@@ -4,8 +4,8 @@
    "title": "Despegue Digital Negocios Cuba",
    "username": "DespegueDigitalCuba",
    "activo": true,
-   "ultima": "2026-10-27",
-   "posts": 35
+   "ultima": "2026-10-28",
+   "posts": 36
   },
   "8600965049": {
    "title": "",
@@ -16,7 +16,7 @@
   }
  },
  "_canal": {
-  "ultima": "2026-10-27"
+  "ultima": "2026-10-28"
  },
  "_pagos": {
   "total": 0
@@ -460,12 +460,12 @@
    "web3-marketing-87098"
   ],
   "gig": {
-   "v": 302,
+   "v": 303,
    "c": 0,
-   "av": 300,
+   "av": 303,
    "ac": 0
   },
-  "hora": "2026-10-28T19"
+  "hora": "2026-10-28T22"
  },
  "_metricas": {
   "fecha": "2026-10-28",
@@ -493,10 +493,10 @@
     "3ro"
    ],
    "k": 1,
-   "abierta": "2026-10-27T21:43:51.722238-04:00",
+   "abierta": null,
    "respuestas": {},
    "rondas": 2,
-   "proximo": null
+   "proximo": "2026-10-29T18:39:48.156552-04:00"
   }
  },
  "_guerra": {
