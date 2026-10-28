@@ -135,7 +135,7 @@ var LS={get:function(k,d){try{return JSON.parse(localStorage.getItem(k))||d}catc
 var S={preg:[],i:0,racha:0,puntos:0,t:15,timer:null,vip:LS.get("vip_hasta","")>hoyISO()};
 function hoyISO(){return new Date().toISOString().slice(0,10)}
 function energia(){var e=LS.get("energia",null);var h=hoyISO();
- if(!e||e.d!=h){e={d:h,n:5};LS.set("energia",e)} return e}
+ if(!e||e.d!=h){var prev=(e&&typeof e.n=="number"&&e.n>=0)?e.n:0;e={d:h,n:prev+5};LS.set("energia",e)} return e}
 function gastaEnergia(){var e=energia();if(e.n<=0)return false;e.n--;LS.set("energia",e);return true}
 function pintarHUD(){
  document.getElementById("chipEnergia").textContent="🪙 Monedas: "+energia().n;
