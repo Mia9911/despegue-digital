@@ -70,6 +70,7 @@ TXT_START = (
     "✅ Garantía: plazo incumplido = reembolso total.\n"
     "🛒 Tienda online: " + VITRINA + "\n"
     "🎲 Juega GRATIS y gana premios reales: https://mia9911.github.io/despegue-digital/juegos.html\n\n"
+    "🚗 ¿Y si te pago por compartir? Escribe \"socio\" y te doy tu link: 20% de cada compra de quien entre por él.\n\n"
     "Cuéntame: ¿cuál es tu negocio y qué vendes? 😊"
 )
 TXT_PRECIOS = (
@@ -345,6 +346,57 @@ def crear_cobro_qvapay(amount, desc, remote_id):
         print("crear cobro fail:", _e)
         return None
 
+
+# ---------------- V15: MODO SOCIO (el "Uber" de Despegue Digital) ----------------
+# Regla de oro: el 20% de cada venta va a los jugadores — al SOCIO que trajo al
+# comprador, o a la OLLA del torneo semanal si nadie lo trajo. La Jefa siempre
+# se queda el 80%. Pagos a socios: MANUALES por QvaPay (transferencia suya, sin
+# permisos peligrosos). NUNCA cobrar entrada por jugar (casino = cuenta muerta).
+SOCIO_PCT = 0.20
+SOCIO_MIN_COBRO = 500   # centavos ($5.00)
+
+def socio_get(uid, nombre, username):
+    _s = grupos.get("_socios") or {}
+    d = _s.get(uid) or {"nombre": nombre, "username": username or "", "saldo": 0,
+                        "referidos": 0, "padre": None, "avisado": 0, "qvapay": ""}
+    d["nombre"] = nombre
+    d["username"] = username or ""
+    _s[uid] = d
+    grupos["_socios"] = _s
+    return d
+
+def socio_link(uid):
+    _b = os.environ.get("TELEGRAM_BOT_USERNAME", "Despeguedijitalbot")
+    return "https://t.me/%s?start=ref_%s" % (_b, uid)
+
+def abonar_socio(uid, nombre, username, venta_cent, producto):
+    """20% de la venta: al padrino si lo hay; si no, a la olla del torneo."""
+    try:
+        _com = int(round(venta_cent * SOCIO_PCT))
+        if _com <= 0:
+            return
+        _s = grupos.get("_socios") or {}
+        _padre = (_s.get(uid) or {}).get("padre")
+        if _padre and _padre in _s:
+            p = _s[_padre]
+            p["saldo"] = int(p.get("saldo", 0)) + _com
+            if p["saldo"] >= SOCIO_MIN_COBRO and not p.get("avisado"):
+                p["avisado"] = 1
+                tg("sendMessage", {"chat_id": JEFA, "text":
+                    "💸 COBRO DE SOCIO: %s (@%s) acumuló $%d.%02d en comisiones (%s).\n"
+                    "Págale por QvaPay → %s\nCuando transfieras, mándame \"pagado %s\" "
+                    "y lo dejo en cero. 🤝" %
+                    (p.get("nombre"), p.get("username"), p["saldo"] // 100, p["saldo"] % 100,
+                     producto, p.get("qvapay") or "(pídele su usuario QvaPay: 'socio cobro <usuario>')", _padre)})
+            _s[_padre] = p
+            grupos["_socios"] = _s
+        else:
+            _o = grupos.get("_olla") or {"cent": 0}
+            _o["cent"] = int(_o.get("cent", 0)) + _com
+            grupos["_olla"] = _o
+    except Exception as _e:
+        print("socio abono fail:", _e)
+
 TXT_INTAKE_GRANDE = (
     "\U0001F525 \u00a1GENIAL! Para fabricar tu pedido a la medida necesito 4 datos:\n\n"
     "1\ufe0f\u20e3 Nombre de tu negocio y qu\u00e9 vendes\n"
@@ -359,6 +411,11 @@ TXT_INTAKE_GRANDE = (
 # ---------------- POSTS PARA GRUPOS ----------------
 IG = "@despegue_digitalmarketing"
 PROMOS = [
+    ("🚗 GANA PLATA REAL con Despegue Digital 💸\n\n"
+     "Entra a t.me/Despeguedijitalbot y escribe \"socio\" → te doy TU link "
+     "exclusivo. Cada amigo que entre por él y compre, te pone el 20% en el "
+     "bolsillo (VIP $0.40 · Kit $1.40...). Cobro por QvaPay desde $5.\n"
+     "Compartir = cobrar. Sin sorteo, sin letra chica. 🤝"),
     ("🤖 ¿Cuántas ventas pierdes mientras duermes?\n\n"
      "Un VENDEDOR IA 24/7 atiende tu negocio en Telegram: responde precios, "
      "toma pedidos, cobra y publica tu promo TODOS los días — solo.\n\n"
@@ -633,6 +690,30 @@ for u in updates:
 
     if bajo.startswith("/start"):
         r = TXT_JEFA if es_jefa else TXT_START
+        try:
+            _uid_r = str((m.get("from") or {}).get("id") or m.get("message_id"))
+            _ref = None
+            for _p in bajo.split():
+                if _p.lower().startswith("ref_"):
+                    _ref = _p[4:]
+                    break
+            if _ref and _ref.isdigit() and _ref != _uid_r:
+                _s = grupos.get("_socios") or {}
+                if _uid_r not in _s:
+                    socio_get(_uid_r, nombre, username)
+                    _s = grupos["_socios"]
+                    if _ref not in _s:
+                        _s[_ref] = {"nombre": "Socio " + _ref, "username": "", "saldo": 0,
+                                    "referidos": 0, "padre": None, "avisado": 0, "qvapay": ""}
+                    _s[_uid_r]["padre"] = _ref
+                    _s[_ref]["referidos"] = int(_s[_ref].get("referidos", 0)) + 1
+                    grupos["_socios"] = _s
+                    tg("sendMessage", {"chat_id": JEFA, "text":
+                        "🤝 NUEVO REFERIDO: %s (@%s) entró por el link de SOCIO de %s (@%s).\n"
+                        "El socio gana el 20%% de lo que este cliente compre. 🚗" %
+                        (nombre, username, _s[_ref].get("nombre"), _s[_ref].get("username"))})
+        except Exception as _e:
+            print("start ref fail:", _e)
         if not es_jefa:
             tg("sendMessage", {"chat_id": JEFA, "text":
                 "👀 VISITA NUEVA: %s (@%s) — ya la atiendo (y queda en la libreta)." % (nombre, username)})
@@ -727,6 +808,7 @@ for u in updates:
     elif "calculadora" in bajo or "cálcul" in bajo or "ganancia" in bajo:
         if any(k in bajo for k in ("pagué", "pague", "ya pag", "pagado", "realicé el pago")):
             r = TXT_CALCULADORA_OK
+            abonar_socio(str((m.get("from") or {}).get("id") or m.get("message_id")), nombre, username, 300, "Calculadora PRO")
             if not es_jefa:
                 tg("sendMessage", {"chat_id": JEFA, "text":
                     "\U0001F9EE %s (@%s) pagó la CALCULADORA PRO ($3) → entregada al instante." % (nombre, username)})
@@ -735,6 +817,7 @@ for u in updates:
     elif any(k in bajo for k in ("kit menú", "kit menu", "kit de menú", "kit de menu", "plantillas de canva", "plantilla canva", "menú pro", "menu pro", "canva", "pagué kit", "pague kit", "pagué el kit", "pague el kit", "ya pague el kit", "ya pagué el kit", "pagado kit", "compré el kit", "compre el kit")):
         if any(k in bajo for k in ("pagué", "pague", "ya pag", "pagado", "realizé el pago", "realicé el pago")):
             r = TXT_KIT_OK
+            abonar_socio(str((m.get("from") or {}).get("id") or m.get("message_id")), nombre, username, 700, "Kit Menú PRO")
             if not es_jefa:
                 tg("sendMessage", {"chat_id": JEFA, "text":
                     "\U0001F37D\uFE0F %s (@%s) pagó el KIT MENÚ PRO ($7) → entregado al instante." % (nombre, username)})
@@ -743,13 +826,15 @@ for u in updates:
     elif "plantilla" in bajo:
         if any(k in bajo for k in ("pagué", "pague", "ya pag", "pagado", "pague el", "realizé el pago", "realicé el pago")):
             r = TXT_PLANTILLAS_OK
+            abonar_socio(str((m.get("from") or {}).get("id") or m.get("message_id")), nombre, username, 400, "Pack Plantillas")
             if not es_jefa:
                 tg("sendMessage", {"chat_id": JEFA, "text":
-                    "📦 %s (@%s) pagó el PACK PLANTILLAS ($4) → entregado al instante." % (nombre, username)})
+                    "📦 %s (@%s) pagó el PACK PLANTILLAS ($4) → entregada al instante." % (nombre, username)})
         else:
             r = TXT_PLANTILLAS
     elif any(k in bajo for k in ("pagué imperio", "pague imperio", "pagado imperio", "pagué el imperio", "pague el imperio")):
         r = TXT_IMPERIO_OK
+        abonar_socio(str((m.get("from") or {}).get("id") or m.get("message_id")), nombre, username, 200, "Boost Imperio")
         if not es_jefa:
             tg("sendMessage", {"chat_id": JEFA, "text":
                 "\U0001F3C6 VENTA BOOST: %s (@%s) pag\u00f3 el PAQUETE EMPRESARIO ($2) \u2192 c\u00f3digo "
@@ -786,6 +871,59 @@ for u in updates:
         else:
             grupos["_sponsor"] = {"nombre": _sp, "desde": hoy}
             r = "✅ Liga patrocinada por: %s — saldrá en los próximos desafíos. (Para quitar: 'patrocinador quitar')" % _sp
+    elif bajo == "socios" and es_jefa:
+        _s = grupos.get("_socios") or {}
+        _lins = ["🚗 SOCIOS DE DESPEGUE DIGITAL — panel de la Jefa:"]
+        _tot = 0
+        for _su, _d in sorted(_s.items(), key=lambda kv: -kv[1].get("saldo", 0))[:10]:
+            if _d.get("saldo", 0) > 0 or _d.get("referidos", 0) > 0:
+                _tot += int(_d.get("saldo", 0))
+                _lins.append("· %s (@%s) [%s]: $%d.%02d · %d referidos · cobro: %s" %
+                             (_d.get("nombre"), _d.get("username"), _su, _d["saldo"] // 100,
+                              _d["saldo"] % 100, _d.get("referidos", 0), _d.get("qvapay") or "—"))
+        _oc = int((grupos.get("_olla") or {}).get("cent", 0))
+        _lins.append("💰 Olla del torneo: $%d.%02d" % (_oc // 100, _oc % 100))
+        _lins.append("💸 Total pendiente a socios: $%d.%02d" % (_tot // 100, _tot % 100))
+        _lins.append("Para pagar: transfiere por QvaPay y mándame \"pagado <id>\".")
+        r = "\n".join(_lins)
+    elif bajo.startswith("olla") and es_jefa:
+        _oc = int((grupos.get("_olla") or {}).get("cent", 0))
+        r = ("💰 OLLA DEL TORNEO SEMANAL: $%d.%02d\n"
+             "Se llena sola con el 20%% de las ventas sin socio. "
+             "Al llegar a $3.00 se anuncia como premio en efectivo del campeón." %
+             (_oc // 100, _oc % 100))
+    elif bajo.startswith("pagado ") and es_jefa:
+        _pu = bajo.split()[1] if len(bajo.split()) > 1 else ""
+        _s = grupos.get("_socios") or {}
+        if _pu in _s:
+            _pag = int(_s[_pu].get("saldo", 0))
+            _s[_pu]["saldo"] = 0
+            _s[_pu]["avisado"] = 0
+            grupos["_socios"] = _s
+            r = ("✅ Socio %s pagado: $%d.%02d. Saldo en cero — sigue acumulando 20%% de sus referidos. 🚗" %
+                 (_s[_pu].get("nombre"), _pag // 100, _pag % 100))
+        else:
+            r = "No tengo socio con id %s. Mira la lista con \"socios\"." % _pu
+    elif bajo.startswith("socio"):
+        _uid_s = str((m.get("from") or {}).get("id") or m.get("message_id"))
+        if "cobro " in bajo and not es_jefa:
+            _qp = texto.split("cobro", 1)[1].strip()[:40]
+            _d = socio_get(_uid_s, nombre, username)
+            _d["qvapay"] = _qp
+            r = ("✅ Usuario de cobro QvaPay guardado: %s\n"
+                 "Al llegar a $5.00 te pagamos ahí mismo. ¡A compartir tu link! 🚗💨" % _qp)
+        else:
+            _d = socio_get(_uid_s, nombre, username)
+            r = ("🚗 MODO SOCIO — gana plata real con Despegue Digital\n\n"
+                 "1️⃣ Tu link exclusivo:\n%s\n\n"
+                 "2️⃣ Compártelo (WhatsApp, estados, grupos). Todo el que entre por él es TU referido.\n"
+                 "3️⃣ Ganas el 20%% de CADA compra que él haga — para siempre:\n"
+                 "    · Pase VIP $1.99 → tú ganas $0.40 · Kit Menú PRO $7 → $1.40 · Plantillas $4 → $0.80\n"
+                 "4️⃣ Al juntar $5.00 te pagamos por QvaPay. Sin sorteo, sin letra chica: compartir = cobrar.\n\n"
+                 "💰 Tu saldo: $%d.%02d · Referidos: %d\n"
+                 "📲 Registra dónde cobrar: \"socio cobro <tu usuario QvaPay>\"") % (
+                socio_link(_uid_s), _d.get("saldo", 0) // 100, _d.get("saldo", 0) % 100,
+                _d.get("referidos", 0))
     elif "vip" in bajo or "moneda" in bajo:
         if any(k in bajo for k in ("pagué", "pague", "ya pag", "pagado", "compré", "compre")):
             try:
@@ -794,6 +932,7 @@ for u in updates:
                 _vipd[_uid_v] = {"nombre": nombre,
                                  "expira": (datetime.now(CUBA) + timedelta(days=7)).strftime("%Y-%m-%d")}
                 grupos["_vip"] = _vipd
+                abonar_socio(_uid_v, nombre, username, 199, "Pase VIP")
             except Exception as _e:
                 print("vip reg fail:", _e)
             r = TXT_VIP_OK
@@ -954,7 +1093,21 @@ try:
                     for _i, (_nm, _pt) in enumerate(_t3):
                         _prem.append("%s %s (%d pts) → %s" % (_med3[_i], _nm, _pt, _links3[_i]))
                     _prem.append("¡Los enlaces son suyos! ¿Premios en EFECTIVO? Que un negocio "
-                                 "patrocine la bolsa: escríbeme \"patrocinio\" 🤝")
+                                 "patrocine la bolsa: escríbame \"patrocinio\" 🤝")
+                    try:
+                        _oc = int((grupos.get("_olla") or {}).get("cent", 0))
+                        if _oc >= 300:
+                            _prem.append("💰 ADEMÁS, por la OLLA DE LA GUERRA (20% de las ventas "
+                                         "va a los jugadores): el campeón se lleva $%d.%02d EN EFECTIVO "
+                                         "por QvaPay. ¡Gracias a todos los que compran monedas y VIP!" %
+                                         (_oc // 100, _oc % 100))
+                            grupos["_olla"] = {"cent": 0}
+                        elif _oc > 0:
+                            _prem.append("💰 La olla de efectivo va en $%d.%02d — se paga al campeón "
+                                         "cuando llegue a $3.00 (se llena con el 20% de cada venta)." %
+                                         (_oc // 100, _oc % 100))
+                    except Exception:
+                        pass
                     tg("sendMessage", {"chat_id": int(_gid), "text": "\n".join(_prem)})
                 except Exception:
                     pass

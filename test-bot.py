@@ -146,6 +146,18 @@ try:
     UPDATES.append(msg(9040, "pagué vip", chat_id=-100999, chat_type="supergroup", nombre="Lina", username="lina"))
     UPDATES.append(msg(9040, _ok, chat_id=-100999, chat_type="supergroup", nombre="Lina", username="lina"))
     UPDATES.append(msg(9041, _mal, chat_id=-100999, chat_type="supergroup", nombre="Pedro", username="pedro2"))
+    # ── MODO SOCIO (el "Uber") ──
+    UPDATES.append(msg(9040, "socio", nombre="Lina", username="lina"))
+    UPDATES.append(msg(9050, "/start ref_9040", nombre="Rosa", username="rosa"))
+    UPDATES.append(msg(9050, "pagué vip", nombre="Rosa", username="rosa"))
+    UPDATES.append(msg(9042, "pagué vip", nombre="Ana", username="ana"))
+    for _k in range(4):
+        UPDATES.append(msg(9050, "pagué kit", nombre="Rosa", username="rosa"))
+    UPDATES.append(msg(9050, "socio cobro rosa_qvapay", nombre="Rosa", username="rosa"))
+    UPDATES.append(msg(1227661387, "socios", chat_id=1227661387, nombre="Mia", username="mia"))
+    UPDATES.append(msg(1227661387, "olla", chat_id=1227661387, nombre="Mia", username="mia"))
+    UPDATES.append(msg(1227661387, "pagado 9040", chat_id=1227661387, nombre="Mia", username="mia"))
+    UPDATES.append(msg(9051, "/start ref_9051", nombre="Ego", username="ego"))
     exec(compile(src, "bot-cycle.py", "exec"), G)
 except Exception as e:
     CRASH = "%s (2da corrida): %s" % (type(e).__name__, e)
@@ -208,6 +220,18 @@ t("33. 'clan caiman/gavilan' → se unen y anuncian", any("se unió a 🐊 CAIMA
 _gu = (G.get("grupos") or {}).get("_guerra") or {}
 t("33b. Acierto VIP = daño enemigo (castillo GAVILANES de 30 → 0)", _gu.get("hp", {}).get("gavilan") == 0)
 t("33c. VICTORIA DE CLAN (CAIMANES) + MVP Lina", any("VICTORIA DE CLAN" in x and "CAIMANES" in x for x in to(GRUPO)) and any("MVP de la guerra: Lina" in x for x in to(GRUPO)))
+_soc = (G.get("grupos") or {}).get("_socios") or {}
+t("34. /start ref_9040 → Rosa queda referida de Lina", (_soc.get("9050") or {}).get("padre") == "9040" and (_soc.get("9040") or {}).get("referidos") == 1)
+t("34b. …y la Jefa recibe NUEVO REFERIDO", any("NUEVO REFERIDO" in x and "Rosa" in x for x in to(JEFA)))
+t("35. 'socio' → panel con TU link y las reglas del 20%", any("MODO SOCIO" in x and "ref_9040" in x and "20%" in x for x in r))
+t("36. La compra del referido le entrega el VIP a ELLA (9050 en registro)", "9050" in ((G.get("grupos") or {}).get("_vip") or {}))
+t("36b. …y aviso de COBRO al cruzar los $5", any("COBRO DE SOCIO" in x and "6.00" in x for x in to(JEFA)))
+t("37. Ventas SIN socio → 20% a la olla ($6.00 tras las 2 corridas)", ((G.get("grupos") or {}).get("_olla") or {}).get("cent") == 600)
+t("37b. 'socio cobro …' → guarda el usuario QvaPay de cobro", (_soc.get("9050") or {}).get("qvapay") == "rosa_qvapay")
+t("38. Jefa 'socios' → panel con saldo, referidos y olla", any("SOCIOS DE DESPEGUE" in x and "6.00" in x and "Olla" in x for x in to(JEFA)))
+t("38b. Jefa 'olla' → muestra la olla del torneo", any("OLLA DEL TORNEO" in x and "6.00" in x for x in to(JEFA)))
+t("39. 'pagado 9040' → saldo del socio en cero", (_soc.get("9040") or {}).get("saldo") == 0 and any("pagado" in x and "6.00" in x for x in to(JEFA)))
+t("40. Nadie es su propio padrino (ref_9051 ignorado)", not ((_soc.get("9051") or {}).get("padre")))
 LXAL = [x for x in to(JEFA) if "laborx.com/jobs/" in x or "laborx.com/vacancies/" in x]
 t("18. Radar LaborX API: job NUEVO que matchea → alerta con link y $", any("community-moderator-for-crypto" in x and "$20" in x for x in LXAL))
 t("18b. …la trampa 'developer account' NO se alerta", not any("telegram-growth-helper" in x for x in LXAL))
