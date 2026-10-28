@@ -1361,23 +1361,54 @@ if grupos.get("_agenda", {}).get("ultima") != hoy:
 
 
 # ---------------- V9: ALARMA DE PAGOS QVAPAY (cada 10 min) ----------------
+# V16: vigila las DOS apps (la del bot Y la mini app Arena Lógica en QvaPay)
+# y reporta cada venta con nombre de producto. Solo LEE (jamás mueve plata).
+def nombre_producto_arena(tx):
+    """Nombre bonito de una venta de la mini app Arena Lógica."""
+    try:
+        _amt = float(tx.get("amount") or 0)
+        _d = (tx.get("description") or "").lower()
+        _rid = (tx.get("remote_id") or "").lower()
+        if "vip" in _d or "vip" in _rid or abs(_amt - 1.99) < 0.01:
+            return "\U0001F451 PASE VIP ARENA — $1.99 (7 días, puntos x2)"
+        if "moneda" in _d or "moneda" in _rid or abs(_amt - 0.99) < 0.01:
+            return "\U0001FA99 +5 MONEDAS ARENA — $0.99"
+        return "\U0001F6CD\uFE0F Venta en Arena Lógica — $%.2f" % _amt
+    except Exception:
+        return "\U0001F6CD\uFE0F Venta en Arena Lógica"
+
+def _qp_transacciones(qp_id, qp_sec):
+    _req = urllib.request.Request("https://api.qvapay.com/v2/transactions",
+        data=b"", headers={"app-id": qp_id, "app-secret": qp_sec,
+                           "Accept": "application/json", "Content-Type": "application/json",
+                           "User-Agent": "Mozilla/5.0"}, method="POST")
+    with urllib.request.urlopen(_req, timeout=20) as _r:
+        return json.loads(_r.read().decode()).get("transactions", [])
+
 try:
-    QP_ID = os.environ.get("QVAPAY_APP_ID", "")
-    QP_SEC = os.environ.get("QVAPAY_APP_SECRET", "")
-    if QP_ID and QP_SEC:
-        _req = urllib.request.Request("https://api.qvapay.com/v2/transactions",
-            data=b"", headers={"app-id": QP_ID, "app-secret": QP_SEC,
-                               "Accept": "application/json", "Content-Type": "application/json",
-                               "User-Agent": "Mozilla/5.0"}, method="POST")
-        with urllib.request.urlopen(_req, timeout=20) as _r:
-            _txs = json.loads(_r.read().decode()).get("transactions", [])
-        _ya = grupos.get("_pagos", {}).get("total", 0)
-        if len(_txs) > _ya:
-            for _tx in _txs[_ya:]:
-                tg("sendMessage", {"chat_id": JEFA, "text":
-                    "\U0001F4B0\U0001F4B0\U0001F4B0 ¡PAGO RECIBIDO EN QVAPAY!\n%s" %
-                    json.dumps(_tx, ensure_ascii=False)[:300]})
-        grupos["_pagos"] = {"total": len(_txs)}
+    for _eid, _esec, _marca, _ck in (
+            ("QVAPAY_APP_ID", "QVAPAY_APP_SECRET", "BOT", "_pagos"),
+            ("QVAPAY_ARENA_APP_ID", "QVAPAY_ARENA_APP_SECRET", "ARENA", "_pagos_arena")):
+        _id2 = os.environ.get(_eid, "")
+        _sec2 = os.environ.get(_esec, "")
+        if not (_id2 and _sec2):
+            continue
+        try:
+            _txs = _qp_transacciones(_id2, _sec2)
+            _ya = grupos.get(_ck, {}).get("total", 0)
+            if len(_txs) > _ya:
+                for _tx in _txs[_ya:]:
+                    if _marca == "ARENA":
+                        tg("sendMessage", {"chat_id": JEFA, "text":
+                            "\U0001F3AE\U0001F4B0 ¡VENTA EN ARENA LÓGICA (mini app QvaPay)!\n%s\n%s" %
+                            (nombre_producto_arena(_tx), json.dumps(_tx, ensure_ascii=False)[:260])})
+                    else:
+                        tg("sendMessage", {"chat_id": JEFA, "text":
+                            "\U0001F4B0\U0001F4B0\U0001F4B0 ¡PAGO RECIBIDO EN QVAPAY!\n%s" %
+                            json.dumps(_tx, ensure_ascii=False)[:300]})
+            grupos[_ck] = {"total": len(_txs)}
+        except Exception as _e:
+            print("qvapay check fail (%s):" % _marca, _e)
 except Exception as e:
     print("qvapay check fail:", e)
 

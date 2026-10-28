@@ -23,3 +23,5 @@ jobs:
           JEFA_CHAT_ID: '1227661387'
           QVAPAY_APP_ID: ${{ secrets.QVAPAY_APP_ID }}
           QVAPAY_APP_SECRET: ${{ secrets.QVAPAY_APP_SECRET }}
+          QVAPAY_ARENA_APP_ID: ${{ secrets.QVAPAY_ARENA_APP_ID }}
+          QVAPAY_ARENA_APP_SECRET: ${{ secrets.QVAPAY_ARENA_APP_SECRET }}

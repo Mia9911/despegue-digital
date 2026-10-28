@@ -232,6 +232,11 @@ t("38. Jefa 'socios' → panel con saldo, referidos y olla", any("SOCIOS DE DESP
 t("38b. Jefa 'olla' → muestra la olla del torneo", any("OLLA DEL TORNEO" in x and "6.00" in x for x in to(JEFA)))
 t("39. 'pagado 9040' → saldo del socio en cero", (_soc.get("9040") or {}).get("saldo") == 0 and any("pagado" in x and "6.00" in x for x in to(JEFA)))
 t("40. Nadie es su propio padrino (ref_9051 ignorado)", not ((_soc.get("9051") or {}).get("padre")))
+_npa = G.get("nombre_producto_arena") or (lambda tx: "")
+t("41. Alarma doble: VIP $1.99 reportado con nombre de producto", "PASE VIP ARENA" in _npa({"amount": "1.99", "description": "Pase VIP Arena Logica 7 dias"}))
+t("41b. Alarma doble: monedas $0.99 con nombre de producto", "MONEDAS ARENA" in _npa({"amount": "0.99", "remote_id": "arena-monedas-5"}))
+t("41c. Alarma doble: venta desconocida no crashea", "Venta" in _npa({"amount": "5.00"}) and "Venta" in _npa({}))
+t("41d. Estructura: el bot vigila las DOS apps de QvaPay", "QVAPAY_ARENA_APP_ID" in src and "_pagos_arena" in src and "nombre_producto_arena" in src)
 LXAL = [x for x in to(JEFA) if "laborx.com/jobs/" in x or "laborx.com/vacancies/" in x]
 t("18. Radar LaborX API: job NUEVO que matchea → alerta con link y $", any("community-moderator-for-crypto" in x and "$20" in x for x in LXAL))
 t("18b. …la trampa 'developer account' NO se alerta", not any("telegram-growth-helper" in x for x in LXAL))
