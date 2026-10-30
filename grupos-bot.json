@@ -4,8 +4,8 @@
    "title": "Despegue Digital Negocios Cuba",
    "username": "DespegueDigitalCuba",
    "activo": true,
-   "ultima": "2026-10-28",
-   "posts": 36
+   "ultima": "2026-10-29",
+   "posts": 37
   },
   "8600965049": {
    "title": "",
@@ -16,7 +16,7 @@
   }
  },
  "_canal": {
-  "ultima": "2026-10-28"
+  "ultima": "2026-10-29"
  },
  "_pagos": {
   "total": 0
@@ -460,12 +460,12 @@
    "web3-marketing-87098"
   ],
   "gig": {
-   "v": 308,
+   "v": 309,
    "c": 0,
-   "av": 306,
+   "av": 309,
    "ac": 0
   },
-  "hora": "2026-10-29T20"
+  "hora": "2026-10-30T00"
  },
  "_metricas": {
   "fecha": "2026-10-29",
@@ -486,17 +486,17 @@
  },
  "_retos": {
   "-1003939536300": {
-   "q": "En una carrera, adelantas al 2do. ¿En qué puesto vas?",
+   "q": "Completa: 1, 1, 2, 3, 5, 8, …",
    "opts": [
-    "1ro",
-    "2do",
-    "3ro"
+    "11",
+    "13",
+    "12"
    ],
    "k": 1,
-   "abierta": null,
+   "abierta": "2026-10-29T20:03:18.926731-04:00",
    "respuestas": {},
-   "rondas": 2,
-   "proximo": "2026-10-29T18:39:48.156552-04:00"
+   "rondas": 3,
+   "proximo": null
   }
  },
  "_guerra": {
