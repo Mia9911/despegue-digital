@@ -89,7 +89,7 @@ h1{font-size:1.35em;color:#F4D35E;margin:8px 0 2px;text-align:center}
   <button class="btn sec" onclick="mostrar('pInicio')">← Volver</button>
 </div>
 
-<div class="nota">Arena Lógica by Despegue Digital 🇨🇺 · Jugar es gratis, siempre.<br>Las monedas y el VIP son ventajas de juego — nunca dinero canjeable.</div>
+<div class="nota">Arena Lógica <b>v1.1</b> · by Despegue Digital 🇨🇺 · Jugar es gratis, siempre.<br>Las monedas y el VIP son ventajas de juego — nunca dinero canjeable.</div>
 
 <script>
 // ===CORE_START===
@@ -133,7 +133,7 @@ function puntuar(esCorrecta,segundosRestantes,rachaAntes,vip){
 var LS={get:function(k,d){try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}},
         set:function(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 var S={preg:[],i:0,racha:0,puntos:0,t:15,timer:null,vip:LS.get("vip_hasta","")>hoyISO()};
-function hoyISO(){return new Date().toISOString().slice(0,10)}
+function hoyISO(){var d=new Date();return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)}
 function energia(){var e=LS.get("energia",null);var h=hoyISO();
  if(!e||e.d!=h){var prev=(e&&typeof e.n=="number"&&e.n>=0)?e.n:0;e={d:h,n:prev+5};LS.set("energia",e)} return e}
 function gastaEnergia(){var e=energia();if(e.n<=0)return false;e.n--;LS.set("energia",e);return true}
@@ -157,11 +157,13 @@ function pintarRank(){
 }
 function escapeHtml(s){return String(s).replace(/[<>&"]/g,function(c){return{"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;"}[c]})}
 function empezar(){
+ if(S.jugando)return;
  if(!gastaEnergia()){mostrar("pTienda");document.getElementById("msjT").textContent="🪙 Se te acabaron las monedas de hoy — recarga arriba o vuelve mañana (5 gratis).";return}
- S.preg=[];for(var i=0;i<5;i++)S.preg.push(genPregunta(i));
+ S.jugando=true;S.preg=[];for(var i=0;i<5;i++)S.preg.push(genPregunta(i));
  S.i=0;S.racha=0;S.puntos=0;pintarHUD();mostrar("pJuego");pregunta();
 }
 function pregunta(){
+ S.bloqueo=false;
  var p=S.preg[S.i];
  document.getElementById("progreso").textContent="Reto "+(S.i+1)+" de 5";
  document.getElementById("qTxt").textContent=p.q;
@@ -175,7 +177,8 @@ function pregunta(){
  },1000);
 }
 function responder(j){
- clearInterval(S.timer);
+ if(S.bloqueo)return;
+ clearInterval(S.timer);S.bloqueo=true;
  var p=S.preg[S.i],ok=j==p.k,boton=null;
  if(j>=0){boton=document.getElementById("o"+j);boton.className="opt "+(ok?"ok":"mal")}
  if(!ok){var b=document.getElementById("o"+p.k);if(b)b.className="opt ok"}
@@ -188,6 +191,7 @@ function responder(j){
  },1300);
 }
 function fin(){
+ S.jugando=false;S.bloqueo=false;
  var rk=LS.get("rank",[]);
  rk.push({n:"Tú",p:S.puntos,v:S.vip,d:hoyISO()});
  LS.set("rank",rk);
