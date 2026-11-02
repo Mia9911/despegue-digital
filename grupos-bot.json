@@ -22,7 +22,7 @@
   "total": 0
  },
  "_agenda": {
-  "ultima": "2026-11-01"
+  "ultima": "2026-11-02"
  },
  "_radar_lx": {
   "ultima": "2026-09-29",
@@ -160,6 +160,7 @@
    "j105235",
    "j105238",
    "j105257",
+   "j105267",
    "j84007",
    "j93887",
    "j93888",
@@ -461,28 +462,28 @@
    "web3-marketing-87098"
   ],
   "gig": {
-   "v": 338,
+   "v": 339,
    "c": 0,
-   "av": 336,
+   "av": 339,
    "ac": 0
   },
-  "hora": "2026-11-02T01"
+  "hora": "2026-11-02T05"
  },
  "_metricas": {
-  "fecha": "2026-11-01",
+  "fecha": "2026-11-02",
   "badge": {
-   "despegue-tienda": 131,
-   "despegue-sala": 55,
-   "despegue-imperio": 47,
-   "despegue-mina": 63,
-   "arena-plata": 61,
-   "despegue-domino": 35,
-   "despegue-bingo": 44,
-   "despegue-cartas": 53
+   "despegue-tienda": 132,
+   "despegue-sala": 56,
+   "despegue-imperio": 48,
+   "despegue-mina": 64,
+   "arena-plata": 62,
+   "despegue-domino": 36,
+   "despegue-bingo": 45,
+   "despegue-cartas": 54
   }
  },
  "_ranking_sem": {
-  "semana": "2026-W44",
+  "semana": "2026-W45",
   "grupos": {}
  },
  "_retos": {
@@ -501,7 +502,7 @@
   }
  },
  "_guerra": {
-  "semana": "2026-W44",
+  "semana": "2026-W45",
   "activa": true,
   "hp": {
    "caiman": 500,
