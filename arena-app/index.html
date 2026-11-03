@@ -207,9 +207,9 @@ function fin(){
  pintarHUD();mostrar("pFin");
 }
 // ── pagos: SDK QvaPay (dentro de la app) con fallback a link directo ──
-var LINK_MONEDAS="https://www.qvapay.com/pay/69fe9056-fd88-4cd4-99ba-f18532813114";
-var LINK_VIP="https://www.qvapay.com/pay/2747d44d-1714-4eb6-8c26-b5697c0e1f26";
-var UUID_COBRO={monedas:"69fe9056-fd88-4cd4-99ba-f18532813114",vip:"2747d44d-1714-4eb6-8c26-b5697c0e1f26"};
+var LINK_MONEDAS="https://www.qvapay.com/pay/e1e1101f-e2c3-4114-aa30-3c052766c149";
+var LINK_VIP="https://www.qvapay.com/pay/414d89cc-bd27-430e-bfad-8661f58df829";
+var UUID_COBRO={monedas:"e1e1101f-e2c3-4114-aa30-3c052766c149",vip:"414d89cc-bd27-430e-bfad-8661f58df829"};
 function haySDK(){try{var Q=window.QvaPay;return !!(Q&&Q.payments&&typeof Q.payments.payInvoice==="function")}catch(e){return false}}
 function noPagado(motivo){
  document.getElementById("msjT").textContent="❌ "+motivo+". NO se acreditó nada y NO se te cobró. Cuando tengas saldo, vuelve a intentarlo.";
