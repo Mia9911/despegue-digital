@@ -1421,7 +1421,9 @@ except Exception as e:
 #      Urgente si quedan <=7 dias. SI SE RENUEVAN LOS LINKS: actualizar
 #      ARENA_LINKS_EXPIRAN aqui abajo (y los UUID en arena-app/index.html).
 ARENA_URL = "https://mia9911.github.io/despegue-digital/arena-app/"
-ARENA_LINKS_EXPIRAN = datetime(2026, 11, 25).date()
+# Renovados 3/11/26 (expiracion solicitada a 1 ano; vigilar el 3/12 por si la API
+# la ignoro y aplico 30 dias — los links viejos 69fe9056/2747d44d vencen 25/11 y quedan sin uso)
+ARENA_LINKS_EXPIRAN = datetime(2026, 12, 3).date()
 try:
     _vig = grupos.get("_vig_arena", {}) or {}
     _hoyV = datetime.utcnow().strftime("%Y-%m-%d")
