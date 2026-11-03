@@ -89,7 +89,7 @@ h1{font-size:1.35em;color:#F4D35E;margin:8px 0 2px;text-align:center}
   <button class="btn sec" onclick="mostrar('pInicio')">← Volver</button>
 </div>
 
-<div class="nota">Arena Lógica <b>v1.2</b> · by Despegue Digital 🇨🇺 · Jugar es gratis, siempre.<br>Las monedas y el VIP son ventajas de juego — nunca dinero canjeable.</div>
+<div class="nota">Arena Lógica <b>v1.3</b> · by Despegue Digital 🇨🇺 · Jugar es gratis, siempre.<br>Las monedas y el VIP son ventajas de juego — nunca dinero canjeable.</div>
 
 <script>
 // ===CORE_START===
@@ -133,10 +133,13 @@ function puntuar(esCorrecta,segundosRestantes,rachaAntes,vip){
 var _mem={};
 var LS={get:function(k,d){try{var v=localStorage.getItem(k);if(v!=null)return JSON.parse(v)||d}catch(e){}return (k in _mem)?_mem[k]:d},
         set:function(k,v){_mem[k]=v;try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
-var S={preg:[],i:0,racha:0,puntos:0,t:15,timer:null,vip:LS.get("vip_hasta","")>hoyISO()};
+var S={preg:[],i:0,racha:0,puntos:0,t:15,timer:null,vip:LS.get("vip_hasta","")>=hoyISO()};
 function hoyISO(){var d=new Date();return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)}
 function energia(){var e=LS.get("energia",null);var h=hoyISO();
- if(!e||e.d!=h){var prev=(e&&typeof e.n=="number"&&e.n>=0)?e.n:0;e={d:h,n:prev+5};LS.set("energia",e)} return e}
+ if(!e||e.d!=h){var prev=(e&&typeof e.n=="number"&&e.n>=0)?e.n:0;e={d:h,n:prev+5};LS.set("energia",e)}
+ if(typeof e.n!="number"||e.n<0)e.n=0;
+ if(e.n>999)e.n=999;
+ return e}
 function gastaEnergia(){var e=energia();if(e.n<=0)return false;e.n--;LS.set("energia",e);return true}
 function pintarHUD(){
  document.getElementById("chipEnergia").textContent="🪙 Monedas: "+energia().n;
@@ -173,6 +176,7 @@ function pregunta(){
  S.t=15;document.getElementById("bar").style.width="100%";
  clearInterval(S.timer);
  S.timer=setInterval(function(){
+  if(document.hidden)return;
   S.t--;document.getElementById("bar").style.width=(S.t/15*100)+"%";
   if(S.t<=0){clearInterval(S.timer);responder(-1)}
  },1000);
@@ -195,6 +199,7 @@ function fin(){
  S.jugando=false;S.bloqueo=false;
  var rk=LS.get("rank",[]);
  rk.push({n:"Tú",p:S.puntos,v:S.vip,d:hoyISO()});
+ if(rk.length>50)rk=rk.slice(-50);
  LS.set("rank",rk);
  document.getElementById("puntosFin").textContent=S.puntos+" pts";
  var mejor=LS.get("mejor",0);if(S.puntos>mejor){LS.set("mejor",S.puntos);mejor=S.puntos}
@@ -218,6 +223,7 @@ function comprar(item){
    else{noPagado("El pago no se completó"+(r&&r.status?" ("+r.status+")":""))}
   }).catch(function(e){
    if(e&&e.code=="USER_CANCELLED"){document.getElementById("msjT").textContent="Cancelaste el pago — no se acreditó nada.";return}
+   if(e&&e.code=="BUSY"){document.getElementById("msjT").textContent="Ya tenías una ventana de pago abierta — ciérrala y vuelve a tocar.";return}
    noPagado("El pago falló"+(e&&e.code?" ("+e.code+")":""))
   });
   return
@@ -239,8 +245,19 @@ function acreditar(item){
 (function(){
  var p=new URLSearchParams(location.search);
  if(p.get("pago")=="ok"){
-  acreditar(p.get("item")||LS.get("ultimo_item","monedas"));mostrar("pTienda");
-  try{history.replaceState(null,"",location.pathname)}catch(e){}  // evita doble crédito al recargar
+  var it=p.get("item")||LS.get("ultimo_item","monedas");
+  if(it.indexOf("vip")<0)it="monedas";
+  var c=LS.get("urlcred",null),h=hoyISO();
+  if(!c||c.d!=h)c={d:h,n:0};
+  if(it=="vip"&&S.vip){
+   document.getElementById("msjT").textContent="👑 Ya tienes VIP activo — disfrútalo, no hace falta otro.";
+  }else if(c.n>=2){
+   document.getElementById("msjT").textContent="⚠️ Límite de acreditación automática: 2 al día. Si pagaste más, manda tu recibo a t.me/Despeguedijitalbot y se acredita a mano.";
+  }else{
+   c.n++;LS.set("urlcred",c);acreditar(it);
+  }
+  mostrar("pTienda");
+  try{history.replaceState(null,"",location.pathname)}catch(e){}
  }
 })();
 pintarHUD();
