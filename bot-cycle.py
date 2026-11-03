@@ -1412,6 +1412,53 @@ try:
 except Exception as e:
     print("qvapay check fail:", e)
 
+# ---------------- V12.5: VIGILANTE DE CAJA ARENA (diario) ----------------
+# Pedido de Jefa (3/11): "ponle un vigilante para no volver a perder dinero".
+# Una vez al dia (gate en grupos.json -> _vig_arena.dia) manda a la Jefa:
+#   1) ¿Mini app ONLINE y en que version? (si no carga -> 🚨 nadie juega/paga)
+#   2) Caja real: total de pagos y $ recaudados (API app ARENA) + ventas de hoy
+#   3) Alarma de EXPIRACION de los 2 cobros ($0.99/$1.99): vencen 2026-11-25.
+#      Urgente si quedan <=7 dias. SI SE RENUEVAN LOS LINKS: actualizar
+#      ARENA_LINKS_EXPIRAN aqui abajo (y los UUID en arena-app/index.html).
+ARENA_URL = "https://mia9911.github.io/despegue-digital/arena-app/"
+ARENA_LINKS_EXPIRAN = datetime(2026, 11, 25).date()
+try:
+    _vig = grupos.get("_vig_arena", {}) or {}
+    _hoyV = datetime.utcnow().strftime("%Y-%m-%d")
+    if _vig.get("dia") != _hoyV:
+        _lineas = ["\U0001F3DF\uFE0F VIGILANTE DE CAJA — Arena Lógica"]
+        try:
+            _rqA = urllib.request.Request(ARENA_URL, headers={"User-Agent": "Mozilla/5.0"})
+            with urllib.request.urlopen(_rqA, timeout=25) as _rhA:
+                _htmlA = _rhA.read().decode("utf-8", "ignore")
+            _vA = re.search(r"Arena Lógica <b>(v[0-9.]+)</b>", _htmlA)
+            _lineas.append("\U0001F7E2 Mini app online · versión " + (_vA.group(1) if _vA else "¿?"))
+        except Exception as _eA:
+            _lineas.append("\U0001F6A8 LA MINI APP NO RESPONDE (%s) — ¡revisar YA! Nadie puede jugar ni pagar." % _eA)
+        _aidA = os.environ.get("QVAPAY_ARENA_APP_ID", "")
+        _asecA = os.environ.get("QVAPAY_ARENA_APP_SECRET", "")
+        _nTx = 0; _totA = 0.0; _hoyN = 0
+        if _aidA and _asecA:
+            try:
+                _txsA = _qp_transacciones(_aidA, _asecA)
+                _nTx = len(_txsA)
+                _totA = sum(float(t.get("amount") or 0) for t in _txsA)
+                _hoyN = sum(1 for t in _txsA if (t.get("created_at") or "").startswith(_hoyV))
+            except Exception as _eB:
+                _lineas.append("⚠️ No pude leer la caja de QvaPay: %s" % _eB)
+        _lineas.append("💰 Caja real: %d pagos · $%.2f total · hoy: %d pago(s)" % (_nTx, _totA, _hoyN))
+        _diasA = (ARENA_LINKS_EXPIRAN - datetime.utcnow().date()).days
+        if _diasA <= 0:
+            _lineas.append("\U0001F6A8 LOS COBROS EXPIRARON (%s) — NADIE PUEDE PAGAR. Renovar YA (la torre puede)." % ARENA_LINKS_EXPIRAN)
+        elif _diasA <= 7:
+            _lineas.append("⚠️ Cobros expiran en %d días (%s) — escribirle a la torre: 'renovar cobros arena'." % (_diasA, ARENA_LINKS_EXPIRAN))
+        else:
+            _lineas.append("📅 Cobros vigentes · expiran en %d días" % _diasA)
+        tg("sendMessage", {"chat_id": JEFA, "text": "\n".join(_lineas)})
+        grupos["_vig_arena"] = {"dia": _hoyV}
+except Exception as _eV:
+    print("vigilante arena fail:", _eV)
+
 # ---------------- V12.4: RADAR LABORX "CAZA-FINA" (API publica, cada hora) ----------------
 # 29/9 DESCUBIERTA LA API PUBLICA de LaborX (sin login, solo feeds publicos):
 #   GET api.laborx.com/simple-jobs/list?limit=100  -> trabajos precio fijo ($15+)
