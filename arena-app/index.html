@@ -75,8 +75,8 @@ h1{font-size:1.35em;color:#F4D35E;margin:8px 0 2px;text-align:center}
   <p style="font-size:.82em;color:#CFE8DD;text-align:center">Las monedas sirven para seguir jugando y competir.<br><b>No se pueden canjear por dinero.</b></p>
   <button class="btn" onclick="comprar('monedas')">🪙 +5 MONEDAS — $0.99</button>
   <button class="btn" onclick="comprar('vip')">👑 PASE VIP 7 DÍAS — $1.99<br><span style="font-size:.75em">x2 puntos + corona</span></button>
-  <p style="font-size:.75em;color:#7FD1C1;text-align:center;margin-top:8px">Al pagar, vuelve y toca “ya pagué”.</p>
-  <button class="btn sec" onclick="yaPague()">✅ Ya pagué</button>
+  <p style="font-size:.75em;color:#7FD1C1;text-align:center;margin-top:8px">Pagas con tu saldo QvaPay · el crédito llega solo si el pago se completa.</p>
+  <button class="btn sec" onclick="yaPague()">❓ Pagué y no apareció</button>
   <button class="btn sec" onclick="mostrar('pInicio')">← Volver</button>
   <div class="msj" id="msjT"></div>
 </div>
@@ -89,7 +89,7 @@ h1{font-size:1.35em;color:#F4D35E;margin:8px 0 2px;text-align:center}
   <button class="btn sec" onclick="mostrar('pInicio')">← Volver</button>
 </div>
 
-<div class="nota">Arena Lógica <b>v1.1</b> · by Despegue Digital 🇨🇺 · Jugar es gratis, siempre.<br>Las monedas y el VIP son ventajas de juego — nunca dinero canjeable.</div>
+<div class="nota">Arena Lógica <b>v1.2</b> · by Despegue Digital 🇨🇺 · Jugar es gratis, siempre.<br>Las monedas y el VIP son ventajas de juego — nunca dinero canjeable.</div>
 
 <script>
 // ===CORE_START===
@@ -130,8 +130,9 @@ function puntuar(esCorrecta,segundosRestantes,rachaAntes,vip){
 // ===CORE_END===
 
 // ── estado ──
-var LS={get:function(k,d){try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}},
-        set:function(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+var _mem={};
+var LS={get:function(k,d){try{var v=localStorage.getItem(k);if(v!=null)return JSON.parse(v)||d}catch(e){}return (k in _mem)?_mem[k]:d},
+        set:function(k,v){_mem[k]=v;try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 var S={preg:[],i:0,racha:0,puntos:0,t:15,timer:null,vip:LS.get("vip_hasta","")>hoyISO()};
 function hoyISO(){var d=new Date();return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)}
 function energia(){var e=LS.get("energia",null);var h=hoyISO();
@@ -204,29 +205,29 @@ function fin(){
 var LINK_MONEDAS="https://www.qvapay.com/pay/69fe9056-fd88-4cd4-99ba-f18532813114";
 var LINK_VIP="https://www.qvapay.com/pay/2747d44d-1714-4eb6-8c26-b5697c0e1f26";
 var UUID_COBRO={monedas:"69fe9056-fd88-4cd4-99ba-f18532813114",vip:"2747d44d-1714-4eb6-8c26-b5697c0e1f26"};
+function haySDK(){try{var Q=window.QvaPay;return !!(Q&&Q.payments&&typeof Q.payments.payInvoice==="function")}catch(e){return false}}
+function noPagado(motivo){
+ document.getElementById("msjT").textContent="❌ "+motivo+". NO se acreditó nada y NO se te cobró. Cuando tengas saldo, vuelve a intentarlo.";
+}
 function comprar(item){
- var url=item=="vip"?LINK_VIP:LINK_MONEDAS;
  LS.set("ultimo_item",item);
- try{
-  var Q=window.QvaPay;
-  if(Q&&Q.payments&&typeof Q.payments.payInvoice==="function"){
-   Q.payments.payInvoice(UUID_COBRO[item]).then(function(r){
-    if(r&&r.status=="paid"){acreditar(item);document.getElementById("msjT").textContent="✅ ¡Pago recibido! Acreditado al instante."}
-    else{document.getElementById("msjT").textContent="Pago: "+(r&&r.status?r.status:"en proceso")+". Al confirmar queda acreditado."}
-   }).catch(function(e){
-    if(e&&e.code=="USER_CANCELLED"){return}
-    window.open(url,"_blank");
-   });
-   return
-  }
- }catch(e){}
- window.open(url,"_blank");
- document.getElementById("msjT").textContent="Pago abierto en QvaPay — al terminar vuelve y toca “ya pagué”.";
+ if(haySDK()){
+  document.getElementById("msjT").textContent="Confirma el pago con tu PIN en QvaPay…";
+  window.QvaPay.payments.payInvoice(UUID_COBRO[item]).then(function(r){
+   if(r&&r.status=="paid"){acreditar(item)}
+   else{noPagado("El pago no se completó"+(r&&r.status?" ("+r.status+")":""))}
+  }).catch(function(e){
+   if(e&&e.code=="USER_CANCELLED"){document.getElementById("msjT").textContent="Cancelaste el pago — no se acreditó nada.";return}
+   noPagado("El pago falló"+(e&&e.code?" ("+e.code+")":""))
+  });
+  return
+ }
+ window.open(item=="vip"?LINK_VIP:LINK_MONEDAS,"_blank");
+ document.getElementById("msjT").textContent="Se abrió QvaPay en otra pestaña. Si pagas, al volver aquí el crédito aparece solo — no hace falta avisar.";
 }
 function yaPague(){
- var p=new URLSearchParams(location.search), item=p.get("item")||LS.get("ultimo_item","monedas");
- if(item.indexOf("vip")>=0){acreditar("vip");return}
- acreditar("monedas");
+ if(haySDK()){document.getElementById("msjT").textContent="Aquí no hace falta: dentro de QvaPay el crédito se acredita solo SI el pago se completa. Si te salió “sin saldo”, no se te cobró nada.";return}
+ document.getElementById("msjT").textContent="Si pagaste, al volver de QvaPay el crédito aparece solo. ¿Pagaste y no apareció? Escríbenos con tu recibo: t.me/Despeguedijitalbot";
 }
 function acreditar(item){
  if(item=="vip"){var d=new Date();d.setDate(d.getDate()+7);LS.set("vip_hasta",d.toISOString().slice(0,10));S.vip=true;
