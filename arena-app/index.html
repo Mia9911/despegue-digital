@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<meta name="description" content="Arena Lógica: retos de lógica de 15 segundos. Juega gratis, compite en el ranking semanal, desbloquea monedas y el Pase VIP.">
+<meta name="description" content="Arena Lógica: retos de lógica de 15 segundos. Juega gratis, compite en el ranking, desbloquea monedas y el Pase VIP.">
 <title>Arena Lógica — retos de 15 segundos</title>
 <script src="https://www.qvapay.com/miniapps/sdk-sim.js"></script>
 <style>
@@ -23,8 +23,9 @@ h1{font-size:1.35em;color:#F4D35E;margin:8px 0 2px;text-align:center}
 .opt.mal{background:#8A2E2E}
 .grande{font-size:1.6em;color:#F4D35E;text-align:center;margin:10px 0}
 .btn{display:block;width:100%;background:linear-gradient(135deg,#F4D35E,#E0A82E);color:#0A2926;border:none;border-radius:12px;padding:14px;font-size:1em;font-weight:bold;font-family:inherit;margin:10px 0;cursor:pointer;text-align:center;text-decoration:none}
+.btn:disabled{opacity:.6;cursor:wait}
 .btn.sec{background:#123B36;color:#7FD1C1;border:1px solid #7fd1c155;font-weight:normal}
-.msj{font-size:.85em;color:#7FD1C1;text-align:center;margin:6px 0;min-height:1.2em}
+.msj{font-size:.85em;color:#7FD1C1;text-align:center;margin:6px 0;min-height:1.2em;line-height:1.4}
 .corona{color:#F4D35E}
 #rank li{font-size:.9em;margin:6px 0;color:#CFE8DD}
 .nota{font-size:.7em;color:#7FD1C1;text-align:center;margin-top:14px;font-style:italic;line-height:1.5}
@@ -42,8 +43,8 @@ h1{font-size:1.35em;color:#F4D35E;margin:8px 0 2px;text-align:center}
 
 <!-- ═══ PANTALLA INICIO ═══ -->
 <div id="pInicio" class="card">
-  <p class="pregunta">Juego gratis hoy: <b id="runsTxt">5 partidas</b><br><span style="font-size:.8em;color:#7FD1C1">gana puntos: correcto +10 · rapidez hasta +15 · racha +5</span></p>
-  <button class="btn" onclick="empezar()">▶️ JUGAR AHORA</button>
+  <p class="pregunta">Partidas disponibles: <b id="runsTxt">5 partidas</b><br><span style="font-size:.8em;color:#7FD1C1">gana puntos: correcto +10 · rapidez hasta +15 · racha +5</span></p>
+  <button class="btn" id="btnJugar" onclick="empezar()">▶️ JUGAR AHORA</button>
   <button class="btn sec" onclick="mostrar('pTienda')">🪙 Tienda (monedas + VIP)</button>
   <button class="btn sec" onclick="mostrar('pRank')">🏆 Ranking</button>
   <div class="msj" id="msjIni"></div>
@@ -73,9 +74,9 @@ h1{font-size:1.35em;color:#F4D35E;margin:8px 0 2px;text-align:center}
 <div id="pTienda" class="card oculto">
   <p class="pregunta">🪙 TIENDA DE LA ARENA</p>
   <p style="font-size:.82em;color:#CFE8DD;text-align:center">Las monedas sirven para seguir jugando y competir.<br><b>No se pueden canjear por dinero.</b></p>
-  <button class="btn" onclick="comprar('monedas')">🪙 +5 MONEDAS — $0.99</button>
-  <button class="btn" onclick="comprar('vip')">👑 PASE VIP 7 DÍAS — $1.99<br><span style="font-size:.75em">x2 puntos + corona</span></button>
-  <p style="font-size:.75em;color:#7FD1C1;text-align:center;margin-top:8px">Pagas con tu saldo QvaPay · el crédito llega solo si el pago se completa.</p>
+  <button class="btn" id="btnComprarMon" onclick="comprar('monedas')">🪙 +5 MONEDAS — $0.99</button>
+  <button class="btn" id="btnComprarVip" onclick="comprar('vip')">👑 PASE VIP 7 DÍAS — $1.99<br><span style="font-size:.75em">x2 puntos + corona en el ranking</span></button>
+  <p style="font-size:.75em;color:#7FD1C1;text-align:center;margin-top:8px">Pagas con tu saldo QvaPay · el crédito llega al instante cuando el pago se completa.</p>
   <button class="btn sec" onclick="yaPague()">❓ Pagué y no apareció</button>
   <button class="btn sec" onclick="mostrar('pInicio')">← Volver</button>
   <div class="msj" id="msjT"></div>
@@ -83,13 +84,13 @@ h1{font-size:1.35em;color:#F4D35E;margin:8px 0 2px;text-align:center}
 
 <!-- ═══ PANTALLA RANKING ═══ -->
 <div id="pRank" class="card oculto">
-  <p class="pregunta">🏆 RANKING SEMANAL</p>
+  <p class="pregunta">🏆 MEJORES MARCAS</p>
   <ol id="rank" style="padding-left:22px"></ol>
-  <p style="font-size:.75em;color:#7FD1C1;text-align:center">Ranking de tu dispositivo — el ranking global Top 100<br>se enciende al publicar la app en el catálogo de QvaPay 🚀</p>
+  <p style="font-size:.75em;color:#7FD1C1;text-align:center">Tus mejores rondas registradas en este dispositivo.<br>Activa el Pase VIP 👑 para duplicar tu puntuación.</p>
   <button class="btn sec" onclick="mostrar('pInicio')">← Volver</button>
 </div>
 
-<div class="nota">Arena Lógica <b>v1.3</b> · by Despegue Digital 🇨🇺 · Jugar es gratis, siempre.<br>Las monedas y el VIP son ventajas de juego — nunca dinero canjeable.</div>
+<div class="nota">Arena Lógica <b>v1.4</b> · by Despegue Digital 🇨🇺 · Jugar es gratis, siempre.<br>Las monedas y el VIP son ventajas de juego — nunca dinero canjeable.</div>
 
 <script>
 // ===CORE_START===
@@ -105,22 +106,77 @@ var BANK=[
  ["La mitad de 2, más 2. ¿Cuánto es?",["3","2","4"],0],
  ["Completa: 100, 81, 64, 49, …",["36","25","38"],0],
  ["Si 3 gatos cazan 3 ratones en 3 horas, ¿cuánto tardan 6 gatos en 6 ratones?",["3 horas","6 horas","1.5 horas"],0],
- ["¿Qué sigue? Z, X, C, V, …",["B","N","A"],0],
- ["Un ladrillo pesa 1 kg más medio ladrillo. ¿Cuánto pesa?",["1 kg","1.5 kg","2 kg"],2]
+ ["¿Qué sigue en el teclado? Z, X, C, V, …",["B","N","A"],0],
+ ["Un ladrillo pesa 1 kg más medio ladrillo. ¿Cuánto pesa un ladrillo?",["1 kg","1.5 kg","2 kg"],2],
+ ["¿Cuántos meses del año tienen 28 días?",["Solo 1","Todos los 12","6 meses"],1],
+ ["El padre de Ana tiene 4 hijas: Lala, Lele, Lili y… ¿quién falta?",["Lolo","Ana","Lulu"],1],
+ ["Si tienes 3 manzanas y quitas 2, ¿cuántas tienes tú?",["1","2","3"],1],
+ ["¿Cuánto es 7 × 8 − 6?",["50","48","52"],0],
+ ["Completa: 3, 6, 12, 24, …",["36","48","42"],1],
+ ["Un tren eléctrico va de norte a sur. ¿Hacia dónde va el humo?",["Al norte","Al sur","No echa humo"],2],
+ ["Si mañana fuera viernes, ¿qué día fue ayer?",["Martes","Miércoles","Jueves"],0],
+ ["¿Cuál es el triple de 15 menos 5?",["40","30","45"],0],
+ ["Completa: 1, 4, 9, 16, 25, …",["30","36","49"],1],
+ ["En una pecera hay 10 peces; si 3 se ahogan, ¿cuántos quedan?",["7","10","3"],1],
+ ["Si un reloj marca las 3:15, ¿cuántos minutos faltan para las 4:00?",["45 min","35 min","55 min"],0],
+ ["¿Qué número es par y primo a la vez?",["2","4","Ninguno"],0],
+ ["Un pastor tiene 17 ovejas y se quedan todas menos 9. ¿Cuántas quedan?",["8","9","17"],1],
+ ["Completa: 80, 40, 20, 10, …",["5","0","2"],0],
+ ["¿Cuántos cuartos de hora hay en 2 horas?",["6","8","4"],1],
+ ["Si compras algo de $3.40 con un billete de $5, ¿cuánto es el vuelto?",["$1.60","$1.40","$2.60"],0],
+ ["Completa las iniciales: L, M, M, J, V, …",["S","D","L"],0]
 ];
-function genPregunta(i){
- var r=(Math.random()*100000+Date.now()%9973+i*137)%1e9;
- r=Math.sin(r)*10000; r=r-Math.floor(r); // pseudo-random determinista
- if(r<0.55){var b=BANK[Math.floor(r*1000)%BANK.length];return{q:b[0],opts:b[1].slice(),k:b[2]}}
- var a=2+Math.floor(r*97)%8, d=2+Math.floor(r*891)%8, s=[a];
- for(var j=1;j<6;j++)s.push(s[j-1]+d);
- var corr=s[5], pool=[corr,corr+d,corr-d,corr+2*d];
- var idx=Math.floor(r*777)%4, opts=[pool[idx]]; pool.splice(idx,1);
- while(opts.length<3)opts.push(pool.pop());
- var k=opts.indexOf(corr);
- if(k<0){k=Math.floor(r*333)%3; opts[k]=corr}   // guardián: la correcta SIEMPRE está
- return {q:"¿Qué sigue? "+s.slice(0,5).join(", ")+", …",opts:opts.map(String),k:k}
+
+function barajarOpciones(opts, idxCorrecto){
+ var correcta=opts[idxCorrecto], copia=opts.slice();
+ for(var i=copia.length-1;i>0;i--){
+  var j=Math.floor(Math.random()*(i+1));
+  var tmp=copia[i];copia[i]=copia[j];copia[j]=tmp;
+ }
+ var nuevoK=copia.indexOf(correcta);
+ if(nuevoK<0){copia[0]=correcta;nuevoK=0}
+ return {opts:copia,k:nuevoK};
 }
+
+function genSerieNumerica(){
+ var modo=Math.floor(Math.random()*3), s=[], corr=0, paso=0;
+ if(modo===0){
+  var a=2+Math.floor(Math.random()*11), d=3+Math.floor(Math.random()*7);
+  for(var j=0;j<5;j++)s.push(a+j*d);
+  corr=a+5*d; paso=d;
+ }else if(modo===1){
+  var b=2+Math.floor(Math.random()*4);
+  s=[b,b*2,b*4,b*8]; corr=b*16; paso=b*4;
+ }else{
+  var ini=2+Math.floor(Math.random()*4);
+  for(var m=0;m<4;m++)s.push((ini+m)*(ini+m));
+  corr=(ini+4)*(ini+4); paso=ini*2+3;
+ }
+ var d1=corr+paso, d2=Math.max(1,corr-paso);
+ if(d2===corr||d2===d1)d2=corr+paso*2;
+ var bObj=barajarOpciones([String(corr),String(d1),String(d2)],0);
+ return {q:"¿Qué sigue? "+s.join(", ")+", …",opts:bObj.opts,k:bObj.k};
+}
+
+function genPreguntaRonda(usadas){
+ for(var intento=0;intento<25;intento++){
+  var item;
+  if(Math.random()<0.68){
+   var b=BANK[Math.floor(Math.random()*BANK.length)];
+   var mezclada=barajarOpciones(b[1],b[2]);
+   item={q:b[0],opts:mezclada.opts,k:mezclada.k};
+  }else{
+   item=genSerieNumerica();
+  }
+  if(!usadas[item.q]){usadas[item.q]=1;return item}
+ }
+ var fb=genSerieNumerica();usadas[fb.q]=1;return fb;
+}
+
+function genPregunta(i){
+ var u={};return genPreguntaRonda(u);
+}
+
 function puntuar(esCorrecta,segundosRestantes,rachaAntes,vip){
  if(!esCorrecta)return{puntos:0,racha:0};
  var p=10+Math.max(0,Math.min(15,segundosRestantes))+5*Math.min(rachaAntes,4);
@@ -129,45 +185,135 @@ function puntuar(esCorrecta,segundosRestantes,rachaAntes,vip){
 }
 // ===CORE_END===
 
-// ── estado ──
+// ── almacenamiento seguro (resiste webviews sin localStorage e iframes sandbox) ──
 var _mem={};
-var LS={get:function(k,d){try{var v=localStorage.getItem(k);if(v!=null)return JSON.parse(v)||d}catch(e){}return (k in _mem)?_mem[k]:d},
-        set:function(k,v){_mem[k]=v;try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
-var S={preg:[],i:0,racha:0,puntos:0,t:15,timer:null,vip:LS.get("vip_hasta","")>=hoyISO()};
-function hoyISO(){var d=new Date();return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)}
-function energia(){var e=LS.get("energia",null);var h=hoyISO();
- if(!e||e.d!=h){var prev=(e&&typeof e.n=="number"&&e.n>=0)?e.n:0;e={d:h,n:prev+5};LS.set("energia",e)}
- if(typeof e.n!="number"||e.n<0)e.n=0;
+var LS={
+ get:function(k,d){
+  try{
+   var v=localStorage.getItem(k);
+   if(v!==null){var parsed=JSON.parse(v);return(parsed!==null&&parsed!==undefined)?parsed:d}
+  }catch(e){}
+  return (k in _mem)?_mem[k]:d;
+ },
+ set:function(k,v){
+  _mem[k]=v;
+  try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}
+ },
+ del:function(k){
+  delete _mem[k];
+  try{localStorage.removeItem(k)}catch(e){}
+ }
+};
+
+function fechaISO(d){
+ var x=d||new Date();
+ return x.getFullYear()+"-"+("0"+(x.getMonth()+1)).slice(-2)+"-"+("0"+x.getDate()).slice(-2);
+}
+function hoyISO(){return fechaISO(new Date())}
+function parseFechaLocal(iso){
+ var p=String(iso||"").split("-");
+ if(p.length!==3)return new Date();
+ return new Date(parseInt(p[0],10),parseInt(p[1],10)-1,parseInt(p[2],10),12,0,0);
+}
+function esVipActivo(){
+ var hasta=LS.get("vip_hasta","");
+ return typeof hasta==="string"&&hasta.length===10&&hasta>=hoyISO();
+}
+
+var S={preg:[],i:0,racha:0,puntos:0,t:15,timer:null,nextTimer:null,jugando:false,bloqueo:false,pagando:false,vip:esVipActivo(),ultimas:{}};
+
+// ── Inicialización SDK Oficial QvaPay Mini-Apps (con guardas por versión) ──
+function initQvaPay(){
+ try{
+  var Q=window.QvaPay;
+  if(!Q)return;
+  if(typeof Q.ready==="function")Q.ready();
+  if(Q.ui&&Q.ui.colors&&typeof Q.ui.colors.set==="function"){
+   Q.ui.colors.set({header:"#0A2926",background:"#0A2926"});
+  }
+  if(Q.ui&&Q.ui.header&&typeof Q.ui.header.set==="function"){
+   Q.ui.header.set({subtitle:"Retos de 15 segundos"});
+  }
+ }catch(e){}
+}
+initQvaPay();
+document.addEventListener("qvapay:ready",initQvaPay);
+
+function vibrar(tipo){
+ try{
+  var h=window.QvaPay&&window.QvaPay.ui&&window.QvaPay.ui.haptic;
+  if(!h)return;
+  if(tipo==="ok"&&typeof h.notification==="function")h.notification("success");
+  else if(tipo==="mal"&&typeof h.notification==="function")h.notification("error");
+  else if(typeof h.impact==="function")h.impact("light");
+ }catch(e){}
+}
+
+// ── Energía diaria: recarga a 5 gratis cada día nuevo y conserva íntegras las compradas (>5) ──
+function energia(){
+ var e=LS.get("energia",null),h=hoyISO();
+ if(!e||e.d!==h){
+  var prev=(e&&typeof e.n==="number"&&e.n>=0)?Math.floor(e.n):0;
+  e={d:h,n:Math.max(prev,5)};
+  LS.set("energia",e);
+ }
+ if(typeof e.n!=="number"||isNaN(e.n)||e.n<0)e.n=0;
  if(e.n>999)e.n=999;
- return e}
+ return e;
+}
 function gastaEnergia(){var e=energia();if(e.n<=0)return false;e.n--;LS.set("energia",e);return true}
+
 function pintarHUD(){
- document.getElementById("chipEnergia").textContent="🪙 Monedas: "+energia().n;
+ S.vip=esVipActivo();
+ var n=energia().n;
+ document.getElementById("chipEnergia").textContent="🪙 Monedas: "+n;
  document.getElementById("chipRacha").textContent="🔥 Racha: "+S.racha;
  document.getElementById("chipVip").textContent=S.vip?"👑 VIP: sí":"👑 VIP: no";
- document.getElementById("runsTxt").textContent=energia().n+" partidas";
+ document.getElementById("runsTxt").textContent=n+(n===1?" partida":" partidas");
 }
+
 function mostrar(id){
  ["pInicio","pJuego","pFin","pTienda","pRank"].forEach(function(p){
-  document.getElementById(p).classList.toggle("oculto",p!=id)});
- if(id=="pRank")pintarRank();
+  document.getElementById(p).classList.toggle("oculto",p!==id);
+ });
+ if(id==="pRank")pintarRank();
 }
+
 function pintarRank(){
- var rk=LS.get("rank",[]).sort(function(a,b){return b.p-a.p}).slice(0,10);
+ var rk=LS.get("rank",[]).slice().sort(function(a,b){return b.p-a.p}).slice(0,10);
  document.getElementById("rank").innerHTML=rk.length?rk.map(function(x,i){
-  return "<li>"+(i==0?"🥇":i==1?"🥈":i==2?"🥉":"▫️")+" "+(x.v?"<span class='corona'>👑</span> ":"")+
-   escapeHtml(x.n)+" — <b>"+x.p+" pts</b></li>"}).join("")
+  return "<li>"+(i===0?"🥇":i===1?"🥈":i===2?"🥉":"▫️")+" "+(x.v?"<span class='corona'>👑</span> ":"")+
+   escapeHtml(x.n)+" — <b>"+Number(x.p||0)+" pts</b></li>"}).join("")
   :"<li style='color:#7FD1C1'>Aún no hay partidas — ¡sé el primero!</li>";
 }
 function escapeHtml(s){return String(s).replace(/[<>&"]/g,function(c){return{"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;"}[c]})}
+
 function empezar(){
  if(S.jugando)return;
- if(!gastaEnergia()){mostrar("pTienda");document.getElementById("msjT").textContent="🪙 Se te acabaron las monedas de hoy — recarga arriba o vuelve mañana (5 gratis).";return}
- S.jugando=true;S.preg=[];for(var i=0;i<5;i++)S.preg.push(genPregunta(i));
- S.i=0;S.racha=0;S.puntos=0;pintarHUD();mostrar("pJuego");pregunta();
+ S.vip=esVipActivo();
+ if(!gastaEnergia()){
+  mostrar("pTienda");
+  document.getElementById("msjT").textContent="🪙 Se te acabaron las monedas de hoy — recarga arriba o vuelve mañana (5 gratis).";
+  return;
+ }
+ S.jugando=true;
+ var usadasRonda={};
+ Object.keys(S.ultimas||{}).forEach(function(q){usadasRonda[q]=1});
+ S.preg=[];
+ var nuevasUltimas={};
+ for(var i=0;i<5;i++){
+  var pr=genPreguntaRonda(usadasRonda);
+  S.preg.push(pr);
+  nuevasUltimas[pr.q]=1;
+ }
+ S.ultimas=nuevasUltimas;
+ S.i=0;S.racha=0;S.puntos=0;
+ pintarHUD();mostrar("pJuego");pregunta();
 }
+
 function pregunta(){
  S.bloqueo=false;
+ clearTimeout(S.nextTimer);
  var p=S.preg[S.i];
  document.getElementById("progreso").textContent="Reto "+(S.i+1)+" de 5";
  document.getElementById("qTxt").textContent=p.q;
@@ -181,21 +327,28 @@ function pregunta(){
   if(S.t<=0){clearInterval(S.timer);responder(-1)}
  },1000);
 }
+
 function responder(j){
- if(S.bloqueo)return;
+ if(S.bloqueo||!S.jugando)return;
  clearInterval(S.timer);S.bloqueo=true;
- var p=S.preg[S.i],ok=j==p.k,boton=null;
- if(j>=0){boton=document.getElementById("o"+j);boton.className="opt "+(ok?"ok":"mal")}
+ var p=S.preg[S.i],ok=(j===p.k);
+ if(j>=0){var boton=document.getElementById("o"+j);if(boton)boton.className="opt "+(ok?"ok":"mal")}
  if(!ok){var b=document.getElementById("o"+p.k);if(b)b.className="opt ok"}
+ vibrar(ok?"ok":"mal");
  var r=puntuar(ok,S.t,S.racha,S.vip);
  S.puntos+=r.puntos;S.racha=r.racha;pintarHUD();
- document.getElementById("msjJ").textContent=ok?("✅ ¡Correcto! +"+r.puntos+(S.vip?" (x2 VIP 👑)":"")+(S.racha>1?" · racha 🔥"+S.racha:"")):"❌ "+(j<0?"¡Tiempo! ":"")+"La correcta era: "+p.opts[p.k];
- setTimeout(function(){
+ document.getElementById("msjJ").textContent=ok
+  ?("✅ ¡Correcto! +"+r.puntos+(S.vip?" (x2 VIP 👑)":"")+(S.racha>1?" · racha 🔥"+S.racha:""))
+  :("❌ "+(j<0?"¡Tiempo! ":"")+"La correcta era: "+p.opts[p.k]);
+ clearTimeout(S.nextTimer);
+ S.nextTimer=setTimeout(function(){
   S.i++;
-  if(S.i<5)pregunta();else fin()
+  if(S.i<5)pregunta();else fin();
  },1300);
 }
+
 function fin(){
+ clearInterval(S.timer);clearTimeout(S.nextTimer);
  S.jugando=false;S.bloqueo=false;
  var rk=LS.get("rank",[]);
  rk.push({n:"Tú",p:S.puntos,v:S.vip,d:hoyISO()});
@@ -206,60 +359,181 @@ function fin(){
  document.getElementById("detalleFin").textContent="Tu mejor marca: "+mejor+" pts · Monedas restantes: "+energia().n;
  pintarHUD();mostrar("pFin");
 }
-// ── pagos: SDK QvaPay (dentro de la app) con fallback a link directo ──
-var LINK_MONEDAS="https://www.qvapay.com/pay/e1e1101f-e2c3-4114-aa30-3c052766c149";
-var LINK_VIP="https://www.qvapay.com/pay/414d89cc-bd27-430e-bfad-8661f58df829";
-var UUID_COBRO={monedas:"e1e1101f-e2c3-4114-aa30-3c052766c149",vip:"414d89cc-bd27-430e-bfad-8661f58df829"};
-function haySDK(){try{var Q=window.QvaPay;return !!(Q&&Q.payments&&typeof Q.payments.payInvoice==="function")}catch(e){return false}}
-function noPagado(motivo){
- document.getElementById("msjT").textContent="❌ "+motivo+". NO se acreditó nada y NO se te cobró. Cuando tengas saldo, vuelve a intentarlo.";
+
+// ── Recámara rotativa de facturas QvaPay (auto-recargada por bot-cycle.py en cobros.json) ──
+var COLA_COBROS={"monedas":[{"uuid":"e1e1101f-e2c3-4114-aa30-3c052766c149","expire_at":"2026-12-03T18:54:43.000Z"},{"uuid":"3109f1dd-2e96-43b8-9cce-b8fbbd999e87","expire_at":"2026-12-06T13:01:15.000Z"},{"uuid":"8e30d639-6a46-4b28-be08-d971e858521d","expire_at":"2026-12-06T13:01:15.000Z"},{"uuid":"cbb4715d-97ea-4772-8ed0-c652f9e34992","expire_at":"2026-12-06T13:01:15.000Z"},{"uuid":"f7127872-bca7-48c0-9a3c-7ef5ec7f84af","expire_at":"2026-12-06T13:01:15.000Z"},{"uuid":"f8569cbd-5e59-499a-9247-5ddd6321c873","expire_at":"2026-12-06T13:01:15.000Z"}],"vip":[{"uuid":"94512a25-527e-4213-9ef0-022dd2650b4b","expire_at":"2026-12-06T12:59:45.000Z"},{"uuid":"1c1a66fe-a22f-470b-b09f-204dfb0a2b83","expire_at":"2026-12-06T13:01:15.000Z"},{"uuid":"549289ad-c86c-494a-bf4b-25f80ded15a3","expire_at":"2026-12-06T13:01:15.000Z"},{"uuid":"b9f76b8b-5924-48e2-b59a-80a226e4a140","expire_at":"2026-12-06T13:01:15.000Z"},{"uuid":"cccac637-9343-45a8-8b34-c96e73ac0c76","expire_at":"2026-12-06T13:01:15.000Z"},{"uuid":"9c827b9f-d8ee-4477-bce4-e6acd39327b8","expire_at":"2026-12-06T13:01:15.000Z"}]};
+var CURSOR_COLA={monedas:0,vip:0};
+
+function cargarCobrosVivos(){
+ try{
+  if(typeof fetch!=="function")return Promise.resolve();
+  return fetch("./cobros.json?t="+Math.floor(Date.now()/30000),{cache:"no-store"})
+   .then(function(r){return r.ok?r.json():null})
+   .then(function(d){
+    if(d&&Array.isArray(d.monedas)&&d.monedas.length)COLA_COBROS.monedas=d.monedas;
+    if(d&&Array.isArray(d.vip)&&d.vip.length)COLA_COBROS.vip=d.vip;
+   }).catch(function(){});
+ }catch(e){return Promise.resolve()}
 }
-function comprar(item){
- LS.set("ultimo_item",item);
- if(haySDK()){
-  document.getElementById("msjT").textContent="Confirma el pago con tu PIN en QvaPay…";
-  window.QvaPay.payments.payInvoice(UUID_COBRO[item]).then(function(r){
-   if(r&&r.status=="paid"){acreditar(item)}
-   else{noPagado("El pago no se completó"+(r&&r.status?" ("+r.status+")":""))}
-  }).catch(function(e){
-   if(e&&e.code=="USER_CANCELLED"){document.getElementById("msjT").textContent="Cancelaste el pago — no se acreditó nada.";return}
-   if(e&&e.code=="BUSY"){document.getElementById("msjT").textContent="Ya tenías una ventana de pago abierta — ciérrala y vuelve a tocar.";return}
-   noPagado("El pago falló"+(e&&e.code?" ("+e.code+")":""))
-  });
-  return
+cargarCobrosVivos();
+
+function marcarUuidUsado(uuid){
+ if(!uuid)return;
+ var u=LS.get("uuids_usados",[]);
+ if(u.indexOf(uuid)<0){
+  u.push(uuid);
+  if(u.length>60)u=u.slice(-60);
+  LS.set("uuids_usados",u);
  }
- window.open(item=="vip"?LINK_VIP:LINK_MONEDAS,"_blank");
- document.getElementById("msjT").textContent="Se abrió QvaPay en otra pestaña. Si pagas, al volver aquí el crédito aparece solo — no hace falta avisar.";
 }
+
+function elegirFacturaActiva(item){
+ var lista=(COLA_COBROS[item]||[]).slice();
+ var usados=LS.get("uuids_usados",[]);
+ var ahora=Date.now();
+ var vivas=lista.filter(function(x){
+  if(!x||!x.uuid)return false;
+  if(usados.indexOf(x.uuid)>=0)return false;
+  if(x.expire_at){
+   var exp=Date.parse(x.expire_at);
+   if(!isNaN(exp)&&exp<=ahora)return false;
+  }
+  return true;
+ });
+ if(!vivas.length)vivas=lista.filter(function(x){return x&&x.uuid});
+ if(!vivas.length)return null;
+ var idx=(CURSOR_COLA[item]||0)%vivas.length;
+ return vivas[idx].uuid;
+}
+
+function rotarFactura(item){
+ CURSOR_COLA[item]=(CURSOR_COLA[item]||0)+1;
+ cargarCobrosVivos();
+}
+
+function setBotonesCompraDisabled(dis){
+ S.pagando=!!dis;
+ var b1=document.getElementById("btnComprarMon"),b2=document.getElementById("btnComprarVip");
+ if(b1)b1.disabled=!!dis;
+ if(b2)b2.disabled=!!dis;
+}
+
+function haySDK(){try{var Q=window.QvaPay;return !!(Q&&Q.payments&&typeof Q.payments.payInvoice==="function")}catch(e){return false}}
+
+function noPagado(motivo){
+ document.getElementById("msjT").textContent="❌ "+motivo+". NO se acreditó nada y NO se te cobró. Verifica tu saldo y vuelve a tocar.";
+}
+
+function comprar(item){
+ if(S.pagando)return;
+ var tipo=(item==="vip")?"vip":"monedas";
+ var uuid=elegirFacturaActiva(tipo);
+ if(!uuid){
+  document.getElementById("msjT").textContent="⚠️ Actualizando órdenes de cobro… espera 3 segundos y vuelve a tocar.";
+  cargarCobrosVivos();
+  return;
+ }
+ LS.set("ultimo_item",tipo);
+
+ if(haySDK()){
+  setBotonesCompraDisabled(true);
+  document.getElementById("msjT").textContent="Confirma el pago con tu PIN en QvaPay…";
+  window.QvaPay.payments.payInvoice(uuid).then(function(r){
+   setBotonesCompraDisabled(false);
+   if(r&&r.status==="paid"){
+    marcarUuidUsado(r.transaction_uuid||uuid);
+    cargarCobrosVivos();
+    acreditar(tipo);
+   }else{
+    rotarFactura(tipo);
+    noPagado("El pago no se completó"+(r&&r.status?" ("+r.status+")":""));
+   }
+  }).catch(function(e){
+   setBotonesCompraDisabled(false);
+   var code=(e&&e.code)?String(e.code):"";
+   if(code==="USER_CANCELLED"){document.getElementById("msjT").textContent="Cancelaste el pago — no se te cobró nada.";return}
+   if(code==="BUSY"){document.getElementById("msjT").textContent="Ya tenías una ventana de pago abierta — ciérrala y vuelve a tocar.";return}
+   if(code==="NOT_ALLOWED"){document.getElementById("msjT").textContent="Necesitas tener tu cuenta QvaPay verificada (KYC) para comprar en mini-apps.";return}
+   if(code==="NETWORK"){document.getElementById("msjT").textContent="Sin conexión con QvaPay — revisa tus datos e inténtalo de nuevo.";return}
+   // Si la factura acababa de ser pagada por otro jugador, el siguiente toque usará la siguiente factura virgen
+   rotarFactura(tipo);
+   noPagado("El pago no pudo completarse"+(code?" ("+code+")":""));
+  });
+  return;
+ }
+
+ // Modo navegador web: registrar ticket local temporal antes de abrir QvaPay
+ LS.set("intento_pago",{item:tipo,uuid:uuid,ts:Date.now()});
+ rotarFactura(tipo);
+ window.open("https://www.qvapay.com/pay/"+uuid,"_blank");
+ document.getElementById("msjT").textContent="Se abrió QvaPay en otra pestaña. Al completar el pago volverás aquí y tu compra se acreditará sola.";
+}
+
 function yaPague(){
- if(haySDK()){document.getElementById("msjT").textContent="Aquí no hace falta: dentro de QvaPay el crédito se acredita solo SI el pago se completa. Si te salió “sin saldo”, no se te cobró nada.";return}
- document.getElementById("msjT").textContent="Si pagaste, al volver de QvaPay el crédito aparece solo. ¿Pagaste y no apareció? Escríbenos con tu recibo: t.me/Despeguedijitalbot";
+ if(haySDK()){
+  document.getElementById("msjT").textContent="Dentro de la app de QvaPay el crédito entra al instante SOLO si el pago se completa. Si salió error o sin saldo, no se te cobró nada.";
+  return;
+ }
+ document.getElementById("msjT").textContent="Al pagar en QvaPay vuelves automáticamente aquí con tu crédito. ¿Pagaste y cerraste la pestaña antes de volver? Envía tu recibo a t.me/Despeguedijitalbot";
 }
+
 function acreditar(item){
- if(item=="vip"){var d=new Date();d.setDate(d.getDate()+7);LS.set("vip_hasta",d.toISOString().slice(0,10));S.vip=true;
-  document.getElementById("msjT").textContent="👑 ¡VIP activado 7 días! Puntos x2 y corona desde ya."}
- else{var e=energia();e.n+=5;LS.set("energia",e);document.getElementById("msjT").textContent="🪙 +5 monedas acreditadas. ¡A jugar!"}
+ vibrar("ok");
+ if(item==="vip"){
+  var hoy=hoyISO(),actual=LS.get("vip_hasta","");
+  var base=(typeof actual==="string"&&actual>=hoy)?parseFechaLocal(actual):new Date();
+  base.setDate(base.getDate()+7);
+  var hastaISO=fechaISO(base);
+  LS.set("vip_hasta",hastaISO);
+  S.vip=true;
+  document.getElementById("msjT").textContent="👑 ¡VIP activado hasta el "+hastaISO+"! Puntos x2 y corona activos.";
+ }else{
+  var e=energia();
+  e.n=Math.min(999,e.n+5);
+  LS.set("energia",e);
+  document.getElementById("msjT").textContent="🪙 +5 monedas acreditadas (tienes "+e.n+"). ¡A jugar!";
+ }
  pintarHUD();
 }
-// parámetros de retorno de pago (?pago=ok&item=vip)
+
+// ── Retorno desde navegador QvaPay (?pago=ok / ?pago=cancel) blindado contra URL manual ──
 (function(){
  var p=new URLSearchParams(location.search);
- if(p.get("pago")=="ok"){
-  var it=p.get("item")||LS.get("ultimo_item","monedas");
-  if(it.indexOf("vip")<0)it="monedas";
-  var c=LS.get("urlcred",null),h=hoyISO();
-  if(!c||c.d!=h)c={d:h,n:0};
-  if(it=="vip"&&S.vip){
-   document.getElementById("msjT").textContent="👑 Ya tienes VIP activo — disfrútalo, no hace falta otro.";
-  }else if(c.n>=2){
-   document.getElementById("msjT").textContent="⚠️ Límite de acreditación automática: 2 al día. Si pagaste más, manda tu recibo a t.me/Despeguedijitalbot y se acredita a mano.";
-  }else{
-   c.n++;LS.set("urlcred",c);acreditar(it);
+ var estadoPago=p.get("pago");
+ if(!estadoPago)return;
+
+ try{history.replaceState(null,"",location.pathname)}catch(e){}
+ mostrar("pTienda");
+
+ if(estadoPago==="cancel"){
+  LS.del("intento_pago");
+  document.getElementById("msjT").textContent="Cancelaste el pago en QvaPay — no se te cobró nada.";
+  return;
+ }
+
+ if(estadoPago==="ok"){
+  var intento=LS.get("intento_pago",null);
+  LS.del("intento_pago");
+  var ahora=Date.now();
+  // Exigir que este navegador haya abierto realmente un cobro hace entre 4s y 45 min
+  if(!intento||!intento.item||typeof intento.ts!=="number"||(ahora-intento.ts)<4000||(ahora-intento.ts)>45*60*1000){
+   document.getElementById("msjT").textContent="⚠️ No hay ningún pago pendiente reciente en este navegador. Si pagaste desde otro dispositivo, envía tu recibo a t.me/Despeguedijitalbot";
+   return;
   }
-  mostrar("pTienda");
-  try{history.replaceState(null,"",location.pathname)}catch(e){}
+  var it=(intento.item==="vip")?"vip":"monedas";
+  var c=LS.get("urlcred",null),h=hoyISO();
+  if(!c||c.d!==h)c={d:h,n:0};
+  if(c.n>=2){
+   document.getElementById("msjT").textContent="⚠️ Límite de acreditación automática en navegador: 2 al día. Envía tu recibo a t.me/Despeguedijitalbot y te lo acreditamos.";
+   return;
+  }
+  c.n++;
+  LS.set("urlcred",c);
+  if(intento.uuid)marcarUuidUsado(intento.uuid);
+  acreditar(it);
  }
 })();
+
 pintarHUD();
 </script>
 </body>

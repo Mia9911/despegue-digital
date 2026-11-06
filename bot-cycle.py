@@ -1360,9 +1360,9 @@ if grupos.get("_agenda", {}).get("ultima") != hoy:
         print("agenda fail:", e)
 
 
-# ---------------- V9: ALARMA DE PAGOS QVAPAY (cada 10 min) ----------------
-# V16: vigila las DOS apps (la del bot Y la mini app Arena Lógica en QvaPay)
-# y reporta cada venta con nombre de producto. Solo LEE (jamás mueve plata).
+# ---------------- V9: ALARMA DE PAGOS QVAPAY + AUTO-RECÁMARA ARENA (cada 10 min) ----------------
+# V12.6: corrige orden DESC de /v2/transactions (rastrea por uuid pagado), calcula fecha Cuba
+# por updated_at y repone automáticamente las facturas de un solo uso en arena-app/cobros.json.
 def nombre_producto_arena(tx):
     """Nombre bonito de una venta de la mini app Arena Lógica."""
     try:
@@ -1377,14 +1377,27 @@ def nombre_producto_arena(tx):
     except Exception:
         return "\U0001F6CD\uFE0F Venta en Arena Lógica"
 
-def _qp_transacciones(qp_id, qp_sec):
-    _req = urllib.request.Request("https://api.qvapay.com/v2/transactions",
-        data=b"", headers={"app-id": qp_id, "app-secret": qp_sec,
-                           "Accept": "application/json", "Content-Type": "application/json",
-                           "User-Agent": "Mozilla/5.0"}, method="POST")
+def _qp_post(qp_id, qp_sec, path, body=None):
+    _raw = json.dumps(body).encode() if body is not None else b"{}"
+    _req = urllib.request.Request("https://api.qvapay.com" + path,
+        data=_raw, headers={"app-id": qp_id, "app-secret": qp_sec,
+                            "Accept": "application/json", "Content-Type": "application/json",
+                            "User-Agent": "Mozilla/5.0"}, method="POST")
     with urllib.request.urlopen(_req, timeout=20) as _r:
-        return json.loads(_r.read().decode()).get("transactions", [])
+        return json.loads(_r.read().decode())
 
+def _qp_transacciones(qp_id, qp_sec):
+    _txs = _qp_post(qp_id, qp_sec, "/v2/transactions").get("transactions", [])
+    return [t for t in _txs if str(t.get("status", "")).lower() == "paid"]
+
+def _fecha_cuba_de_iso(iso_str):
+    try:
+        _s = str(iso_str or "").replace("Z", "+00:00")
+        return datetime.fromisoformat(_s).astimezone(CUBA).strftime("%Y-%m-%d")
+    except Exception:
+        return ""
+
+_txs_arena_cache = None
 try:
     for _eid, _esec, _marca, _ck in (
             ("QVAPAY_APP_ID", "QVAPAY_APP_SECRET", "BOT", "_pagos"),
@@ -1395,39 +1408,106 @@ try:
             continue
         try:
             _txs = _qp_transacciones(_id2, _sec2)
-            _ya = grupos.get(_ck, {}).get("total", 0)
-            if len(_txs) > _ya:
-                for _tx in _txs[_ya:]:
-                    if _marca == "ARENA":
-                        tg("sendMessage", {"chat_id": JEFA, "text":
-                            "\U0001F3AE\U0001F4B0 ¡VENTA EN ARENA LÓGICA (mini app QvaPay)!\n%s\n%s" %
-                            (nombre_producto_arena(_tx), json.dumps(_tx, ensure_ascii=False)[:260])})
-                    else:
-                        tg("sendMessage", {"chat_id": JEFA, "text":
-                            "\U0001F4B0\U0001F4B0\U0001F4B0 ¡PAGO RECIBIDO EN QVAPAY!\n%s" %
-                            json.dumps(_tx, ensure_ascii=False)[:300]})
-            grupos[_ck] = {"total": len(_txs)}
+            if _marca == "ARENA":
+                _txs_arena_cache = _txs
+            _est = grupos.get(_ck, {}) or {}
+            _ya = int(_est.get("total", 0) or 0)
+            _vistos = _est.get("uuids")
+            if isinstance(_vistos, list):
+                _set_v = set(_vistos)
+                # _txs viene de más reciente a más antigua: recorrer al revés para avisar en orden
+                _nuevas = [t for t in reversed(_txs) if t.get("uuid") and t.get("uuid") not in _set_v]
+            else:
+                # Migración limpia: las nuevas están al INICIO de _txs, no al final
+                _dif = max(0, len(_txs) - _ya)
+                _nuevas = list(reversed(_txs[:_dif])) if _dif > 0 else []
+            for _tx in _nuevas:
+                if _marca == "ARENA":
+                    tg("sendMessage", {"chat_id": JEFA, "text":
+                        "\U0001F3AE\U0001F4B0 ¡VENTA EN ARENA LÓGICA (mini app QvaPay)!\n%s\nUUID: %s · Pagado: %s" %
+                        (nombre_producto_arena(_tx), _tx.get("uuid", ""), _tx.get("updated_at", ""))})
+                else:
+                    tg("sendMessage", {"chat_id": JEFA, "text":
+                        "\U0001F4B0\U0001F4B0\U0001F4B0 ¡PAGO RECIBIDO EN QVAPAY!\n%s" %
+                        json.dumps(_tx, ensure_ascii=False)[:300]})
+            grupos[_ck] = {
+                "total": len(_txs),
+                "uuids": [t.get("uuid") for t in _txs if t.get("uuid")][:200]
+            }
         except Exception as _e:
             print("qvapay check fail (%s):" % _marca, _e)
 except Exception as e:
     print("qvapay check fail:", e)
 
-# ---------------- V12.5: VIGILANTE DE CAJA ARENA (diario) ----------------
-# Pedido de Jefa (3/11): "ponle un vigilante para no volver a perder dinero".
-# Una vez al dia (gate en grupos.json -> _vig_arena.dia) manda a la Jefa:
-#   1) ¿Mini app ONLINE y en que version? (si no carga -> 🚨 nadie juega/paga)
-#   2) Caja real: total de pagos y $ recaudados (API app ARENA) + ventas de hoy
-#   3) Alarma de EXPIRACION de los 2 cobros ($0.99/$1.99): vencen 2026-11-25.
-#      Urgente si quedan <=7 dias. SI SE RENUEVAN LOS LINKS: actualizar
-#      ARENA_LINKS_EXPIRAN aqui abajo (y los UUID en arena-app/index.html).
+# ---------------- V12.6: AUTO-REPONEDOR DE FACTURAS ARENA (arena-app/cobros.json) ----------------
+# Cada factura de /v2/create_invoice es de UN SOLO USO y dura 30 días.
+# Este bloque descarta las facturas pagadas o con <7 días de vigencia y crea reemplazos solos.
+_estado_recamara_arena = ""
+try:
+    _aidR = os.environ.get("QVAPAY_ARENA_APP_ID", "")
+    _asecR = os.environ.get("QVAPAY_ARENA_APP_SECRET", "")
+    if _aidR and _asecR and GH:
+        if _txs_arena_cache is None:
+            _txs_arena_cache = _qp_transacciones(_aidR, _asecR)
+        _pagadas_set = set(t.get("uuid") for t in _txs_arena_cache if t.get("uuid"))
+        _cob_obj, _cob_sha = gh_get_file("arena-app/cobros.json")
+        _umbral_exp = (datetime.now(timezone.utc) + timedelta(days=7)).strftime("%Y-%m-%dT%H:%M:%SZ")
+        _cambio_cob = False
+        _res_listas = {}
+        for _tipo, _monto, _desc, _rid in (
+                ("monedas", 0.99, "+5 Monedas Arena Logica", "arena-monedas-5"),
+                ("vip", 1.99, "Pase VIP Arena Logica 7 dias", "arena-vip-7d")):
+            _orig = _cob_obj.get(_tipo, []) or []
+            _vivas = []
+            for _it in _orig:
+                _u = (_it or {}).get("uuid", "")
+                _ex = (_it or {}).get("expire_at", "")
+                if not _u or _u in _pagadas_set:
+                    _cambio_cob = True
+                    continue
+                if _ex and _ex < _umbral_exp:
+                    _cambio_cob = True
+                    continue
+                _vivas.append({"uuid": _u, "expire_at": _ex})
+            # Verificar que la cabeza de cola siga realmente "pending" en QvaPay
+            while _vivas:
+                try:
+                    _det = _qp_post(_aidR, _asecR, "/v2/transactions/" + _vivas[0]["uuid"]).get("transaction", {})
+                    if str(_det.get("status", "")).lower() != "pending":
+                        _vivas.pop(0)
+                        _cambio_cob = True
+                        continue
+                except Exception:
+                    pass
+                break
+            _exp_solic = (datetime.now(timezone.utc) + timedelta(days=30)).strftime("%Y-%m-%dT%H:%M:%SZ")
+            while len(_vivas) < 6:
+                _nv = _qp_post(_aidR, _asecR, "/v2/create_invoice", {
+                    "amount": _monto, "description": _desc, "remote_id": _rid,
+                    "signed": 1, "expire_at": _exp_solic
+                })
+                _vivas.append({"uuid": _nv["transaction_uuid"], "expire_at": _nv.get("expire_at", _exp_solic)})
+                _cambio_cob = True
+            _res_listas[_tipo] = _vivas
+        if _cambio_cob:
+            _nuevo_cob = {
+                "updated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "monedas": _res_listas["monedas"],
+                "vip": _res_listas["vip"]
+            }
+            gh_put_file("arena-app/cobros.json", _nuevo_cob, _cob_sha, "auto-reponer cobros arena")
+        _estado_recamara_arena = "🟢 Cobros listos: %d Monedas / %d VIP en recámara (auto-renovación ON)" % (
+            len(_res_listas.get("monedas", [])), len(_res_listas.get("vip", [])))
+except Exception as _eR:
+    _estado_recamara_arena = "⚠️ Revisar auto-recámara cobros.json: %s" % _eR
+    print("auto-recamara arena fail:", _eR)
+
+# ---------------- V12.6: VIGILANTE DE CAJA ARENA (diario en hora Cuba) ----------------
 ARENA_URL = "https://mia9911.github.io/despegue-digital/arena-app/"
-# Renovados 3/11/26 (expiracion solicitada a 1 ano; vigilar el 3/12 por si la API
-# la ignoro y aplico 30 dias — los links viejos 69fe9056/2747d44d vencen 25/11 y quedan sin uso)
-ARENA_LINKS_EXPIRAN = datetime(2026, 12, 3).date()
 try:
     _vig = grupos.get("_vig_arena", {}) or {}
-    _hoyV = datetime.utcnow().strftime("%Y-%m-%d")
-    if _vig.get("dia") != _hoyV:
+    _hoyCuba = datetime.now(CUBA).strftime("%Y-%m-%d")
+    if _vig.get("dia") != _hoyCuba:
         _lineas = ["\U0001F3DF\uFE0F VIGILANTE DE CAJA — Arena Lógica"]
         try:
             _rqA = urllib.request.Request(ARENA_URL, headers={"User-Agent": "Mozilla/5.0"})
@@ -1442,22 +1522,17 @@ try:
         _nTx = 0; _totA = 0.0; _hoyN = 0
         if _aidA and _asecA:
             try:
-                _txsA = _qp_transacciones(_aidA, _asecA)
+                _txsA = _txs_arena_cache if _txs_arena_cache is not None else _qp_transacciones(_aidA, _asecA)
                 _nTx = len(_txsA)
                 _totA = sum(float(t.get("amount") or 0) for t in _txsA)
-                _hoyN = sum(1 for t in _txsA if (t.get("created_at") or "").startswith(_hoyV))
+                _hoyN = sum(1 for t in _txsA if _fecha_cuba_de_iso(t.get("updated_at") or t.get("created_at")) == _hoyCuba)
             except Exception as _eB:
                 _lineas.append("⚠️ No pude leer la caja de QvaPay: %s" % _eB)
-        _lineas.append("💰 Caja real: %d pagos · $%.2f total · hoy: %d pago(s)" % (_nTx, _totA, _hoyN))
-        _diasA = (ARENA_LINKS_EXPIRAN - datetime.utcnow().date()).days
-        if _diasA <= 0:
-            _lineas.append("\U0001F6A8 LOS COBROS EXPIRARON (%s) — NADIE PUEDE PAGAR. Renovar YA (la torre puede)." % ARENA_LINKS_EXPIRAN)
-        elif _diasA <= 7:
-            _lineas.append("⚠️ Cobros expiran en %d días (%s) — escribirle a la torre: 'renovar cobros arena'." % (_diasA, ARENA_LINKS_EXPIRAN))
-        else:
-            _lineas.append("📅 Cobros vigentes · expiran en %d días" % _diasA)
+        _lineas.append("💰 Caja real: %d pagos · $%.2f total · hoy (Cuba): %d pago(s)" % (_nTx, _totA, _hoyN))
+        if _estado_recamara_arena:
+            _lineas.append(_estado_recamara_arena)
         tg("sendMessage", {"chat_id": JEFA, "text": "\n".join(_lineas)})
-        grupos["_vig_arena"] = {"dia": _hoyV}
+        grupos["_vig_arena"] = {"dia": _hoyCuba}
 except Exception as _eV:
     print("vigilante arena fail:", _eV)
 
