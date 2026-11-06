@@ -1423,9 +1423,19 @@ try:
                 _nuevas = list(reversed(_txs[:_dif])) if _dif > 0 else []
             for _tx in _nuevas:
                 if _marca == "ARENA":
+                    _quien_txt = ""
+                    try:
+                        _det_tx = _qp_estado_tx(_id2, _sec2, _tx.get("uuid", ""))
+                        _pb = (_det_tx or {}).get("PaidBy") or (_det_tx or {}).get("paid_by") or {}
+                        if isinstance(_pb, dict) and (_pb.get("name") or _pb.get("username")):
+                            _nom_pb = ("%s %s" % (_pb.get("name") or "", _pb.get("lastname") or "")).strip()
+                            _usr_pb = ("@%s" % _pb.get("username")) if _pb.get("username") else ""
+                            _quien_txt = "\n👤 Comprador: %s %s" % (_nom_pb, _usr_pb)
+                    except Exception:
+                        pass
                     tg("sendMessage", {"chat_id": JEFA, "text":
-                        "\U0001F3AE\U0001F4B0 ¡VENTA EN ARENA LÓGICA (mini app QvaPay)!\n%s\nUUID: %s · Pagado: %s" %
-                        (nombre_producto_arena(_tx), _tx.get("uuid", ""), _tx.get("updated_at", ""))})
+                        "\U0001F3AE\U0001F4B0 ¡VENTA EN ARENA LÓGICA (mini app QvaPay)!\n%s%s\nUUID: %s · Pagado: %s" %
+                        (nombre_producto_arena(_tx), _quien_txt, _tx.get("uuid", ""), _tx.get("updated_at", ""))})
                 else:
                     tg("sendMessage", {"chat_id": JEFA, "text":
                         "\U0001F4B0\U0001F4B0\U0001F4B0 ¡PAGO RECIBIDO EN QVAPAY!\n%s" %
@@ -1529,10 +1539,25 @@ try:
             except Exception as _eB:
                 _lineas.append("⚠️ No pude leer la caja de QvaPay: %s" % _eB)
         _lineas.append("💰 Caja real: %d pagos · $%.2f total · hoy (Cuba): %d pago(s)" % (_nTx, _totA, _hoyN))
+        _lec_bot = int(_vig.get("lecturas", 0) or 0) + 1
+        _ap_real = int(_vig.get("aperturas", 0) or 0)
+        _ro_real = int(_vig.get("rondas", 0) or 0)
+        try:
+            _raw_ap = urllib.request.urlopen("https://visitor-badge.laobi.icu/badge?page_id=arena-logica-aperturas", timeout=10).read().decode("utf-8", "ignore")
+            _m_ap = re.findall(r">(\d+)<", _raw_ap)
+            _ap_hoy = max(0, (int(_m_ap[-1]) if _m_ap else 0) - _lec_bot)
+            _raw_ro = urllib.request.urlopen("https://visitor-badge.laobi.icu/badge?page_id=arena-logica-rondas", timeout=10).read().decode("utf-8", "ignore")
+            _m_ro = re.findall(r">(\d+)<", _raw_ro)
+            _ro_hoy = max(0, (int(_m_ro[-1]) if _m_ro else 0) - _lec_bot)
+            _lineas.append("👥 Jugadores/tráfico: %d apertura(s) (+%d) · %d ronda(s) jugada(s) (+%d)" % (
+                _ap_hoy, max(0, _ap_hoy - _ap_real), _ro_hoy, max(0, _ro_hoy - _ro_real)))
+            _ap_real, _ro_real = _ap_hoy, _ro_hoy
+        except Exception:
+            _lec_bot -= 1
         if _estado_recamara_arena:
             _lineas.append(_estado_recamara_arena)
         tg("sendMessage", {"chat_id": JEFA, "text": "\n".join(_lineas)})
-        grupos["_vig_arena"] = {"dia": _hoyCuba}
+        grupos["_vig_arena"] = {"dia": _hoyCuba, "lecturas": _lec_bot, "aperturas": _ap_real, "rondas": _ro_real}
 except Exception as _eV:
     print("vigilante arena fail:", _eV)
 

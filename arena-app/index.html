@@ -5,26 +5,36 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="description" content="Arena Lógica: retos de lógica de 15 segundos. Juega gratis, compite en el ranking, desbloquea monedas y el Pase VIP.">
 <title>Arena Lógica — retos de 15 segundos</title>
-<script src="https://www.qvapay.com/miniapps/sdk-sim.js"></script>
+<script src="https://www.qvapay.com/miniapps/sdk-sim.js" defer></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{font-family:Georgia,'Times New Roman',serif;background:#0A2926;color:#F2F7EA;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:14px;max-width:480px;margin:0 auto}
 h1{font-size:1.35em;color:#F4D35E;margin:8px 0 2px;text-align:center}
 .sub{color:#7FD1C1;font-style:italic;font-size:.85em;text-align:center;margin-bottom:12px}
-#hud{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:10px}
-.chip{background:#123B36;border:1px solid #f4d35e33;border-radius:20px;padding:6px 12px;font-size:.8em;color:#F4D35E}
-#barra{width:100%;height:10px;background:#123B36;border-radius:6px;overflow:hidden;margin:6px 0 12px}
-#barra>div{height:100%;background:linear-gradient(90deg,#F4D35E,#E05C5C);width:100%;transition:width 1s linear}
-.card{background:#123B36;border:1px solid #f4d35e33;border-radius:16px;padding:16px;width:100%;margin:6px 0}
-.pregunta{font-size:1.15em;color:#F2F7EA;text-align:center;margin:8px 0 14px;line-height:1.45}
-.opt{display:block;width:100%;background:#0F4D42;color:#F2F7EA;border:1px solid #7fd1c155;border-radius:12px;padding:14px;font-size:1em;font-family:inherit;margin:8px 0;cursor:pointer;text-align:center}
+#hud{display:flex;gap:7px;justify-content:center;flex-wrap:wrap;margin-bottom:10px}
+.chip{background:#123B36;border:1px solid #f4d35e33;border-radius:20px;padding:6px 11px;font-size:.79em;color:#F4D35E}
+.chip-btn{cursor:pointer;font-family:inherit}
+#barra{width:100%;height:10px;background:#091F1C;border-radius:6px;overflow:hidden;margin:6px 0 12px;border:1px solid #7fd1c122}
+#barra>div{height:100%;background:linear-gradient(90deg,#F4D35E,#E05C5C);width:100%}
+.card{background:#123B36;border:1px solid #f4d35e33;border-radius:16px;padding:16px;width:100%;margin:6px 0;box-shadow:0 10px 26px rgba(0,0,0,.28)}
+.cab-juego{display:flex;justify-content:space-between;align-items:center;font-size:.82em;color:#7FD1C1;margin-bottom:2px}
+.reloj{font-weight:bold;color:#F4D35E;font-variant-numeric:tabular-nums}
+.reloj.urgente{color:#FF7A7A}
+.pregunta{font-size:1.14em;color:#F2F7EA;text-align:center;margin:8px 0 14px;line-height:1.45}
+.opt{display:block;width:100%;background:#0F4D42;color:#F2F7EA;border:1px solid #7fd1c155;border-radius:12px;padding:14px;font-size:1em;font-family:inherit;margin:8px 0;cursor:pointer;text-align:center;transition:background .12s,border-color .12s}
+@media (hover:hover){.opt:hover{border-color:#F4D35E88}}
 .opt:active{background:#1D6E4F}
-.opt.ok{background:#1D6E4F;border-color:#F4D35E}
-.opt.mal{background:#8A2E2E}
-.grande{font-size:1.6em;color:#F4D35E;text-align:center;margin:10px 0}
-.btn{display:block;width:100%;background:linear-gradient(135deg,#F4D35E,#E0A82E);color:#0A2926;border:none;border-radius:12px;padding:14px;font-size:1em;font-weight:bold;font-family:inherit;margin:10px 0;cursor:pointer;text-align:center;text-decoration:none}
+.opt.ok{background:#1D6E4F!important;border-color:#F4D35E!important;color:#FFF}
+.opt.mal{background:#8A2E2E!important;border-color:#FF8080!important}
+.grande{font-size:1.75em;color:#F4D35E;text-align:center;margin:8px 0 4px;font-weight:bold}
+.resumen-ronda{background:#0C2E2A;border:1px solid #7fd1c133;border-radius:12px;padding:10px 12px;margin:8px 0;font-size:.84em;color:#CFE8DD;text-align:center;line-height:1.5}
+.gancho-vip{background:rgba(244,211,94,.11);border:1px dashed #F4D35E88;border-radius:10px;padding:8px 10px;margin:8px 0;font-size:.8em;color:#F4D35E;text-align:center}
+.banner-vip-activo{background:rgba(29,110,79,.45);border:1px solid #7FD1C1;border-radius:11px;padding:9px 11px;margin:8px 0;font-size:.81em;color:#E6FFF7;text-align:center;line-height:1.4}
+.btn{display:block;width:100%;background:linear-gradient(135deg,#F4D35E,#E0A82E);color:#0A2926;border:none;border-radius:12px;padding:14px;font-size:1em;font-weight:bold;font-family:inherit;margin:9px 0;cursor:pointer;text-align:center;text-decoration:none}
 .btn:disabled{opacity:.6;cursor:wait}
 .btn.sec{background:#123B36;color:#7FD1C1;border:1px solid #7fd1c155;font-weight:normal}
+.fila-dos{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fila-dos .btn{margin:4px 0;padding:11px 8px;font-size:.88em}
 .msj{font-size:.85em;color:#7FD1C1;text-align:center;margin:6px 0;min-height:1.2em;line-height:1.4}
 .corona{color:#F4D35E}
 #rank li{font-size:.9em;margin:6px 0;color:#CFE8DD}
@@ -39,6 +49,7 @@ h1{font-size:1.35em;color:#F4D35E;margin:8px 0 2px;text-align:center}
   <span class="chip" id="chipEnergia">🪙 Monedas: 5</span>
   <span class="chip" id="chipRacha">🔥 Racha: 0</span>
   <span class="chip" id="chipVip">👑 VIP: no</span>
+  <button type="button" class="chip chip-btn" id="chipSonido" onclick="alternarSonido()" aria-label="Sonido">🔊</button>
 </div>
 
 <!-- ═══ PANTALLA INICIO ═══ -->
@@ -52,7 +63,11 @@ h1{font-size:1.35em;color:#F4D35E;margin:8px 0 2px;text-align:center}
 
 <!-- ═══ PANTALLA JUEGO ═══ -->
 <div id="pJuego" class="card oculto">
-  <div style="text-align:center;font-size:.8em;color:#7FD1C1" id="progreso">Reto 1 de 5</div>
+  <div class="cab-juego">
+    <span id="progreso">Reto 1 de 5</span>
+    <span id="puntosVivo">⭐ 0 pts</span>
+    <span class="reloj" id="relojTxt">⏱️ 15s</span>
+  </div>
   <div id="barra"><div id="bar"></div></div>
   <p class="pregunta" id="qTxt">…</p>
   <button class="opt" id="o0" onclick="responder(0)">…</button>
@@ -63,19 +78,25 @@ h1{font-size:1.35em;color:#F4D35E;margin:8px 0 2px;text-align:center}
 
 <!-- ═══ PANTALLA RESULTADO ═══ -->
 <div id="pFin" class="card oculto">
-  <p class="pregunta">🏁 RESULTADO DE LA RONDA</p>
+  <p class="pregunta" id="tituloFin">🏁 RESULTADO DE LA RONDA</p>
   <div class="grande" id="puntosFin">0 pts</div>
-  <p class="msj" id="detalleFin"></p>
+  <div class="resumen-ronda" id="detalleFin"></div>
+  <div class="gancho-vip oculto" id="ganchoVipFin"></div>
   <button class="btn" onclick="empezar()">▶️ OTRA RONDA</button>
-  <button class="btn sec" onclick="mostrar('pTienda')">🪙 ¿Sin monedas? Recarga</button>
+  <div class="fila-dos">
+    <button class="btn sec" onclick="mostrar('pRank')">🏆 Ranking</button>
+    <button class="btn sec" onclick="mostrar('pTienda')">🪙 Tienda / VIP</button>
+  </div>
+  <button class="btn sec" onclick="mostrar('pInicio')">← Volver al inicio</button>
 </div>
 
 <!-- ═══ PANTALLA TIENDA ═══ -->
 <div id="pTienda" class="card oculto">
   <p class="pregunta">🪙 TIENDA DE LA ARENA</p>
+  <div id="bannerVipTienda" class="banner-vip-activo oculto"></div>
   <p style="font-size:.82em;color:#CFE8DD;text-align:center">Las monedas sirven para seguir jugando y competir.<br><b>No se pueden canjear por dinero.</b></p>
   <button class="btn" id="btnComprarMon" onclick="comprar('monedas')">🪙 +5 MONEDAS — $0.99</button>
-  <button class="btn" id="btnComprarVip" onclick="comprar('vip')">👑 PASE VIP 7 DÍAS — $1.99<br><span style="font-size:.75em">x2 puntos + corona en el ranking</span></button>
+  <button class="btn" id="btnComprarVip" onclick="comprar('vip')"><span id="txtBtnVip">👑 PASE VIP 7 DÍAS — $1.99</span><br><span style="font-size:.75em">x2 puntos + corona en el ranking</span></button>
   <p style="font-size:.75em;color:#7FD1C1;text-align:center;margin-top:8px">Pagas con tu saldo QvaPay · el crédito llega al instante cuando el pago se completa.</p>
   <button class="btn sec" onclick="yaPague()">❓ Pagué y no apareció</button>
   <button class="btn sec" onclick="mostrar('pInicio')">← Volver</button>
@@ -86,46 +107,15 @@ h1{font-size:1.35em;color:#F4D35E;margin:8px 0 2px;text-align:center}
 <div id="pRank" class="card oculto">
   <p class="pregunta">🏆 MEJORES MARCAS</p>
   <ol id="rank" style="padding-left:22px"></ol>
-  <p style="font-size:.75em;color:#7FD1C1;text-align:center">Tus mejores rondas registradas en este dispositivo.<br>Activa el Pase VIP 👑 para duplicar tu puntuación.</p>
+  <p style="font-size:.75em;color:#7FD1C1;text-align:center;margin-top:8px">Tus mejores rondas registradas en este dispositivo.<br>Activa el Pase VIP 👑 para duplicar tu puntuación.</p>
   <button class="btn sec" onclick="mostrar('pInicio')">← Volver</button>
 </div>
 
-<div class="nota">Arena Lógica <b>v1.4</b> · by Despegue Digital 🇨🇺 · Jugar es gratis, siempre.<br>Las monedas y el VIP son ventajas de juego — nunca dinero canjeable.</div>
+<div class="nota">Arena Lógica <b>v1.5</b> · by Despegue Digital 🇨🇺 · Jugar es gratis, siempre.<br>Las monedas y el VIP son ventajas de juego — nunca dinero canjeable.</div>
 
 <script>
 // ===CORE_START===
-var BANK=[
- ["¿Qué sigue? 2, 4, 8, 16, …",["24","32","20"],1],
- ["Si 5 máquinas hacen 5 piezas en 5 minutos, ¿cuánto tarda 1 máquina en 1 pieza?",["1 minuto","5 minutos","25 minutos"],1],
- ["¿Qué pesa más: 1 kg de hierro o 1 kg de plumas?",["El hierro","Las plumas","Pesan igual"],2],
- ["Si hoy es miércoles, ¿qué día fue hace 3 días?",["Domingo","Lunes","Martes"],0],
- ["Completa: 1, 1, 2, 3, 5, 8, …",["11","13","12"],1],
- ["En una carrera, adelantas al 2do. ¿En qué puesto vas?",["1ro","2do","3ro"],1],
- ["¿Cuántos lados tiene un hexágono?",["5","6","7"],1],
- ["Si un litro cuesta $2, ¿cuánto cuestan 3.5 litros?",["$6.50","$7.00","$6.00"],1],
- ["La mitad de 2, más 2. ¿Cuánto es?",["3","2","4"],0],
- ["Completa: 100, 81, 64, 49, …",["36","25","38"],0],
- ["Si 3 gatos cazan 3 ratones en 3 horas, ¿cuánto tardan 6 gatos en 6 ratones?",["3 horas","6 horas","1.5 horas"],0],
- ["¿Qué sigue en el teclado? Z, X, C, V, …",["B","N","A"],0],
- ["Un ladrillo pesa 1 kg más medio ladrillo. ¿Cuánto pesa un ladrillo?",["1 kg","1.5 kg","2 kg"],2],
- ["¿Cuántos meses del año tienen 28 días?",["Solo 1","Todos los 12","6 meses"],1],
- ["El padre de Ana tiene 4 hijas: Lala, Lele, Lili y… ¿quién falta?",["Lolo","Ana","Lulu"],1],
- ["Si tienes 3 manzanas y quitas 2, ¿cuántas tienes tú?",["1","2","3"],1],
- ["¿Cuánto es 7 × 8 − 6?",["50","48","52"],0],
- ["Completa: 3, 6, 12, 24, …",["36","48","42"],1],
- ["Un tren eléctrico va de norte a sur. ¿Hacia dónde va el humo?",["Al norte","Al sur","No echa humo"],2],
- ["Si mañana fuera viernes, ¿qué día fue ayer?",["Martes","Miércoles","Jueves"],0],
- ["¿Cuál es el triple de 15 menos 5?",["40","30","45"],0],
- ["Completa: 1, 4, 9, 16, 25, …",["30","36","49"],1],
- ["En una pecera hay 10 peces; si 3 se ahogan, ¿cuántos quedan?",["7","10","3"],1],
- ["Si un reloj marca las 3:15, ¿cuántos minutos faltan para las 4:00?",["45 min","35 min","55 min"],0],
- ["¿Qué número es par y primo a la vez?",["2","4","Ninguno"],0],
- ["Un pastor tiene 17 ovejas y se quedan todas menos 9. ¿Cuántas quedan?",["8","9","17"],1],
- ["Completa: 80, 40, 20, 10, …",["5","0","2"],0],
- ["¿Cuántos cuartos de hora hay en 2 horas?",["6","8","4"],1],
- ["Si compras algo de $3.40 con un billete de $5, ¿cuánto es el vuelto?",["$1.60","$1.40","$2.60"],0],
- ["Completa las iniciales: L, M, M, J, V, …",["S","D","L"],0]
-];
+var BANK=[["¿Qué sigue? 2, 4, 8, 16, …",["24","32","20"],1],["Si 5 máquinas hacen 5 piezas en 5 minutos, ¿cuánto tarda 1 máquina en hacer 1 pieza?",["1 minuto","5 minutos","25 minutos"],1],["¿Qué pesa más: 1 kg de hierro o 1 kg de plumas?",["El hierro","Las plumas","Pesan igual"],2],["Si hoy es miércoles, ¿qué día fue hace 3 días?",["Domingo","Lunes","Martes"],0],["Completa: 1, 1, 2, 3, 5, 8, …",["11","13","12"],1],["En una carrera adelantas al que va 2do. ¿En qué puesto quedas tú?",["1ro","2do","3ro"],1],["¿Cuántos lados tiene un hexágono?",["5","6","7"],1],["Si un litro cuesta $2, ¿cuánto cuestan 3.5 litros?",["$6.50","$7.00","$6.00"],1],["La mitad de 2, más 2. ¿Cuánto es?",["3","2","4"],0],["Completa: 100, 81, 64, 49, …",["36","25","38"],0],["Si 3 gatos cazan 3 ratones en 3 horas, ¿cuánto tardan 6 gatos en cazar 6 ratones?",["3 horas","6 horas","1.5 horas"],0],["¿Qué letra sigue en esa fila del teclado? Z, X, C, V, …",["B","N","A"],0],["Un ladrillo pesa 1 kg más medio ladrillo. ¿Cuánto pesa un ladrillo entero?",["1 kg","1.5 kg","2 kg"],2],["¿Cuántos meses del año tienen al menos 28 días?",["Solo 1","Todos los 12","6 meses"],1],["El padre de Ana tiene 4 hijas: Lala, Lele, Lili y… ¿quién es la cuarta?",["Lolo","Ana","Lulu"],1],["En una cesta hay 3 manzanas y tú tomas 2. ¿Cuántas manzanas tienes tú?",["1","2","3"],1],["¿Cuánto es 7 × 8 − 6?",["50","48","52"],0],["Completa: 3, 6, 12, 24, …",["36","48","42"],1],["Un tren eléctrico viaja de norte a sur. ¿Hacia dónde va el humo?",["Al norte","Al sur","No echa humo"],2],["Si mañana fuera viernes, ¿qué día fue ayer?",["Martes","Miércoles","Jueves"],1],["¿Cuánto es (3 × 15) − 5?",["40","30","45"],0],["Completa: 1, 4, 9, 16, 25, …",["30","36","49"],1],["En una pecera cerrada hay 10 peces y ninguno sale. Si 3 se duermen, ¿cuántos siguen dentro?",["7","10","3"],1],["Si un reloj marca las 3:15, ¿cuántos minutos faltan para las 4:00?",["45 min","35 min","55 min"],0],["¿Qué número es par y primo a la vez?",["2","4","Ninguno"],0],["Un pastor tiene 17 ovejas y se escapan todas menos 9. ¿Cuántas le quedan?",["8","9","17"],1],["Completa: 80, 40, 20, 10, …",["5","0","2"],0],["¿Cuántos cuartos de hora hay en 2 horas?",["6","8","4"],1],["Pagas una compra de $3.40 con un billete de $5.00. ¿Cuánto es el vuelto?",["$1.60","$1.40","$2.60"],0],["Completa las iniciales de los días: L, M, M, J, V, …",["S","D","L"],0],["¿Cuántos minutos hay en 2 horas y media?",["120 min","150 min","130 min"],1],["Si adelantas al último en una carrera normal (sin vueltas), ¿es posible?",["Sí, quedas penúltimo","No, detrás del último no va nadie","Quedas primero"],1],["Un bate y una pelota cuestan $1.10 en total. El bate cuesta $1.00 más que la pelota. ¿Cuánto cuesta la pelota?",["$0.10","$0.05","$0.15"],1],["Completa: 2, 6, 18, 54, …",["108","162","154"],1],["Si 1 camisa seca al sol en 1 hora, ¿cuánto tardan 5 camisas tendidas juntas al sol?",["5 horas","1 hora","2.5 horas"],1],["¿Cuál es el 20% de 150?",["25","30","35"],1],["Si eres hijo único de tus padres y miras tu foto, ¿a quién ves?",["A mi hijo","A mí mismo","A mi hermano"],1],["¿Cuántas veces puedes restar 5 de 25 antes de que deje de ser 25?",["5 veces","Solo 1 vez","Ninguna"],1],["Completa: 90, 81, 72, 63, …",["54","56","45"],0],["Un médico te receta 3 pastillas: una cada media hora. ¿En cuánto tiempo te tomas las 3?",["1 hora y media","1 hora","45 minutos"],1],["¿Cuánto es 12 × 12?",["124","144","148"],1],["Si un triángulo tiene dos ángulos de 60°, ¿cuánto mide el tercer ángulo?",["60°","90°","30°"],0],["Completa las iniciales de los meses: E, F, M, A, M, …",["J","A","S"],0],["¿Qué número falta? 5, 10, 20, 40, …",["60","80","100"],1],["Si Juan es más alto que Pedro y Pedro es más alto que Luis, ¿quién es el más bajo?",["Juan","Pedro","Luis"],2],["¿Cuántos segundos hay en 3 minutos?",["180 s","120 s","300 s"],0],["Si divides 30 entre 0.5 y sumas 10, ¿cuánto da?",["25","70","40"],1],["Un gallo pone un huevo justo en la cumbre de un tejado. ¿Hacia qué lado cae?",["A la derecha","A la izquierda","Los gallos no ponen huevos"],2],["¿Cuánto es 9 × 9 + 9?",["81","90","99"],1],["Si pasado mañana es domingo, ¿qué día es hoy?",["Viernes","Sábado","Jueves"],0],["¿Cuántas aristas tiene un cubo?",["6","8","12"],2],["Completa: 2, 3, 5, 7, 11, 13, … (números primos)",["15","17","19"],1],["En un taxi subes tú con 3 pasajeros más y el chofer. ¿Cuántas personas van en el taxi?",["4","5","3"],1],["¿Cuál es la raíz cuadrada de 121?",["11","12","13"],0],["Si un artículo de $40 tiene 25% de descuento, ¿cuánto pagas?",["$30","$10","$35"],0],["Completa: 1, 2, 4, 7, 11, 16, …",["21","22","23"],1],["¿Cuántos años tiene un lustro?",["5 años","10 años","50 años"],0],["Si dos padres y dos hijos van a pescar y pescan 3 peces (1 cada uno), ¿cómo es posible?",["Son abuelo, padre y nieto","Uno devolvió el pez","Eran gemelos"],0],["¿Cuánto es 100 − (8 × 7)?",["44","54","46"],0],["Un caracol sube 3 m de día y resbala 2 m de noche en un muro de 5 m. ¿En qué día llega arriba?",["Día 5","Día 3","Día 4"],1],["¿Cuántos lados tiene un octágono?",["6","8","10"],1],["Si ayer fue lunes, ¿qué día será pasado mañana?",["Miércoles","Jueves","Viernes"],1],["Completa: 64, 32, 16, 8, …",["4","2","6"],0],["¿Cuánto es el 50% de la mitad de 80?",["40","20","10"],1],["Antes de que el Monte Everest fuera descubierto, ¿cuál era la montaña más alta del mundo?",["El K2","El Monte Everest","El Kilimanjaro"],1],["¿Cuánto es 6 × 7 + 8?",["50","48","56"],0],["Si compras 3 paquetes de 8 galletas y regalas 6 galletas, ¿cuántas te quedan?",["16","18","20"],1],["Completa: 10, 20, 19, 38, 37, …",["74","36","76"],0],["¿Cuántas caras tiene un dado clásico?",["6","8","4"],0],["Si un tren sale a las 14:40 y el viaje dura 50 minutos, ¿a qué hora llega?",["15:30","15:20","15:10"],0]];
 
 function barajarOpciones(opts, idxCorrecto){
  var correcta=opts[idxCorrecto], copia=opts.slice();
@@ -138,39 +128,53 @@ function barajarOpciones(opts, idxCorrecto){
  return {opts:copia,k:nuevoK};
 }
 
-function genSerieNumerica(){
- var modo=Math.floor(Math.random()*3), s=[], corr=0, paso=0;
+function genRetoDinamico(){
+ var modo=Math.floor(Math.random()*5), q="", corr=0, d1=0, d2=0, suf="";
  if(modo===0){
-  var a=2+Math.floor(Math.random()*11), d=3+Math.floor(Math.random()*7);
+  var a=2+Math.floor(Math.random()*12), d=3+Math.floor(Math.random()*8), s=[];
   for(var j=0;j<5;j++)s.push(a+j*d);
-  corr=a+5*d; paso=d;
+  corr=a+5*d; d1=corr+d; d2=Math.max(1,corr-d);
+  q="¿Qué sigue? "+s.join(", ")+", …";
  }else if(modo===1){
   var b=2+Math.floor(Math.random()*4);
-  s=[b,b*2,b*4,b*8]; corr=b*16; paso=b*4;
+  corr=b*16; d1=corr+b*4; d2=corr-b*4;
+  q="¿Qué sigue? "+[b,b*2,b*4,b*8].join(", ")+", …";
+ }else if(modo===2){
+  var ini=2+Math.floor(Math.random()*5), sq=[];
+  for(var m=0;m<4;m++)sq.push((ini+m)*(ini+m));
+  corr=(ini+4)*(ini+4); d1=corr+(ini*2+3); d2=Math.max(1,corr-(ini*2+1));
+  q="¿Qué sigue? "+sq.join(", ")+", …";
+ }else if(modo===3){
+  var x=4+Math.floor(Math.random()*8), y=5+Math.floor(Math.random()*8), z=3+Math.floor(Math.random()*9);
+  corr=x*y+z; d1=corr+x; d2=Math.max(1,corr-y);
+  q="Calcula rápido: ("+x+" × "+y+") + "+z+" = ?";
  }else{
-  var ini=2+Math.floor(Math.random()*4);
-  for(var m=0;m<4;m++)s.push((ini+m)*(ini+m));
-  corr=(ini+4)*(ini+4); paso=ini*2+3;
+  var p10=(2+Math.floor(Math.random()*7))*10, pct=[10,20,25,50][Math.floor(Math.random()*4)];
+  if(pct===25)p10=40*(1+Math.floor(Math.random()*5));
+  corr=Math.round(p10*pct/100); d1=corr+5; d2=Math.max(2,corr-5);
+  q="¿Cuánto es el "+pct+"% de "+p10+"?";
  }
- var d1=corr+paso, d2=Math.max(1,corr-paso);
- if(d2===corr||d2===d1)d2=corr+paso*2;
- var bObj=barajarOpciones([String(corr),String(d1),String(d2)],0);
- return {q:"¿Qué sigue? "+s.join(", ")+", …",opts:bObj.opts,k:bObj.k};
+ if(d2===corr||d2===d1)d2=corr+9;
+ if(d1===corr)d1=corr+4;
+ var bObj=barajarOpciones([corr+suf,d1+suf,d2+suf],0);
+ return {q:q,opts:bObj.opts,k:bObj.k};
 }
 
+function genSerieNumerica(){return genRetoDinamico()}
+
 function genPreguntaRonda(usadas){
- for(var intento=0;intento<25;intento++){
+ for(var intento=0;intento<40;intento++){
   var item;
-  if(Math.random()<0.68){
+  if(Math.random()<0.74){
    var b=BANK[Math.floor(Math.random()*BANK.length)];
    var mezclada=barajarOpciones(b[1],b[2]);
    item={q:b[0],opts:mezclada.opts,k:mezclada.k};
   }else{
-   item=genSerieNumerica();
+   item=genRetoDinamico();
   }
   if(!usadas[item.q]){usadas[item.q]=1;return item}
  }
- var fb=genSerieNumerica();usadas[fb.q]=1;return fb;
+ var fb=genRetoDinamico();usadas[fb.q]=1;return fb;
 }
 
 function genPregunta(i){
@@ -220,7 +224,49 @@ function esVipActivo(){
  return typeof hasta==="string"&&hasta.length===10&&hasta>=hoyISO();
 }
 
-var S={preg:[],i:0,racha:0,puntos:0,t:15,timer:null,nextTimer:null,jugando:false,bloqueo:false,pagando:false,vip:esVipActivo(),ultimas:{}};
+var S={preg:[],i:0,racha:0,rachaMax:0,aciertos:0,puntos:0,t:15,timer:null,nextTimer:null,jugando:false,bloqueo:false,pagando:false,vip:esVipActivo(),sonido:LS.get("sonido",true)!==false};
+
+// ── Audio ligero sintetizado (0 KB externos, funciona 100% sin red) ──
+var _actx=null;
+function tocarTono(tipo){
+ if(!S.sonido)return;
+ try{
+  var AC=window.AudioContext||window.webkitAudioContext;
+  if(!AC)return;
+  if(!_actx)_actx=new AC();
+  if(_actx.state==="suspended")_actx.resume();
+  var now=_actx.currentTime;
+  var notas=tipo==="ok"?[[523.25,0,.09],[659.25,.08,.14]]:tipo==="fin"?[[523.25,0,.1],[659.25,.09,.1],[783.99,.18,.22]]:[[220,0,.16]];
+  for(var i=0;i<notas.length;i++){
+   var o=_actx.createOscillator(),g=_actx.createGain();
+   o.type=tipo==="mal"?"sawtooth":"triangle";
+   o.frequency.setValueAtTime(notas[i][0],now+notas[i][1]);
+   g.gain.setValueAtTime(0.08,now+notas[i][1]);
+   g.gain.exponentialRampToValueAtTime(0.001,now+notas[i][1]+notas[i][2]);
+   o.connect(g);g.connect(_actx.destination);
+   o.start(now+notas[i][1]);o.stop(now+notas[i][1]+notas[i][2]+0.02);
+  }
+ }catch(e){}
+}
+
+function alternarSonido(){
+ S.sonido=!S.sonido;
+ LS.set("sonido",S.sonido);
+ pintarHUD();
+ if(S.sonido)tocarTono("ok");
+}
+
+// ── Telemetría anónima no bloqueante (mide aperturas y rondas reales) ──
+function pingMetrica(clave){
+ try{
+  if(location.hostname.indexOf("github.io")<0)return;
+  setTimeout(function(){
+   var img=new Image();
+   img.src="https://visitor-badge.laobi.icu/badge?page_id="+encodeURIComponent(clave)+"&_="+Date.now();
+  },900);
+ }catch(e){}
+}
+pingMetrica("arena-logica-aperturas");
 
 // ── Inicialización SDK Oficial QvaPay Mini-Apps (con guardas por versión) ──
 function initQvaPay(){
@@ -266,10 +312,23 @@ function gastaEnergia(){var e=energia();if(e.n<=0)return false;e.n--;LS.set("ene
 function pintarHUD(){
  S.vip=esVipActivo();
  var n=energia().n;
+ var hasta=LS.get("vip_hasta","");
  document.getElementById("chipEnergia").textContent="🪙 Monedas: "+n;
  document.getElementById("chipRacha").textContent="🔥 Racha: "+S.racha;
  document.getElementById("chipVip").textContent=S.vip?"👑 VIP: sí":"👑 VIP: no";
+ document.getElementById("chipSonido").textContent=S.sonido?"🔊":"🔇";
  document.getElementById("runsTxt").textContent=n+(n===1?" partida":" partidas");
+ var bvt=document.getElementById("bannerVipTienda"),tbv=document.getElementById("txtBtnVip");
+ if(bvt&&tbv){
+  if(S.vip){
+   bvt.classList.remove("oculto");
+   bvt.innerHTML="👑 <b>Pase VIP activo</b> hasta el <b>"+escapeHtml(hasta)+"</b> · Puntos x2 encendidos";
+   tbv.textContent="👑 EXTENDER VIP +7 DÍAS — $1.99";
+  }else{
+   bvt.classList.add("oculto");
+   tbv.textContent="👑 PASE VIP 7 DÍAS — $1.99";
+  }
+ }
 }
 
 function mostrar(id){
@@ -277,16 +336,31 @@ function mostrar(id){
   document.getElementById(p).classList.toggle("oculto",p!==id);
  });
  if(id==="pRank")pintarRank();
+ if(id==="pTienda")pintarHUD();
 }
 
 function pintarRank(){
  var rk=LS.get("rank",[]).slice().sort(function(a,b){return b.p-a.p}).slice(0,10);
  document.getElementById("rank").innerHTML=rk.length?rk.map(function(x,i){
   return "<li>"+(i===0?"🥇":i===1?"🥈":i===2?"🥉":"▫️")+" "+(x.v?"<span class='corona'>👑</span> ":"")+
-   escapeHtml(x.n)+" — <b>"+Number(x.p||0)+" pts</b></li>"}).join("")
+   escapeHtml(x.n)+" — <b>"+Number(x.p||0)+" pts</b>"+(x.d?" <span style='font-size:.78em;color:#7FD1C1'>("+escapeHtml(x.d)+")</span>":"")+"</li>"}).join("")
   :"<li style='color:#7FD1C1'>Aún no hay partidas — ¡sé el primero!</li>";
 }
 function escapeHtml(s){return String(s).replace(/[<>&"]/g,function(c){return{"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;"}[c]})}
+
+function resetBarra15s(){
+ var bar=document.getElementById("bar");
+ bar.style.transition="none";
+ bar.style.width="100%";
+ void bar.offsetWidth;
+ bar.style.transition="width 1s linear";
+}
+
+function pintarReloj(){
+ var el=document.getElementById("relojTxt");
+ el.textContent="⏱️ "+S.t+"s";
+ el.classList.toggle("urgente",S.t<=5);
+}
 
 function empezar(){
  if(S.jugando)return;
@@ -297,17 +371,21 @@ function empezar(){
   return;
  }
  S.jugando=true;
+ var historial=LS.get("ultimas_q",[]);
+ if(!Array.isArray(historial))historial=[];
  var usadasRonda={};
- Object.keys(S.ultimas||{}).forEach(function(q){usadasRonda[q]=1});
+ for(var h=0;h<historial.length;h++)usadasRonda[historial[h]]=1;
  S.preg=[];
- var nuevasUltimas={};
  for(var i=0;i<5;i++){
   var pr=genPreguntaRonda(usadasRonda);
   S.preg.push(pr);
-  nuevasUltimas[pr.q]=1;
+  historial.push(pr.q);
  }
- S.ultimas=nuevasUltimas;
- S.i=0;S.racha=0;S.puntos=0;
+ if(historial.length>35)historial=historial.slice(-35);
+ LS.set("ultimas_q",historial);
+
+ S.i=0;S.racha=0;S.rachaMax=0;S.aciertos=0;S.puntos=0;
+ document.getElementById("puntosVivo").textContent="⭐ 0 pts";
  pintarHUD();mostrar("pJuego");pregunta();
 }
 
@@ -317,13 +395,22 @@ function pregunta(){
  var p=S.preg[S.i];
  document.getElementById("progreso").textContent="Reto "+(S.i+1)+" de 5";
  document.getElementById("qTxt").textContent=p.q;
- for(var j=0;j<3;j++){var b=document.getElementById("o"+j);b.textContent=(j+1)+") "+p.opts[j];b.className="opt"}
+ for(var j=0;j<3;j++){
+  var b=document.getElementById("o"+j);
+  b.textContent=(j+1)+") "+p.opts[j];
+  b.className="opt";
+  try{b.blur()}catch(e){}
+ }
  document.getElementById("msjJ").textContent="";
- S.t=15;document.getElementById("bar").style.width="100%";
+ S.t=15;
+ pintarReloj();
+ resetBarra15s();
  clearInterval(S.timer);
  S.timer=setInterval(function(){
   if(document.hidden)return;
-  S.t--;document.getElementById("bar").style.width=(S.t/15*100)+"%";
+  S.t--;
+  pintarReloj();
+  document.getElementById("bar").style.width=Math.max(0,S.t/15*100)+"%";
   if(S.t<=0){clearInterval(S.timer);responder(-1)}
  },1000);
 }
@@ -335,34 +422,56 @@ function responder(j){
  if(j>=0){var boton=document.getElementById("o"+j);if(boton)boton.className="opt "+(ok?"ok":"mal")}
  if(!ok){var b=document.getElementById("o"+p.k);if(b)b.className="opt ok"}
  vibrar(ok?"ok":"mal");
+ tocarTono(ok?"ok":"mal");
  var r=puntuar(ok,S.t,S.racha,S.vip);
- S.puntos+=r.puntos;S.racha=r.racha;pintarHUD();
+ S.puntos+=r.puntos;S.racha=r.racha;
+ if(ok){S.aciertos++;if(S.racha>S.rachaMax)S.rachaMax=S.racha}
+ document.getElementById("puntosVivo").textContent="⭐ "+S.puntos+" pts";
+ pintarHUD();
  document.getElementById("msjJ").textContent=ok
   ?("✅ ¡Correcto! +"+r.puntos+(S.vip?" (x2 VIP 👑)":"")+(S.racha>1?" · racha 🔥"+S.racha:""))
-  :("❌ "+(j<0?"¡Tiempo! ":"")+"La correcta era: "+p.opts[p.k]);
+  :("❌ "+(j<0?"¡Tiempo agotado! ":"")+"Respuesta: "+p.opts[p.k]);
  clearTimeout(S.nextTimer);
  S.nextTimer=setTimeout(function(){
   S.i++;
   if(S.i<5)pregunta();else fin();
- },1300);
+ },1250);
 }
 
 function fin(){
  clearInterval(S.timer);clearTimeout(S.nextTimer);
  S.jugando=false;S.bloqueo=false;
+ tocarTono("fin");
+ pingMetrica("arena-logica-rondas");
  var rk=LS.get("rank",[]);
  rk.push({n:"Tú",p:S.puntos,v:S.vip,d:hoyISO()});
  if(rk.length>50)rk=rk.slice(-50);
  LS.set("rank",rk);
+
+ var mejorAntes=Number(LS.get("mejor",0)||0);
+ var esRecord=(S.puntos>0&&S.puntos>mejorAntes);
+ var mejor=esRecord?S.puntos:mejorAntes;
+ if(esRecord)LS.set("mejor",mejor);
+
+ document.getElementById("tituloFin").textContent=esRecord?"🏆 ¡NUEVO RÉCORD PERSONAL!":"🏁 RESULTADO DE LA RONDA";
  document.getElementById("puntosFin").textContent=S.puntos+" pts";
- var mejor=LS.get("mejor",0);if(S.puntos>mejor){LS.set("mejor",S.puntos);mejor=S.puntos}
- document.getElementById("detalleFin").textContent="Tu mejor marca: "+mejor+" pts · Monedas restantes: "+energia().n;
+ document.getElementById("detalleFin").innerHTML=
+  "Aciertos: <b>"+S.aciertos+" de 5</b> · Racha máx: <b>🔥 "+S.rachaMax+"</b><br>"+
+  "Tu récord: <b>"+mejor+" pts</b> · Monedas restantes: <b>"+energia().n+"</b>";
+
+ var gancho=document.getElementById("ganchoVipFin");
+ if(!S.vip&&S.puntos>0){
+  gancho.classList.remove("oculto");
+  gancho.textContent="👑 Con Pase VIP habrías sumado "+(S.puntos*2)+" pts (x2) en esta ronda.";
+ }else{
+  gancho.classList.add("oculto");
+ }
  pintarHUD();mostrar("pFin");
 }
 
 // ── Recámara rotativa de facturas QvaPay (auto-recargada por bot-cycle.py en cobros.json) ──
 var COLA_COBROS={"monedas":[{"uuid":"e1e1101f-e2c3-4114-aa30-3c052766c149","expire_at":"2026-12-03T18:54:43.000Z"},{"uuid":"3109f1dd-2e96-43b8-9cce-b8fbbd999e87","expire_at":"2026-12-06T13:01:15.000Z"},{"uuid":"8e30d639-6a46-4b28-be08-d971e858521d","expire_at":"2026-12-06T13:01:15.000Z"},{"uuid":"cbb4715d-97ea-4772-8ed0-c652f9e34992","expire_at":"2026-12-06T13:01:15.000Z"},{"uuid":"f7127872-bca7-48c0-9a3c-7ef5ec7f84af","expire_at":"2026-12-06T13:01:15.000Z"},{"uuid":"f8569cbd-5e59-499a-9247-5ddd6321c873","expire_at":"2026-12-06T13:01:15.000Z"}],"vip":[{"uuid":"94512a25-527e-4213-9ef0-022dd2650b4b","expire_at":"2026-12-06T12:59:45.000Z"},{"uuid":"1c1a66fe-a22f-470b-b09f-204dfb0a2b83","expire_at":"2026-12-06T13:01:15.000Z"},{"uuid":"549289ad-c86c-494a-bf4b-25f80ded15a3","expire_at":"2026-12-06T13:01:15.000Z"},{"uuid":"b9f76b8b-5924-48e2-b59a-80a226e4a140","expire_at":"2026-12-06T13:01:15.000Z"},{"uuid":"cccac637-9343-45a8-8b34-c96e73ac0c76","expire_at":"2026-12-06T13:01:15.000Z"},{"uuid":"9c827b9f-d8ee-4477-bce4-e6acd39327b8","expire_at":"2026-12-06T13:01:15.000Z"}]};
-var CURSOR_COLA={monedas:0,vip:0};
+var CURSOR_COLA={monedas:Math.floor(Math.random()*6),vip:Math.floor(Math.random()*6)};
 
 function cargarCobrosVivos(){
  try{
@@ -421,7 +530,34 @@ function setBotonesCompraDisabled(dis){
 function haySDK(){try{var Q=window.QvaPay;return !!(Q&&Q.payments&&typeof Q.payments.payInvoice==="function")}catch(e){return false}}
 
 function noPagado(motivo){
- document.getElementById("msjT").textContent="❌ "+motivo+". NO se acreditó nada y NO se te cobró. Verifica tu saldo y vuelve a tocar.";
+ document.getElementById("msjT").textContent="❌ "+motivo+". NO se acreditó nada y NO se te cobró. Ya preparamos otra orden limpia: verifica tu saldo y vuelve a tocar.";
+}
+
+function ejecutarPagoSDK(tipo, uuid){
+ setBotonesCompraDisabled(true);
+ document.getElementById("msjT").textContent="Confirma el pago con tu PIN en QvaPay…";
+ window.QvaPay.payments.payInvoice(uuid).then(function(r){
+  setBotonesCompraDisabled(false);
+  if(r&&r.status==="paid"){
+   marcarUuidUsado(r.transaction_uuid||uuid);
+   cargarCobrosVivos();
+   acreditar(tipo);
+  }else{
+   marcarUuidUsado(uuid);
+   rotarFactura(tipo);
+   noPagado("El pago no se completó"+(r&&r.status?" ("+r.status+")":""));
+  }
+ }).catch(function(e){
+  setBotonesCompraDisabled(false);
+  var code=(e&&e.code)?String(e.code):"";
+  if(code==="USER_CANCELLED"){document.getElementById("msjT").textContent="Cancelaste el pago — no se te cobró nada.";return}
+  if(code==="BUSY"){document.getElementById("msjT").textContent="Ya tenías una ventana de pago abierta — ciérrala y vuelve a tocar.";return}
+  if(code==="NOT_ALLOWED"){document.getElementById("msjT").textContent="Necesitas tener tu cuenta QvaPay verificada (KYC) para comprar en mini-apps.";return}
+  if(code==="NETWORK"){document.getElementById("msjT").textContent="Sin conexión con QvaPay — revisa tus datos e inténtalo de nuevo.";return}
+  marcarUuidUsado(uuid);
+  rotarFactura(tipo);
+  noPagado("El pago no pudo completarse"+(code?" ("+code+")":""));
+ });
 }
 
 function comprar(item){
@@ -436,29 +572,7 @@ function comprar(item){
  LS.set("ultimo_item",tipo);
 
  if(haySDK()){
-  setBotonesCompraDisabled(true);
-  document.getElementById("msjT").textContent="Confirma el pago con tu PIN en QvaPay…";
-  window.QvaPay.payments.payInvoice(uuid).then(function(r){
-   setBotonesCompraDisabled(false);
-   if(r&&r.status==="paid"){
-    marcarUuidUsado(r.transaction_uuid||uuid);
-    cargarCobrosVivos();
-    acreditar(tipo);
-   }else{
-    rotarFactura(tipo);
-    noPagado("El pago no se completó"+(r&&r.status?" ("+r.status+")":""));
-   }
-  }).catch(function(e){
-   setBotonesCompraDisabled(false);
-   var code=(e&&e.code)?String(e.code):"";
-   if(code==="USER_CANCELLED"){document.getElementById("msjT").textContent="Cancelaste el pago — no se te cobró nada.";return}
-   if(code==="BUSY"){document.getElementById("msjT").textContent="Ya tenías una ventana de pago abierta — ciérrala y vuelve a tocar.";return}
-   if(code==="NOT_ALLOWED"){document.getElementById("msjT").textContent="Necesitas tener tu cuenta QvaPay verificada (KYC) para comprar en mini-apps.";return}
-   if(code==="NETWORK"){document.getElementById("msjT").textContent="Sin conexión con QvaPay — revisa tus datos e inténtalo de nuevo.";return}
-   // Si la factura acababa de ser pagada por otro jugador, el siguiente toque usará la siguiente factura virgen
-   rotarFactura(tipo);
-   noPagado("El pago no pudo completarse"+(code?" ("+code+")":""));
-  });
+  ejecutarPagoSDK(tipo,uuid);
   return;
  }
 
@@ -479,6 +593,7 @@ function yaPague(){
 
 function acreditar(item){
  vibrar("ok");
+ tocarTono("fin");
  if(item==="vip"){
   var hoy=hoyISO(),actual=LS.get("vip_hasta","");
   var base=(typeof actual==="string"&&actual>=hoy)?parseFechaLocal(actual):new Date();
@@ -515,7 +630,6 @@ function acreditar(item){
   var intento=LS.get("intento_pago",null);
   LS.del("intento_pago");
   var ahora=Date.now();
-  // Exigir que este navegador haya abierto realmente un cobro hace entre 4s y 45 min
   if(!intento||!intento.item||typeof intento.ts!=="number"||(ahora-intento.ts)<4000||(ahora-intento.ts)>45*60*1000){
    document.getElementById("msjT").textContent="⚠️ No hay ningún pago pendiente reciente en este navegador. Si pagaste desde otro dispositivo, envía tu recibo a t.me/Despeguedijitalbot";
    return;
