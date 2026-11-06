@@ -4,8 +4,8 @@
    "title": "Despegue Digital Negocios Cuba",
    "username": "DespegueDigitalCuba",
    "activo": true,
-   "ultima": "2026-11-05",
-   "posts": 44
+   "ultima": "2026-11-06",
+   "posts": 45
   },
   "8600965049": {
    "title": "",
@@ -16,7 +16,7 @@
   }
  },
  "_canal": {
-  "ultima": "2026-11-05"
+  "ultima": "2026-11-06"
  },
  "_pagos": {
   "total": 0,
@@ -249,6 +249,7 @@
    "social-media-specialist-16775",
    "spanish-tiktok-manager-83562",
    "telegram-crypto-community-managers-16262",
+   "v19171",
    "v19172",
    "v19178",
    "v19187",
@@ -476,12 +477,12 @@
    "web3-marketing-87098"
   ],
   "gig": {
-   "v": 371,
+   "v": 372,
    "c": 0,
-   "av": 369,
+   "av": 372,
    "ac": 0
   },
-  "hora": "2026-11-06T16"
+  "hora": "2026-11-06T21"
  },
  "_metricas": {
   "fecha": "2026-11-06",
@@ -502,17 +503,17 @@
  },
  "_retos": {
   "-1003939536300": {
-   "q": "Completa: 1, 1, 2, 3, 5, 8, …",
+   "q": "Si 3 gatos cazan 3 ratones en 3 horas, ¿cuánto tardan 6 gatos en 6 ratones?",
    "opts": [
-    "11",
-    "13",
-    "12"
+    "3 horas",
+    "6 horas",
+    "1.5 horas"
    ],
-   "k": 1,
-   "abierta": null,
+   "k": 0,
+   "abierta": "2026-11-06T17:38:24.267242-04:00",
    "respuestas": {},
-   "rondas": 6,
-   "proximo": "2026-11-06T17:25:59.096779-04:00"
+   "rondas": 7,
+   "proximo": null
   }
  },
  "_guerra": {
