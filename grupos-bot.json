@@ -470,12 +470,12 @@
    "web3-marketing-87098"
   ],
   "gig": {
-   "v": 366,
+   "v": 367,
    "c": 0,
    "av": 366,
    "ac": 0
   },
-  "hora": "2026-11-05T22"
+  "hora": "2026-11-06T01"
  },
  "_metricas": {
   "fecha": "2026-11-05",
@@ -524,9 +524,9 @@
   "reinicia": null
  },
  "_pagos_arena": {
-  "total": 1
+  "total": 2
  },
  "_vig_arena": {
-  "dia": "2026-11-05"
+  "dia": "2026-11-06"
  }
 }
