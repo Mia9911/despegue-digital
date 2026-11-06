@@ -97,6 +97,41 @@
    "username": "carlosernesto45",
    "texto": "/precios",
    "ts": "2026-10-23T18:24:06.401324-04:00"
+  },
+  {
+   "chat_id": 6487912379,
+   "nombre": "Brayan",
+   "username": "",
+   "texto": "/start",
+   "ts": "2026-11-05T22:33:02.063641-04:00"
+  },
+  {
+   "chat_id": 6487912379,
+   "nombre": "Brayan",
+   "username": "",
+   "texto": "/start",
+   "ts": "2026-11-05T22:33:02.924538-04:00"
+  },
+  {
+   "chat_id": 6487912379,
+   "nombre": "Brayan",
+   "username": "",
+   "texto": "Premio muestra",
+   "ts": "2026-11-05T22:33:03.766239-04:00"
+  },
+  {
+   "chat_id": 6487912379,
+   "nombre": "Brayan",
+   "username": "",
+   "texto": "/muestra",
+   "ts": "2026-11-05T22:33:04.195007-04:00"
+  },
+  {
+   "chat_id": 6487912379,
+   "nombre": "Brayan",
+   "username": "",
+   "texto": "/start",
+   "ts": "2026-11-05T22:33:04.633112-04:00"
   }
  ]
 }
