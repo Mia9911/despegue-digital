@@ -1529,8 +1529,8 @@ except Exception as _eR:
 
 # ---------------- V12.8: AUTO-REPONEDOR Y VIGILANTE VISAPREP PRO (visaprep-pro/cobros.json) ----------------
 try:
-    _aidVP = os.environ.get("QVAPAY_VISAPREP_APP_ID", "") or os.environ.get("QVAPAY_APP_ID", "")
-    _asecVP = os.environ.get("QVAPAY_VISAPREP_APP_SECRET", "") or os.environ.get("QVAPAY_APP_SECRET", "")
+    _aidVP = os.environ.get("QVAPAY_VISAPREP_APP_ID", "")
+    _asecVP = os.environ.get("QVAPAY_VISAPREP_APP_SECRET", "")
     if _aidVP and _asecVP and GH:
         _vp_obj, _vp_sha = gh_get_file("visaprep-pro/cobros.json")
         if isinstance(_vp_obj, dict) and _vp_sha:
