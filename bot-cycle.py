@@ -832,6 +832,21 @@ for u in updates:
                     "📦 %s (@%s) pagó el PACK PLANTILLAS ($4) → entregada al instante." % (nombre, username)})
         else:
             r = TXT_PLANTILLAS
+    elif "visaprep" in bajo:
+        if any(k in bajo for k in ("pagué", "pague", "ya pag", "pagado", "realicé el pago")):
+            r = ("✈️ ¡Gracias por tu compra en VISAPREP PRO ($4.99)!\n\n"
+                 "Abre este enlace en el MISMO navegador de tu celular donde iniciaste el pago para activar tu Membresía VIP al instante:\n"
+                 "👉 https://mia9911.github.io/despegue-digital/visaprep-pro/?pago=ok\n\n"
+                 "Si cambiaste de navegador o dispositivo, envíame captura de tu recibo aquí mismo y te asistimos de inmediato.")
+            if not es_jefa:
+                tg("sendMessage", {"chat_id": JEFA, "text":
+                    "✈️ %s (@%s) reportó pago de VISAPREP PRO ($4.99) en el bot." % (nombre, username)})
+        else:
+            r = ("✈️ VISAPREP PRO — Tu Visa, Paso a Paso y Sin Errores\n\n"
+                 "✅ Diagnóstico Consular GRATIS (EE.UU., España, Canadá y México)\n"
+                 "✅ Checklist Oficial descargable en PDF GRATIS\n"
+                 "👑 Suite VIP ($4.99 pago único con QvaPay): Traductor de Formularios DS-160 + Carta de Motivación Bilingüe en PDF.\n\n"
+                 "Entra aquí 👉 https://mia9911.github.io/despegue-digital/visaprep-pro/")
     elif any(k in bajo for k in ("pagué imperio", "pague imperio", "pagado imperio", "pagué el imperio", "pague el imperio")):
         r = TXT_IMPERIO_OK
         abonar_socio(str((m.get("from") or {}).get("id") or m.get("message_id")), nombre, username, 200, "Boost Imperio")
@@ -1511,6 +1526,70 @@ try:
 except Exception as _eR:
     _estado_recamara_arena = "⚠️ Revisar auto-recámara cobros.json: %s" % _eR
     print("auto-recamara arena fail:", _eR)
+
+# ---------------- V12.8: AUTO-REPONEDOR Y VIGILANTE VISAPREP PRO (visaprep-pro/cobros.json) ----------------
+try:
+    _aidVP = os.environ.get("QVAPAY_VISAPREP_APP_ID", "") or os.environ.get("QVAPAY_APP_ID", "")
+    _asecVP = os.environ.get("QVAPAY_VISAPREP_APP_SECRET", "") or os.environ.get("QVAPAY_APP_SECRET", "")
+    if _aidVP and _asecVP and GH:
+        _vp_obj, _vp_sha = gh_get_file("visaprep-pro/cobros.json")
+        if isinstance(_vp_obj, dict) and _vp_sha:
+            _txsVP = _qp_transacciones(_aidVP, _asecVP)
+            _pag_vp = set(t.get("uuid") for t in _txsVP if t.get("uuid"))
+            _est_vp = grupos.get("_pagos_visaprep", {}) or {}
+            _vistos_vp = set(_est_vp.get("uuids") or [])
+            for _t in reversed(_txsVP):
+                _tu = _t.get("uuid", "")
+                _desc_t = str(_t.get("description") or "")
+                if _tu and _tu not in _vistos_vp and ("visaprep" in _desc_t.lower() or os.environ.get("QVAPAY_VISAPREP_APP_ID")):
+                    tg("sendMessage", {"chat_id": JEFA, "text":
+                        "✈️💰 ¡VENTA EN VISAPREP PRO ($%s USD)!\n%s\nUUID: %s" % (
+                            _t.get("amount", "4.99"), _desc_t, _tu)})
+            grupos["_pagos_visaprep"] = {"uuids": [t.get("uuid") for t in _txsVP if t.get("uuid")][:200]}
+
+            _umb_vp = (datetime.now(timezone.utc) + timedelta(days=7)).strftime("%Y-%m-%dT%H:%M:%SZ")
+            _vivas_vp = []
+            _cambio_vp = False
+            for _it in (_vp_obj.get("vip") or []):
+                _u = (_it or {}).get("uuid", "")
+                _ex = (_it or {}).get("expire_at", "")
+                if not _u or _u in _pag_vp or (_ex and _ex < _umb_vp):
+                    _cambio_vp = True
+                    continue
+                _vivas_vp.append(_it)
+            while _vivas_vp:
+                try:
+                    _dvp = _qp_post(_aidVP, _asecVP, "/v2/transactions/" + _vivas_vp[0]["uuid"]).get("transaction", {})
+                    if str(_dvp.get("status", "")).lower() != "pending":
+                        _vivas_vp.pop(0)
+                        _cambio_vp = True
+                        continue
+                except Exception:
+                    pass
+                break
+            _exp_vp = (datetime.now(timezone.utc) + timedelta(days=30)).strftime("%Y-%m-%dT%H:%M:%SZ")
+            while len(_vivas_vp) < 6:
+                _nvp = _qp_post(_aidVP, _asecVP, "/v2/create_invoice", {
+                    "amount": 4.99,
+                    "description": "VisaPrep Pro - Membresia VIP Vitalicia",
+                    "remote_id": "visaprep-vip-499",
+                    "signed": 1,
+                    "expire_at": _exp_vp
+                })
+                _tu2 = _nvp["transaction_uuid"]
+                _vivas_vp.append({
+                    "uuid": _tu2,
+                    "url": _nvp.get("url") or ("https://www.qvapay.com/pay/" + _tu2),
+                    "expire_at": _nvp.get("expire_at", _exp_vp)
+                })
+                _cambio_vp = True
+            if _cambio_vp:
+                gh_put_file("visaprep-pro/cobros.json", {
+                    "updated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    "vip": _vivas_vp
+                }, _vp_sha, "auto-reponer cobros visaprep")
+except Exception as _eVP:
+    print("auto-recamara visaprep skip/fail:", _eVP)
 
 # ---------------- V12.6: VIGILANTE DE CAJA ARENA (diario en hora Cuba) ----------------
 ARENA_URL = "https://mia9911.github.io/despegue-digital/arena-app/"

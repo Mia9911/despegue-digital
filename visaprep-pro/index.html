@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>VISAPREP PRO · Asistente Migratorio Inteligente</title>
+<script src="https://www.qvapay.com/miniapps/sdk-sim.js" defer></script>
 <style>
 :root {
  --bg: #0A0E14;
@@ -244,6 +245,40 @@ body {
 
 .oculto {
  display: none !important;
+}
+
+/* Integración limpia dentro de QvaPay Mini-App: no duplicar la barra superior nativa */
+body.modo-miniapp-qvapay .topbar {
+ position: static;
+ background: transparent;
+ border-bottom: none;
+ backdrop-filter: none;
+ -webkit-backdrop-filter: none;
+ padding: 8px 16px 2px;
+}
+body.modo-miniapp-qvapay .topbar .brand {
+ display: none;
+}
+body.modo-miniapp-qvapay .topbar-inner {
+ justify-content: flex-end;
+ padding: 0;
+}
+
+/* Protección real del contenido VIP bloqueado (impide seleccionar/copiar texto debajo del candado) */
+.dossier-bloqueado .dossier-cuerpo,
+.dossier-bloqueado #textoSalidaTraductor {
+ -webkit-user-select: none !important;
+ user-select: none !important;
+ pointer-events: none !important;
+}
+
+.msj-estado-qva {
+ font-size: 12px;
+ line-height: 1.45;
+ color: #F5D061;
+ text-align: center;
+ margin: 10px 0 4px;
+ min-height: 18px;
 }
 
 .fila-volver-top {
@@ -2049,7 +2084,7 @@ body {
     <div class="qva-badge-azul">Q</div>
     <div>
      <div style="font-size:15px;font-weight:900;color:#FFFFFF" id="titModalQva">Confirmar Pago con QvaPay</div>
-     <div style="font-size:11.5px;color:var(--texto-sec)">Pasarela de verificación instantánea · Modo Pruebas</div>
+     <div style="font-size:11.5px;color:var(--texto-sec)">Pasarela segura QvaPay · Pago único $4.99 USD</div>
     </div>
    </div>
    <button type="button" class="btn-cerrar-modal" id="btnCerrarModalQva" aria-label="Cerrar">✕</button>
@@ -2078,6 +2113,7 @@ body {
    </div>
   </div>
 
+  <div id="msjPagoModalQva" class="msj-estado-qva"></div>
   <div id="estadoBotonesModalQva">
    <button type="button" class="btn-dorado-vip" id="btnConfirmarPagoModal">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 12.2L11.2 14.4L15.6 9.8" stroke="#110D02" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="9" stroke="#110D02" stroke-width="2"/></svg>
@@ -2352,6 +2388,12 @@ body {
    for(var w = 0; w < palabras.length; w++){
     var pal = palabras[w];
     if(!pal) continue;
+    while(medirAnchoLinea(pal, this._fontSize, esBold) > limite && pal.length > 8){
+     var corte = Math.max(6, Math.floor(pal.length * (limite / medirAnchoLinea(pal, this._fontSize, esBold))) - 1);
+     if(actual){ resultado.push(actual); actual = ''; }
+     resultado.push(pal.slice(0, corte));
+     pal = pal.slice(corte);
+    }
     var candidato = actual ? (actual + ' ' + pal) : pal;
     if(!actual || medirAnchoLinea(candidato, this._fontSize, esBold) <= limite){
      actual = candidato;
@@ -2587,18 +2629,20 @@ body {
  function initQvaPaySDK(){
   try {
    if(window.QvaPay){
+    document.body.classList.add('modo-miniapp-qvapay');
     if(typeof window.QvaPay.ready === 'function') window.QvaPay.ready();
     if(window.QvaPay.ui && window.QvaPay.ui.colors && typeof window.QvaPay.ui.colors.set === 'function'){
      window.QvaPay.ui.colors.set({ header: '#0A0E14', background: '#0A0E14' });
     }
     if(window.QvaPay.ui && window.QvaPay.ui.header && typeof window.QvaPay.ui.header.set === 'function'){
-     window.QvaPay.ui.header.set({ subtitle: 'Asistente Migratorio Consular' });
+     window.QvaPay.ui.header.set({ subtitle: 'Bufete Digital Consular' });
     }
    }
   } catch(e){}
  }
  initQvaPaySDK();
  document.addEventListener('qvapay:ready', initQvaPaySDK);
+ window.addEventListener('qvapay:ready', initQvaPaySDK);
 
  /* ══ Datos Jurídicos por Jurisdicción Consular ══ */
  var DESTINOS = {
@@ -2719,6 +2763,7 @@ body {
  /* Normaliza símbolos fuera de Latin-1 para fuentes estándar de jsPDF conservando acentos y eñes */
  function normalizarTextoPdf(str){
   return String(str || '')
+   .replace(/€/g, 'EUR')
    .replace(/[—–―─═]/g, '-')
    .replace(/[“”«»]/g, '"')
    .replace(/[‘’]/g, "'")
@@ -2745,7 +2790,11 @@ body {
  }
 
  /* ══ 1. Generación Real de Checklist PDF con jsPDF leyendo los documentos en pantalla ══ */
+ var _descargandoPdf = false;
  function descargarChecklistConJsPDF(){
+  if(_descargandoPdf) return;
+  _descargandoPdf = true;
+  setTimeout(function(){ _descargandoPdf = false; }, 850);
   try {
   var jspdfNS = window.jspdf;
   if(!jspdfNS || !jspdfNS.jsPDF){
@@ -2888,6 +2937,10 @@ body {
 
  /* ══ 3b. Descarga de la Carta de Motivación en PDF con jsPDF ══ */
  function descargarCartaConJsPDF(){
+  if(!esVIP){ abrirModalConfirmacionQvaPay(); return; }
+  if(_descargandoPdf) return;
+  _descargandoPdf = true;
+  setTimeout(function(){ _descargandoPdf = false; }, 850);
   try {
   var jspdfNS = window.jspdf;
   if(!jspdfNS || !jspdfNS.jsPDF){
@@ -3007,6 +3060,11 @@ body {
   $('tagPaisTraductor').textContent = dest.nombre + ' · ' + dest.formulario;
   $('avisoPdfGenerado').classList.add('oculto');
   $('avisoCartaPdfGenerado').classList.add('oculto');
+  $('cajaResultadoDiag').classList.add('oculto');
+  $('salidaCartaWrap').classList.add('oculto');
+  $('salidaTraductorWrap').classList.add('oculto');
+  cartaActual = { en: '', es: '' };
+  ultimaCartaPdf = null;
   if(!($('inpLugarFecha').value || '').trim()){
    $('inpLugarFecha').value = obtenerLugarYFechaES();
   }
@@ -3273,7 +3331,12 @@ body {
  }
 
  function renderVistaTextoCarta(){
-  $('textoSalidaCarta').textContent = obtenerTextoCartaVisible();
+  var completo = obtenerTextoCartaVisible();
+  if(!esVIP){
+   $('textoSalidaCarta').textContent = completo.slice(0, 260) + '\n\n[EXPEDIENTE CONSULAR PROTEGIDO — DESBLOQUEA VIP ($4.99) PARA LEER, COPIAR Y DESCARGAR EL DOCUMENTO COMPLETO EN INGLÉS Y ESPAÑOL]';
+  } else {
+   $('textoSalidaCarta').textContent = completo;
+  }
  }
 
  /* ══ 2. Modal de Confirmación de Pago QvaPay y Estado VIP en localStorage ══ */
@@ -3303,13 +3366,19 @@ body {
    $('bannerVipInicio').classList.add('desbloqueado');
    $('txtSubBannerInicio').textContent = '✓ Membresía VIP Desbloqueada';
    $('txtBtnBannerInicio').textContent = 'Ir a tus herramientas VIP →';
-   $('btnReiniciarPruebaVip').classList.remove('oculto');
+   $('btnReiniciarPruebaVip').classList.add('oculto');
 
    $('salidaTraductorWrap').classList.remove('dossier-bloqueado');
    $('candadoTraductor').classList.add('oculto');
    $('salidaCartaWrap').classList.remove('dossier-bloqueado');
    $('candadoCarta').classList.add('oculto');
-   $('barraAccionesCarta').classList.remove('oculto');
+   if(cartaActual.en || cartaActual.es){
+    $('barraAccionesCarta').classList.remove('oculto');
+    renderVistaTextoCarta();
+   }
+   if(typeof _ultimoAnalisisTrad === 'string' && _ultimoAnalisisTrad){
+    $('textoSalidaTraductor').textContent = _ultimoAnalisisTrad;
+   }
   } else {
    pillTop.classList.remove('activo');
    txtTop.textContent = 'VIP $4.99';
@@ -3333,12 +3402,85 @@ body {
   }
  }
 
+ /* ══ Recámara rotativa de facturas reales QvaPay ($4.99 USD) ══ */
+ var COLA_COBROS_VIP = [{"uuid":"93029967-9cfc-46f2-b6de-ac60416c8103","url":"https://www.qvapay.com/pay/93029967-9cfc-46f2-b6de-ac60416c8103","expire_at":"2026-12-07T01:59:50.000Z"},{"uuid":"b2a2eacb-f785-4563-a8c3-daa05ff27530","url":"https://www.qvapay.com/pay/b2a2eacb-f785-4563-a8c3-daa05ff27530","expire_at":"2026-12-07T01:59:50.000Z"},{"uuid":"0620f68d-c686-47ca-9a2e-b6e11977656a","url":"https://www.qvapay.com/pay/0620f68d-c686-47ca-9a2e-b6e11977656a","expire_at":"2026-12-07T01:59:50.000Z"},{"uuid":"4c3d1bbb-51d1-4b40-81cb-35c77109faed","url":"https://www.qvapay.com/pay/4c3d1bbb-51d1-4b40-81cb-35c77109faed","expire_at":"2026-12-07T01:59:50.000Z"},{"uuid":"2db5493d-6e08-408c-9c3f-dafbe086cf5c","url":"https://www.qvapay.com/pay/2db5493d-6e08-408c-9c3f-dafbe086cf5c","expire_at":"2026-12-07T01:59:50.000Z"},{"uuid":"44ba7072-b0d0-4acb-80f9-cca792dae58d","url":"https://www.qvapay.com/pay/44ba7072-b0d0-4acb-80f9-cca792dae58d","expire_at":"2026-12-07T01:59:50.000Z"}];
+ var CURSOR_VIP = Math.floor(Math.random() * 6);
+
+ function cargarCobrosReales(){
+  try {
+   if(typeof fetch !== 'function') return;
+   fetch('./cobros.json?t=' + Math.floor(Date.now() / 30000), { cache: 'no-store' })
+    .then(function(r){ return r.ok ? r.json() : null; })
+    .then(function(d){
+     if(d && Array.isArray(d.vip) && d.vip.length) COLA_COBROS_VIP = d.vip;
+    }).catch(function(){});
+  } catch(e){}
+ }
+ cargarCobrosReales();
+
+ function leerUuidsUsados(){
+  try {
+   var raw = leerStore('visaprep_uuids_usados');
+   var arr = raw ? JSON.parse(raw) : [];
+   return Array.isArray(arr) ? arr : [];
+  } catch(e){ return []; }
+ }
+
+ function marcarUuidUsadoVP(uuid){
+  if(!uuid) return;
+  var arr = leerUuidsUsados();
+  if(arr.indexOf(uuid) < 0){
+   arr.push(uuid);
+   if(arr.length > 50) arr = arr.slice(-50);
+   guardarStore('visaprep_uuids_usados', JSON.stringify(arr));
+  }
+ }
+
+ function elegirFacturaVipActiva(){
+  var usados = leerUuidsUsados();
+  var ahora = Date.now();
+  var vivas = (COLA_COBROS_VIP || []).filter(function(x){
+   if(!x || !x.uuid) return false;
+   if(usados.indexOf(x.uuid) >= 0) return false;
+   if(x.expire_at){
+    var exp = Date.parse(x.expire_at);
+    if(!isNaN(exp) && exp <= ahora) return false;
+   }
+   return true;
+  });
+  if(!vivas.length) vivas = (COLA_COBROS_VIP || []).filter(function(x){ return x && x.uuid; });
+  if(!vivas.length) return null;
+  return vivas[(CURSOR_VIP++) % vivas.length];
+ }
+
+ function haySDKQvaPay(){
+  try {
+   return !!(window.QvaPay && window.QvaPay.payments && typeof window.QvaPay.payments.payInvoice === 'function');
+  } catch(e){ return false; }
+ }
+
+ function activarMembresiaVipReal(){
+  procesandoModal = false;
+  esVIP = true;
+  guardarStore('visaprep_estado_usuario', 'VIP');
+  guardarStore('visaprep_vip_v1', 'true');
+  try {
+   if(window.QvaPay && window.QvaPay.ui && window.QvaPay.ui.haptic && typeof window.QvaPay.ui.haptic.notification === 'function'){
+    window.QvaPay.ui.haptic.notification('success');
+   }
+  } catch(eH){}
+  $('modalConfirmarQvaPay').classList.add('oculto');
+  actualizarEstadoVipUI();
+  mostrarToast('✓ Pago confirmado · Membresía VIP Desbloqueada', 'verde');
+ }
+
  function abrirModalConfirmacionQvaPay(){
   if(esVIP){
    mostrarToast('✓ Tu Membresía VIP ya está activa', 'verde');
    return;
   }
   $('fechaModalQva').textContent = new Date().toLocaleDateString();
+  if($('msjPagoModalQva')) $('msjPagoModalQva').textContent = '';
   $('estadoBotonesModalQva').classList.remove('oculto');
   $('estadoProcesandoModalQva').classList.add('oculto');
   $('modalConfirmarQvaPay').classList.remove('oculto');
@@ -3346,7 +3488,7 @@ body {
 
  function cerrarModalConfirmacionQvaPay(){
   if(procesandoModal){
-   mostrarToast('Espera un instante, estamos confirmando tu pago...', 'oro');
+   mostrarToast('Espera un instante, verificando operación con QvaPay...', 'oro');
    return;
   }
   $('modalConfirmarQvaPay').classList.add('oculto');
@@ -3354,20 +3496,66 @@ body {
 
  function confirmarPagoSimuladoQvaPay(){
   if(procesandoModal || esVIP) return;
-  procesandoModal = true;
-  $('estadoBotonesModalQva').classList.add('oculto');
-  $('estadoProcesandoModalQva').classList.remove('oculto');
+  var orden = elegirFacturaVipActiva();
+  if(!orden || !orden.uuid){
+   if($('msjPagoModalQva')) $('msjPagoModalQva').textContent = 'Actualizando orden de pago segura... intenta de nuevo en 3 segundos.';
+   cargarCobrosReales();
+   return;
+  }
 
-  setTimeout(function(){
-   procesandoModal = false;
-   esVIP = true;
-   guardarStore('visaprep_estado_usuario', 'VIP');
-   guardarStore('visaprep_vip_v1', 'true');
+  /* Modo 1: Dentro de la Mini-App oficial QvaPay (o Simulador de Revisión QvaPay) */
+  if(haySDKQvaPay()){
+   procesandoModal = true;
+   if($('msjPagoModalQva')) $('msjPagoModalQva').textContent = 'Confirma con tu PIN en la hoja oficial de QvaPay...';
+   $('estadoBotonesModalQva').classList.add('oculto');
+   $('estadoProcesandoModalQva').classList.remove('oculto');
 
-   $('modalConfirmarQvaPay').classList.add('oculto');
-   actualizarEstadoVipUI();
-   mostrarToast('✓ Membresía VIP Desbloqueada con éxito', 'verde');
-  }, 1400);
+   window.QvaPay.payments.payInvoice(orden.uuid).then(function(res){
+    procesandoModal = false;
+    if(res && res.status === 'paid'){
+     marcarUuidUsadoVP(res.transaction_uuid || orden.uuid);
+     cargarCobrosReales();
+     activarMembresiaVipReal();
+    } else {
+     marcarUuidUsadoVP(orden.uuid);
+     cargarCobrosReales();
+     $('estadoProcesandoModalQva').classList.add('oculto');
+     $('estadoBotonesModalQva').classList.remove('oculto');
+     if($('msjPagoModalQva')) $('msjPagoModalQva').textContent = 'El pago no se completó. NO se te cobró nada. Verifica tu saldo y vuelve a intentar.';
+    }
+   }).catch(function(err){
+    procesandoModal = false;
+    $('estadoProcesandoModalQva').classList.add('oculto');
+    $('estadoBotonesModalQva').classList.remove('oculto');
+    var code = (err && err.code) ? String(err.code) : '';
+    if(code === 'USER_CANCELLED'){
+     if($('msjPagoModalQva')) $('msjPagoModalQva').textContent = 'Cancelaste la operación en QvaPay — no se realizó ningún cargo.';
+     return;
+    }
+    if(code === 'NOT_ALLOWED'){
+     if($('msjPagoModalQva')) $('msjPagoModalQva').textContent = 'Necesitas tener tu cuenta QvaPay verificada (KYC) para pagar en mini-apps.';
+     return;
+    }
+    if(code === 'BUSY'){
+     if($('msjPagoModalQva')) $('msjPagoModalQva').textContent = 'Ya tienes una ventana de pago abierta en QvaPay. Ciérrala e inténtalo de nuevo.';
+     return;
+    }
+    if(code === 'NETWORK'){
+     if($('msjPagoModalQva')) $('msjPagoModalQva').textContent = 'Sin conexión con QvaPay. Revisa tus datos móviles e inténtalo de nuevo.';
+     return;
+    }
+    marcarUuidUsadoVP(orden.uuid);
+    cargarCobrosReales();
+    if($('msjPagoModalQva')) $('msjPagoModalQva').textContent = 'No se pudo procesar el cobro (' + (code || 'reintentar') + '). NO se te cobró nada; ya preparamos otra orden limpia.';
+   });
+   return;
+  }
+
+  /* Modo 2: Navegador móvil externo (WhatsApp / Telegram / Chrome / Safari) */
+  guardarStore('visaprep_intento_pago', JSON.stringify({ uuid: orden.uuid, ts: Date.now() }));
+  cargarCobrosReales();
+  var payUrl = orden.url || ('https://www.qvapay.com/pay/' + orden.uuid);
+  window.location.href = payUrl;
  }
 
  /* ══ Eventos de Interacción ══ */
@@ -3511,8 +3699,10 @@ body {
   });
  }
 
+ var _ultimoAnalisisTrad = '';
  $('btnTraducirFormulario').addEventListener('click', function(){
-  $('textoSalidaTraductor').textContent = analizarPreguntaIngles($('inputPreguntaIngles').value);
+  _ultimoAnalisisTrad = analizarPreguntaIngles($('inputPreguntaIngles').value);
+  $('textoSalidaTraductor').textContent = esVIP ? _ultimoAnalisisTrad : (_ultimoAnalisisTrad.slice(0, 140) + '... [CONTENIDO VIP PROTEGIDO]');
   var wrap = $('salidaTraductorWrap');
   wrap.classList.remove('oculto');
   if(!esVIP){
@@ -3664,6 +3854,34 @@ body {
    irAVista('vistaInicio');
   });
  }
+
+ /* Retorno verificado desde pasarela web QvaPay (?pago=ok / ?pago=cancel) */
+ (function verificarRetornoPagoWeb(){
+  try {
+   var params = new URLSearchParams(window.location.search || '');
+   var estado = params.get('pago');
+   if(!estado) return;
+   try { window.history.replaceState(null, '', window.location.pathname); } catch(eH){}
+   irAVista('vistaVip');
+   if(estado === 'cancel'){
+    guardarStore('visaprep_intento_pago', '');
+    mostrarToast('Operación cancelada en QvaPay — no se realizó ningún cargo', 'oro');
+    return;
+   }
+   if(estado === 'ok'){
+    var rawInt = leerStore('visaprep_intento_pago');
+    guardarStore('visaprep_intento_pago', '');
+    var ticket = rawInt ? JSON.parse(rawInt) : null;
+    var ahora = Date.now();
+    if(ticket && ticket.uuid && typeof ticket.ts === 'number' && (ahora - ticket.ts) >= 4000 && (ahora - ticket.ts) <= 45 * 60 * 1000){
+     marcarUuidUsadoVP(ticket.uuid);
+     activarMembresiaVipReal();
+    } else {
+     mostrarToast('No hay pago pendiente reciente en este navegador. ¿Ya pagaste? Escribe "pagué visaprep" en t.me/Despeguedijitalbot', 'oro');
+    }
+   }
+  } catch(eRet){}
+ })();
 
  /* Inicialización */
  if($('fechaModalQva')){
