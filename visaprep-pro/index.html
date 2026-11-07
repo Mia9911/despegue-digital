@@ -1,0 +1,3616 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>VISAPREP PRO · Asistente Migratorio Inteligente</title>
+<style>
+:root {
+ --bg: #0A0E14;
+ --bg-soft: #0F1520;
+ --card: #121A27;
+ --card-elev: #162031;
+ --cian: #00E5FF;
+ --cian-dim: rgba(0, 229, 255, 0.14);
+ --cian-borde: rgba(0, 229, 255, 0.34);
+ --oro: #D4AF37;
+ --oro-vivo: #F5D061;
+ --oro-dim: rgba(212, 175, 55, 0.14);
+ --oro-borde: rgba(212, 175, 55, 0.38);
+ --verde: #10B981;
+ --verde-vivo: #34D399;
+ --verde-borde: rgba(16, 185, 129, 0.58);
+ --texto: #E8EEF5;
+ --texto-sec: #94A3B8;
+ --texto-apagado: #64748B;
+ --borde: rgba(255, 255, 255, 0.08);
+ --radio: 16px;
+ --sombra: 0 18px 42px rgba(0, 0, 0, 0.55);
+}
+
+* {
+ box-sizing: border-box;
+ margin: 0;
+ padding: 0;
+ -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+ background: var(--bg);
+ color: var(--texto);
+ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
+ line-height: 1.5;
+ min-height: 100vh;
+ overflow-x: hidden;
+}
+
+body {
+ background-image:
+  radial-gradient(circle at 12% 8%, rgba(0, 229, 255, 0.065) 0%, transparent 42%),
+  radial-gradient(circle at 88% 12%, rgba(212, 175, 55, 0.07) 0%, transparent 44%),
+  linear-gradient(180deg, #0A0E14 0%, #0B1018 100%);
+ padding-bottom: 56px;
+}
+
+/* ══ CABECERA EJECUTIVA ESTILO BUFETE INTERNACIONAL ══ */
+.topbar {
+ position: sticky;
+ top: 0;
+ z-index: 60;
+ background: rgba(10, 14, 20, 0.92);
+ backdrop-filter: blur(14px);
+ -webkit-backdrop-filter: blur(14px);
+ border-bottom: 1px solid rgba(212, 175, 55, 0.22);
+}
+
+.topbar-inner {
+ max-width: 780px;
+ margin: 0 auto;
+ padding: 12px 16px;
+ display: flex;
+ align-items: center;
+ justify-content: space-between;
+ gap: 10px;
+}
+
+.brand {
+ display: flex;
+ align-items: center;
+ gap: 11px;
+ cursor: pointer;
+}
+
+.brand-crest {
+ width: 40px;
+ height: 40px;
+ border-radius: 11px;
+ background: linear-gradient(145deg, #162234, #0C131E);
+ border: 1px solid var(--oro-borde);
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ box-shadow: 0 0 18px rgba(212, 175, 55, 0.16);
+ flex-shrink: 0;
+}
+
+.brand-txt {
+ display: flex;
+ flex-direction: column;
+}
+
+.brand-name {
+ font-size: 15px;
+ font-weight: 800;
+ letter-spacing: 1.1px;
+ color: #FFFFFF;
+ display: flex;
+ align-items: center;
+ gap: 6px;
+}
+
+.brand-name span {
+ color: var(--oro-vivo);
+ font-weight: 900;
+}
+
+.brand-sub {
+ font-size: 10px;
+ letter-spacing: 0.45px;
+ text-transform: uppercase;
+ color: var(--texto-sec);
+ white-space: nowrap;
+}
+
+.top-actions {
+ display: flex;
+ align-items: center;
+ gap: 8px;
+}
+
+.pill-destino {
+ display: inline-flex;
+ align-items: center;
+ gap: 6px;
+ padding: 6px 10px;
+ border-radius: 999px;
+ background: rgba(0, 229, 255, 0.08);
+ border: 1px solid rgba(0, 229, 255, 0.28);
+ color: var(--cian);
+ font-size: 11px;
+ font-weight: 700;
+ letter-spacing: 0.3px;
+}
+
+.pill-vip-top {
+ display: inline-flex;
+ align-items: center;
+ gap: 5px;
+ padding: 6px 11px;
+ border-radius: 999px;
+ background: linear-gradient(180deg, #1B170C, #12100A);
+ border: 1px solid var(--oro-borde);
+ color: var(--oro-vivo);
+ font-size: 11px;
+ font-weight: 800;
+ letter-spacing: 0.4px;
+ cursor: pointer;
+ transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.pill-vip-top.activo {
+ background: linear-gradient(180deg, #0E261F, #0A1814);
+ border-color: var(--verde-borde);
+ color: var(--verde-vivo);
+ box-shadow: 0 0 18px rgba(16, 185, 129, 0.28);
+}
+
+/* ══ NAVEGACIÓN DE ETAPAS DEL EXPEDIENTE ══ */
+.nav-pasos-wrap {
+ max-width: 780px;
+ margin: 0 auto;
+ padding: 10px 16px 4px;
+}
+
+.nav-pasos {
+ display: grid;
+ grid-template-columns: repeat(4, 1fr);
+ gap: 6px;
+ background: #0E141F;
+ padding: 5px;
+ border-radius: 13px;
+ border: 1px solid var(--borde);
+}
+
+.nav-btn {
+ appearance: none;
+ border: 1px solid transparent;
+ background: transparent;
+ color: var(--texto-sec);
+ font-size: 11.5px;
+ font-weight: 700;
+ padding: 9px 6px;
+ border-radius: 9px;
+ cursor: pointer;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ gap: 5px;
+ transition: all 0.18s ease;
+ text-align: center;
+ line-height: 1.2;
+}
+
+.nav-btn:hover {
+ color: #FFFFFF;
+}
+
+.nav-btn.activo {
+ background: linear-gradient(180deg, #182538, #111B29);
+ color: var(--cian);
+ border-color: rgba(0, 229, 255, 0.34);
+ box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+}
+
+.nav-btn.vip-tab.activo {
+ background: linear-gradient(180deg, #261F0E, #161209);
+ color: var(--oro-vivo);
+ border-color: var(--oro-borde);
+}
+
+.nav-btn.vip-tab {
+ color: #E2C15A;
+}
+
+/* ══ CONTENEDOR PRINCIPAL ══ */
+.contenedor {
+ max-width: 780px;
+ margin: 0 auto;
+ padding: 16px;
+}
+
+.vista {
+ display: none;
+ animation: fadeSuave 0.24s ease;
+}
+
+.vista.activa {
+ display: block;
+}
+
+@keyframes fadeSuave {
+ from { opacity: 0; }
+ to { opacity: 1; }
+}
+
+.oculto {
+ display: none !important;
+}
+
+/* ══ 1. PANTALLA DE INICIO ══ */
+.hero-card {
+ position: relative;
+ background: linear-gradient(165deg, #131D2D 0%, #0D131E 62%, #131A24 100%);
+ border: 1px solid rgba(212, 175, 55, 0.26);
+ border-radius: 20px;
+ padding: 24px 20px 22px;
+ box-shadow: var(--sombra);
+ overflow: hidden;
+ margin-bottom: 18px;
+}
+
+.hero-watermark {
+ position: absolute;
+ right: -18px;
+ top: -14px;
+ width: 158px;
+ height: 158px;
+ opacity: 0.08;
+ pointer-events: none;
+}
+
+.eyebrow-consular {
+ display: inline-flex;
+ align-items: center;
+ gap: 7px;
+ padding: 5px 11px;
+ border-radius: 999px;
+ background: rgba(212, 175, 55, 0.11);
+ border: 1px solid rgba(212, 175, 55, 0.32);
+ color: var(--oro-vivo);
+ font-size: 10.5px;
+ font-weight: 800;
+ letter-spacing: 0.9px;
+ text-transform: uppercase;
+ margin-bottom: 14px;
+}
+
+.hero-titulo {
+ font-size: clamp(24px, 5.6vw, 34px);
+ font-weight: 900;
+ letter-spacing: -0.5px;
+ line-height: 1.15;
+ color: #FFFFFF;
+ margin-bottom: 10px;
+}
+
+.hero-sub {
+ font-size: 14px;
+ color: var(--texto-sec);
+ max-width: 600px;
+ margin-bottom: 20px;
+}
+
+.seccion-label {
+ display: flex;
+ align-items: center;
+ justify-content: space-between;
+ gap: 8px;
+ font-size: 11.5px;
+ font-weight: 800;
+ text-transform: uppercase;
+ letter-spacing: 0.9px;
+ color: var(--oro-vivo);
+ margin-bottom: 11px;
+}
+
+.seccion-label span {
+ color: var(--texto-sec);
+ font-weight: 600;
+ text-transform: none;
+ letter-spacing: 0;
+ white-space: nowrap;
+ flex-shrink: 0;
+}
+
+/* Selector visual de destinos */
+.grid-destinos {
+ display: grid;
+ grid-template-columns: repeat(2, 1fr);
+ gap: 11px;
+ margin-bottom: 20px;
+}
+
+@media (min-width: 640px) {
+ .grid-destinos {
+  grid-template-columns: repeat(4, 1fr);
+ }
+}
+
+.card-destino {
+ appearance: none;
+ width: 100%;
+ text-align: left;
+ background: linear-gradient(180deg, #141E2E 0%, #0E1520 100%);
+ border: 1.5px solid rgba(255, 255, 255, 0.09);
+ border-radius: 14px;
+ padding: 14px 13px;
+ color: var(--texto);
+ cursor: pointer;
+ transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+ position: relative;
+ display: flex;
+ flex-direction: column;
+ justify-content: space-between;
+ gap: 10px;
+}
+
+.card-destino:hover {
+ border-color: rgba(0, 229, 255, 0.45);
+}
+
+.card-destino.seleccionado {
+ background: linear-gradient(180deg, #17273B 0%, #101B29 100%);
+ border-color: var(--cian);
+ box-shadow: 0 0 22px rgba(0, 229, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.dest-top {
+ display: flex;
+ align-items: center;
+ justify-content: space-between;
+ width: 100%;
+}
+
+.dest-flag-badge {
+ display: inline-flex;
+ align-items: center;
+ gap: 7px;
+ padding: 4px 8px;
+ border-radius: 7px;
+ background: rgba(255, 255, 255, 0.05);
+ border: 1px solid rgba(255, 255, 255, 0.1);
+ font-size: 11px;
+ font-weight: 800;
+ letter-spacing: 0.7px;
+ color: #FFFFFF;
+}
+
+.dest-check {
+ width: 19px;
+ height: 19px;
+ border-radius: 50%;
+ border: 1.5px solid rgba(255, 255, 255, 0.2);
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ font-size: 11px;
+ color: transparent;
+}
+
+.card-destino.seleccionado .dest-check {
+ background: var(--cian);
+ border-color: var(--cian);
+ color: #061018;
+ font-weight: 900;
+}
+
+.dest-nombre {
+ font-size: 16px;
+ font-weight: 800;
+ color: #FFFFFF;
+ letter-spacing: -0.2px;
+}
+
+.dest-tipo {
+ font-size: 11.5px;
+ color: var(--texto-sec);
+ line-height: 1.3;
+}
+
+/* Botones Ejecutivos */
+.btn-primario-cian {
+ appearance: none;
+ width: 100%;
+ border: 1.5px solid var(--cian);
+ background: linear-gradient(180deg, #00E5FF 0%, #00B8D4 100%);
+ color: #051018;
+ font-size: 14.5px;
+ font-weight: 900;
+ letter-spacing: 0.8px;
+ text-transform: uppercase;
+ padding: 16px 20px;
+ border-radius: 14px;
+ cursor: pointer;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ gap: 10px;
+ box-shadow: 0 0 26px rgba(0, 229, 255, 0.28), 0 10px 24px rgba(0, 0, 0, 0.5);
+ transition: filter 0.18s ease, box-shadow 0.18s ease;
+ text-align: center;
+ text-decoration: none;
+}
+
+.btn-primario-cian:hover {
+ filter: brightness(1.06);
+ box-shadow: 0 0 34px rgba(0, 229, 255, 0.42), 0 12px 26px rgba(0, 0, 0, 0.6);
+}
+
+.btn-primario-cian:disabled {
+ opacity: 0.6;
+ cursor: wait;
+}
+
+.btn-ejecutivo-oscuro {
+ appearance: none;
+ width: 100%;
+ border: 1.5px solid var(--cian);
+ background: linear-gradient(180deg, #162638 0%, #0E1824 100%);
+ color: #FFFFFF;
+ font-size: 13.5px;
+ font-weight: 800;
+ letter-spacing: 0.6px;
+ text-transform: uppercase;
+ padding: 15px 18px;
+ border-radius: 13px;
+ cursor: pointer;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ gap: 9px;
+ text-decoration: none;
+ text-align: center;
+ box-shadow: 0 0 20px rgba(0, 229, 255, 0.16), 0 8px 20px rgba(0, 0, 0, 0.55);
+ transition: background 0.18s ease, box-shadow 0.18s ease;
+}
+
+.btn-ejecutivo-oscuro:hover {
+ background: linear-gradient(180deg, #1C3148 0%, #122030 100%);
+ box-shadow: 0 0 28px rgba(0, 229, 255, 0.28);
+}
+
+.btn-dorado-vip {
+ appearance: none;
+ width: 100%;
+ border: 1.5px solid var(--oro-vivo);
+ background: linear-gradient(180deg, #F5D061 0%, #C99E2C 100%);
+ color: #110D02;
+ font-size: 14px;
+ font-weight: 900;
+ letter-spacing: 0.6px;
+ text-transform: uppercase;
+ padding: 16px 20px;
+ border-radius: 13px;
+ cursor: pointer;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ gap: 9px;
+ text-align: center;
+ box-shadow: 0 0 28px rgba(212, 175, 55, 0.32), 0 10px 24px rgba(0, 0, 0, 0.6);
+ transition: filter 0.18s ease, box-shadow 0.18s ease;
+}
+
+.btn-dorado-vip:hover {
+ filter: brightness(1.06);
+ box-shadow: 0 0 36px rgba(245, 208, 97, 0.48);
+}
+
+/* Sellos de garantía bajo el Hero */
+.barra-garantias {
+ display: grid;
+ grid-template-columns: repeat(3, 1fr);
+ gap: 10px;
+ margin-bottom: 18px;
+}
+
+.garantia-item {
+ background: #0F1622;
+ border: 1px solid var(--borde);
+ border-radius: 13px;
+ padding: 12px 10px;
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ text-align: center;
+ gap: 6px;
+}
+
+.garantia-tit {
+ font-size: 11.5px;
+ font-weight: 800;
+ color: #FFFFFF;
+}
+
+.garantia-sub {
+ font-size: 10.5px;
+ color: var(--texto-sec);
+ line-height: 1.25;
+}
+
+/* ══ BANNER GRANDE VIP ══ */
+.banner-vip-grande {
+ width: 100%;
+ text-align: left;
+ appearance: none;
+ cursor: pointer;
+ background: linear-gradient(135deg, #1B160B 0%, #121824 55%, #1D170A 100%);
+ border: 1.5px solid var(--oro-borde);
+ border-radius: 18px;
+ padding: 20px 18px;
+ display: flex;
+ flex-direction: column;
+ gap: 13px;
+ box-shadow: 0 14px 34px rgba(0, 0, 0, 0.55), 0 0 24px rgba(212, 175, 55, 0.12);
+ transition: border-color 0.2s ease, box-shadow 0.2s ease;
+ margin-top: 16px;
+}
+
+.banner-vip-grande:hover {
+ border-color: var(--oro-vivo);
+ box-shadow: 0 16px 38px rgba(0, 0, 0, 0.65), 0 0 32px rgba(212, 175, 55, 0.24);
+}
+
+.banner-vip-top {
+ display: flex;
+ align-items: flex-start;
+ gap: 14px;
+}
+
+.banner-vip-icono {
+ width: 48px;
+ height: 48px;
+ border-radius: 13px;
+ background: rgba(212, 175, 55, 0.14);
+ border: 1px solid var(--oro-borde);
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ flex-shrink: 0;
+}
+
+.banner-vip-titulo {
+ font-size: 17px;
+ font-weight: 900;
+ color: var(--oro-vivo);
+ line-height: 1.25;
+ margin-bottom: 5px;
+}
+
+.banner-vip-desc {
+ font-size: 13px;
+ color: var(--texto-sec);
+ line-height: 1.4;
+}
+
+.banner-vip-cta-fila {
+ display: flex;
+ align-items: center;
+ justify-content: space-between;
+ padding-top: 10px;
+ border-top: 1px solid rgba(212, 175, 55, 0.18);
+ font-size: 12px;
+ font-weight: 800;
+ color: #FFFFFF;
+}
+
+.banner-vip-cta-btn {
+ display: inline-flex;
+ align-items: center;
+ gap: 6px;
+ padding: 7px 13px;
+ border-radius: 9px;
+ background: linear-gradient(180deg, #F5D061, #C99E2C);
+ color: #120E03;
+ font-weight: 900;
+ font-size: 11.5px;
+ text-transform: uppercase;
+ letter-spacing: 0.4px;
+}
+
+/* ══ TARJETAS DE SECCIÓN ══ */
+.panel-consular {
+ background: linear-gradient(180deg, #131C2B 0%, #0E1520 100%);
+ border: 1px solid rgba(255, 255, 255, 0.09);
+ border-radius: 18px;
+ padding: 22px 18px;
+ box-shadow: var(--sombra);
+ margin-bottom: 18px;
+}
+
+.panel-header {
+ display: flex;
+ align-items: flex-start;
+ justify-content: space-between;
+ gap: 12px;
+ padding-bottom: 15px;
+ margin-bottom: 18px;
+ border-bottom: 1px solid var(--borde);
+}
+
+.panel-header-izq {
+ display: flex;
+ align-items: center;
+ gap: 12px;
+}
+
+.icono-caja {
+ width: 44px;
+ height: 44px;
+ border-radius: 12px;
+ background: rgba(0, 229, 255, 0.09);
+ border: 1px solid rgba(0, 229, 255, 0.28);
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ flex-shrink: 0;
+}
+
+.icono-caja.oro {
+ background: rgba(212, 175, 55, 0.11);
+ border-color: var(--oro-borde);
+}
+
+.panel-tit {
+ font-size: 19px;
+ font-weight: 900;
+ color: #FFFFFF;
+ line-height: 1.2;
+}
+
+.panel-sub {
+ font-size: 12.5px;
+ color: var(--texto-sec);
+ margin-top: 2px;
+}
+
+.tag-gratis {
+ padding: 5px 10px;
+ border-radius: 999px;
+ background: rgba(16, 185, 129, 0.14);
+ border: 1px solid rgba(16, 185, 129, 0.35);
+ color: #34D399;
+ font-size: 10.5px;
+ font-weight: 800;
+ letter-spacing: 0.6px;
+ text-transform: uppercase;
+ white-space: nowrap;
+}
+
+/* ══ 2. EL DIAGNÓSTICO ══ */
+.bloque-pregunta {
+ margin-bottom: 18px;
+}
+
+.pregunta-label {
+ display: block;
+ font-size: 14.5px;
+ font-weight: 800;
+ color: #FFFFFF;
+ margin-bottom: 9px;
+}
+
+.pregunta-num {
+ color: var(--cian);
+ margin-right: 5px;
+}
+
+.opciones-fila {
+ display: grid;
+ grid-template-columns: repeat(3, 1fr);
+ gap: 8px;
+}
+
+@media (max-width: 520px) {
+ .opciones-fila {
+  grid-template-columns: 1fr;
+ }
+}
+
+.opcion-radio {
+ appearance: none;
+ text-align: left;
+ padding: 12px 13px;
+ border-radius: 11px;
+ background: #0B1018;
+ border: 1.5px solid rgba(255, 255, 255, 0.09);
+ color: var(--texto-sec);
+ font-size: 13px;
+ font-weight: 700;
+ cursor: pointer;
+ display: flex;
+ align-items: center;
+ gap: 9px;
+ transition: all 0.16s ease;
+}
+
+.opcion-radio:hover {
+ border-color: rgba(0, 229, 255, 0.35);
+ color: #FFFFFF;
+}
+
+.opcion-radio.activa {
+ background: rgba(0, 229, 255, 0.1);
+ border-color: var(--cian);
+ color: #FFFFFF;
+ box-shadow: 0 0 14px rgba(0, 229, 255, 0.14);
+}
+
+.punto-radio {
+ width: 16px;
+ height: 16px;
+ border-radius: 50%;
+ border: 2px solid var(--texto-apagado);
+ flex-shrink: 0;
+}
+
+.opcion-radio.activa .punto-radio {
+ border-color: var(--cian);
+ background: var(--cian);
+ box-shadow: inset 0 0 0 3px #0B1018;
+}
+
+.caja-analizando {
+ text-align: center;
+ padding: 26px 18px;
+ background: #0B111B;
+ border: 1px solid var(--cian-borde);
+ border-radius: 14px;
+ margin-top: 16px;
+}
+
+.spinner-consular {
+ width: 42px;
+ height: 42px;
+ border-radius: 50%;
+ border: 3px solid rgba(0, 229, 255, 0.18);
+ border-top-color: var(--cian);
+ border-right-color: var(--oro-vivo);
+ margin: 0 auto 12px;
+ animation: giroConsular 0.85s linear infinite;
+}
+
+@keyframes giroConsular {
+ to { transform: rotate(360deg); }
+}
+
+.resultado-diagnostico {
+ margin-top: 18px;
+ background: linear-gradient(160deg, #0E1D24 0%, #0D1522 100%);
+ border: 1.5px solid rgba(16, 185, 129, 0.5);
+ border-radius: 16px;
+ padding: 20px 18px;
+ box-shadow: 0 0 28px rgba(16, 185, 129, 0.12);
+}
+
+.sello-aprobado-fila {
+ display: flex;
+ align-items: center;
+ justify-content: space-between;
+ gap: 12px;
+ margin-bottom: 12px;
+ flex-wrap: wrap;
+}
+
+.badge-dictamen {
+ display: inline-flex;
+ align-items: center;
+ gap: 7px;
+ padding: 6px 12px;
+ border-radius: 999px;
+ background: rgba(16, 185, 129, 0.16);
+ border: 1px solid rgba(16, 185, 129, 0.45);
+ color: #34D399;
+ font-size: 11.5px;
+ font-weight: 900;
+ letter-spacing: 0.7px;
+ text-transform: uppercase;
+}
+
+.resultado-frase-exacta {
+ font-size: 17.5px;
+ font-weight: 900;
+ color: #FFFFFF;
+ line-height: 1.35;
+ margin-bottom: 12px;
+}
+
+.nota-abogado {
+ font-size: 13px;
+ color: var(--texto-sec);
+ background: rgba(10, 14, 20, 0.65);
+ border-left: 3px solid var(--oro-vivo);
+ padding: 11px 13px;
+ border-radius: 0 10px 10px 0;
+ margin-bottom: 16px;
+}
+
+/* ══ 3. EL CHECKLIST (GRATIS) ══ */
+.progreso-maleta {
+ background: #0B1018;
+ border: 1px solid var(--borde);
+ border-radius: 12px;
+ padding: 12px 14px;
+ margin-bottom: 16px;
+}
+
+.progreso-top {
+ display: flex;
+ justify-content: space-between;
+ font-size: 12px;
+ font-weight: 800;
+ color: var(--texto-sec);
+ margin-bottom: 7px;
+}
+
+.progreso-top b {
+ color: var(--cian);
+}
+
+.barra-fondo {
+ width: 100%;
+ height: 8px;
+ background: #162030;
+ border-radius: 999px;
+ overflow: hidden;
+}
+
+.barra-relleno {
+ height: 100%;
+ background: linear-gradient(90deg, var(--cian), var(--oro-vivo));
+ border-radius: 999px;
+ transition: width 0.25s ease;
+}
+
+.lista-documentos {
+ display: flex;
+ flex-direction: column;
+ gap: 10px;
+ margin-bottom: 18px;
+}
+
+.doc-item {
+ display: flex;
+ align-items: flex-start;
+ gap: 13px;
+ padding: 14px;
+ border-radius: 13px;
+ background: #0B111B;
+ border: 1px solid rgba(255, 255, 255, 0.08);
+ cursor: pointer;
+ transition: border-color 0.16s ease, background 0.16s ease;
+}
+
+.doc-item.marcado {
+ border-color: rgba(0, 229, 255, 0.34);
+ background: rgba(0, 229, 255, 0.045);
+}
+
+.doc-check {
+ width: 22px;
+ height: 22px;
+ border-radius: 6px;
+ border: 2px solid var(--texto-apagado);
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ flex-shrink: 0;
+ margin-top: 2px;
+ color: transparent;
+ font-size: 13px;
+ font-weight: 900;
+}
+
+.doc-item.marcado .doc-check {
+ background: var(--cian);
+ border-color: var(--cian);
+ color: #051018;
+}
+
+.doc-titulo {
+ font-size: 15px;
+ font-weight: 800;
+ color: #FFFFFF;
+ margin-bottom: 3px;
+ display: flex;
+ align-items: center;
+ gap: 8px;
+ flex-wrap: wrap;
+}
+
+.doc-tag {
+ font-size: 10px;
+ font-weight: 800;
+ padding: 2px 7px;
+ border-radius: 5px;
+ background: rgba(212, 175, 55, 0.13);
+ color: var(--oro-vivo);
+ text-transform: uppercase;
+ letter-spacing: 0.5px;
+}
+
+.doc-detalle {
+ font-size: 12.5px;
+ color: var(--texto-sec);
+ line-height: 1.4;
+}
+
+.confirmacion-pdf {
+ margin-top: 14px;
+ padding: 14px;
+ border-radius: 12px;
+ background: rgba(16, 185, 129, 0.1);
+ border: 1px solid rgba(16, 185, 129, 0.42);
+ color: #D1FAE5;
+ font-size: 12.5px;
+ line-height: 1.5;
+}
+
+.confirmacion-pdf a {
+ color: var(--cian);
+ font-weight: 800;
+ text-decoration: underline;
+}
+
+/* ══ 4. SUITE JURÍDICA VIP ══ */
+.paywall-vip-card {
+ background: linear-gradient(145deg, #1B160B 0%, #101724 55%, #191409 100%);
+ border: 1.5px solid var(--oro-borde);
+ border-radius: 18px;
+ padding: 20px 18px;
+ margin-bottom: 18px;
+ box-shadow: var(--sombra);
+ transition: border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+}
+
+.paywall-vip-card.desbloqueado {
+ background: linear-gradient(145deg, #0C231D 0%, #0E1723 100%);
+ border: 2px solid var(--verde);
+ box-shadow: 0 0 28px rgba(16, 185, 129, 0.18), var(--sombra);
+}
+
+.paywall-top {
+ display: flex;
+ align-items: center;
+ justify-content: space-between;
+ gap: 12px;
+ margin-bottom: 12px;
+ flex-wrap: wrap;
+}
+
+.precio-vip-grande {
+ font-size: 26px;
+ font-weight: 900;
+ color: var(--oro-vivo);
+ letter-spacing: -0.5px;
+}
+
+.precio-vip-grande small {
+ font-size: 12px;
+ color: var(--texto-sec);
+ font-weight: 600;
+}
+
+.paywall-vip-card.desbloqueado .precio-vip-grande {
+ color: var(--verde-vivo);
+ font-size: 15px;
+ letter-spacing: 0.4px;
+}
+
+.icono-caja.verde {
+ background: rgba(16, 185, 129, 0.14);
+ border: 1px solid rgba(16, 185, 129, 0.5);
+}
+
+.banner-vip-grande.desbloqueado {
+ background: linear-gradient(145deg, #0C231D 0%, #0E1723 100%);
+ border-color: var(--verde);
+ box-shadow: 0 0 24px rgba(16, 185, 129, 0.16);
+}
+
+.btn-link-pdf {
+ appearance: none;
+ background: rgba(0, 229, 255, 0.12);
+ border: 1px solid rgba(0, 229, 255, 0.38);
+ color: var(--cian);
+ font-size: 11.5px;
+ font-weight: 800;
+ padding: 5px 10px;
+ border-radius: 7px;
+ cursor: pointer;
+ margin-top: 7px;
+ margin-right: 8px;
+ display: inline-flex;
+ align-items: center;
+ gap: 5px;
+}
+
+.btn-link-pdf:hover {
+ background: rgba(0, 229, 255, 0.22);
+ color: #FFFFFF;
+}
+
+.hoja-a4-preview {
+ background: #FFFFFF;
+ color: #0F172A;
+ border-radius: 10px;
+ overflow: hidden;
+ max-height: 62vh;
+ overflow-y: auto;
+ border: 1px solid rgba(212, 175, 55, 0.45);
+ margin-bottom: 14px;
+}
+
+.hoja-a4-head {
+ background: #0A0E14;
+ color: #FFFFFF;
+ padding: 12px 14px;
+ border-bottom: 3px solid #D4AF37;
+}
+
+.hoja-a4-body {
+ padding: 14px;
+ font-family: Georgia, "Times New Roman", serif;
+ font-size: 12.2px;
+ line-height: 1.55;
+ color: #1E293B;
+ white-space: pre-wrap;
+}
+
+.banner-membresia-verde {
+ padding: 12px 14px;
+ border-radius: 12px;
+ background: rgba(16, 185, 129, 0.14);
+ border: 1.5px solid rgba(16, 185, 129, 0.55);
+ color: #6EE7B7;
+ font-size: 13.5px;
+ font-weight: 800;
+ display: flex;
+ align-items: center;
+ gap: 9px;
+}
+
+.campo-grupo {
+ margin-bottom: 14px;
+}
+
+.campo-label {
+ display: flex;
+ align-items: center;
+ justify-content: space-between;
+ font-size: 13px;
+ font-weight: 800;
+ color: #FFFFFF;
+ margin-bottom: 6px;
+}
+
+.input-consular, .textarea-consular {
+ width: 100%;
+ background: #090D14;
+ border: 1.5px solid rgba(255, 255, 255, 0.12);
+ border-radius: 11px;
+ padding: 12px 13px;
+ color: #FFFFFF;
+ font-family: inherit;
+ font-size: 13.5px;
+ line-height: 1.45;
+ transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.input-consular[readonly] {
+ color: var(--oro-vivo);
+ background: #0C121C;
+ border-color: rgba(212, 175, 55, 0.25);
+ font-weight: 700;
+}
+
+.input-consular:focus, .textarea-consular:focus {
+ outline: none;
+ border-color: var(--cian);
+ box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.12);
+}
+
+.textarea-consular {
+ min-height: 82px;
+ resize: vertical;
+}
+
+.chips-ejemplos {
+ display: flex;
+ gap: 7px;
+ flex-wrap: wrap;
+ margin-bottom: 10px;
+}
+
+.chip-ejemplo {
+ appearance: none;
+ background: rgba(0, 229, 255, 0.07);
+ border: 1px solid rgba(0, 229, 255, 0.24);
+ color: var(--cian);
+ font-size: 11px;
+ font-weight: 700;
+ padding: 5px 10px;
+ border-radius: 999px;
+ cursor: pointer;
+ transition: background 0.15s ease;
+}
+
+.chip-ejemplo:hover {
+ background: rgba(0, 229, 255, 0.16);
+}
+
+.link-rellenar {
+ appearance: none;
+ background: rgba(212, 175, 55, 0.12);
+ border: 1px solid var(--oro-borde);
+ color: var(--oro-vivo);
+ font-size: 11px;
+ font-weight: 800;
+ padding: 4px 10px;
+ border-radius: 8px;
+ cursor: pointer;
+}
+
+/* Dossier Jurídico Generado */
+.dossier-salida {
+ margin-top: 16px;
+ background: #0A0F18;
+ border: 1px solid rgba(212, 175, 55, 0.36);
+ border-radius: 14px;
+ overflow: hidden;
+ position: relative;
+}
+
+.dossier-barra {
+ background: #121B2A;
+ padding: 11px 14px;
+ border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+ display: flex;
+ align-items: center;
+ justify-content: space-between;
+ gap: 8px;
+ flex-wrap: wrap;
+}
+
+.dossier-ref {
+ font-size: 11px;
+ font-weight: 800;
+ letter-spacing: 0.7px;
+ color: var(--oro-vivo);
+ text-transform: uppercase;
+}
+
+.tabs-idioma {
+ display: flex;
+ gap: 5px;
+}
+
+.tab-idioma {
+ appearance: none;
+ background: rgba(255, 255, 255, 0.05);
+ border: 1px solid rgba(255, 255, 255, 0.12);
+ color: var(--texto-sec);
+ font-size: 11px;
+ font-weight: 800;
+ padding: 5px 9px;
+ border-radius: 7px;
+ cursor: pointer;
+}
+
+.tab-idioma.activo {
+ background: var(--cian-dim);
+ border-color: var(--cian);
+ color: var(--cian);
+}
+
+.dossier-cuerpo {
+ padding: 18px 16px;
+ font-family: Georgia, "Times New Roman", Times, serif;
+ font-size: 13.8px;
+ line-height: 1.68;
+ color: #E6EDF6;
+ white-space: pre-wrap;
+}
+
+.dossier-cuerpo.sans {
+ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, sans-serif;
+ font-size: 13.5px;
+ line-height: 1.6;
+}
+
+.dossier-bloqueado .dossier-cuerpo {
+ filter: blur(5.5px);
+ user-select: none;
+ pointer-events: none;
+ min-height: 295px;
+ max-height: 295px;
+ overflow: hidden;
+}
+
+.velo-candado {
+ position: absolute;
+ inset: 44px 0 0 0;
+ background: linear-gradient(180deg, rgba(10, 14, 20, 0.55) 0%, rgba(10, 14, 20, 0.96) 65%);
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ justify-content: center;
+ padding: 20px;
+ text-align: center;
+ gap: 10px;
+}
+
+.acciones-documento {
+ padding: 13px 14px;
+ border-top: 1px solid rgba(255, 255, 255, 0.08);
+ background: #0E1522;
+ display: grid;
+ grid-template-columns: 1fr 1fr;
+ gap: 10px;
+}
+
+@media (max-width: 500px) {
+ .acciones-documento {
+  grid-template-columns: 1fr;
+ }
+}
+
+.btn-accion-carta {
+ appearance: none;
+ width: 100%;
+ padding: 12px 14px;
+ border-radius: 10px;
+ background: #162234;
+ border: 1.5px solid var(--cian-borde);
+ color: var(--cian);
+ font-size: 12.5px;
+ font-weight: 800;
+ letter-spacing: 0.3px;
+ cursor: pointer;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ gap: 8px;
+ text-align: center;
+ transition: background 0.16s ease, color 0.16s ease, border-color 0.16s ease;
+}
+
+.btn-accion-carta:hover {
+ background: rgba(0, 229, 255, 0.15);
+ border-color: var(--cian);
+ color: #FFFFFF;
+}
+
+.btn-accion-carta.oro {
+ background: linear-gradient(180deg, #241D0C 0%, #151107 100%);
+ border-color: var(--oro-borde);
+ color: var(--oro-vivo);
+}
+
+.btn-accion-carta.oro:hover {
+ border-color: var(--oro-vivo);
+ color: #FFFFFF;
+}
+
+/* ══ MODAL DE CONFIRMACIÓN DE PAGO QVAPAY ══ */
+.modal-velo {
+ position: fixed;
+ inset: 0;
+ z-index: 150;
+ background: rgba(4, 7, 12, 0.84);
+ backdrop-filter: blur(8px);
+ -webkit-backdrop-filter: blur(8px);
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ padding: 16px;
+}
+
+.modal-qvapay {
+ width: 100%;
+ max-width: 440px;
+ background: linear-gradient(170deg, #141E2E 0%, #0C121C 100%);
+ border: 1.5px solid var(--oro-borde);
+ border-radius: 20px;
+ padding: 22px 19px;
+ box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85), 0 0 32px rgba(212, 175, 55, 0.16);
+ position: relative;
+}
+
+.modal-qva-top {
+ display: flex;
+ align-items: center;
+ justify-content: space-between;
+ gap: 10px;
+ padding-bottom: 14px;
+ margin-bottom: 15px;
+ border-bottom: 1px solid var(--borde);
+}
+
+.modal-qva-marca {
+ display: flex;
+ align-items: center;
+ gap: 10px;
+}
+
+.qva-badge-azul {
+ width: 38px;
+ height: 38px;
+ border-radius: 10px;
+ background: linear-gradient(145deg, #1E3A8A, #0F172A);
+ border: 1px solid rgba(0, 229, 255, 0.45);
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ font-weight: 900;
+ color: var(--cian);
+ font-size: 15px;
+}
+
+.btn-cerrar-modal {
+ appearance: none;
+ width: 32px;
+ height: 32px;
+ border-radius: 8px;
+ border: 1px solid var(--borde);
+ background: rgba(255, 255, 255, 0.05);
+ color: var(--texto-sec);
+ font-size: 16px;
+ font-weight: 800;
+ cursor: pointer;
+}
+
+.resumen-orden-qva {
+ background: #090E16;
+ border: 1px solid rgba(255, 255, 255, 0.09);
+ border-radius: 13px;
+ padding: 14px;
+ margin-bottom: 16px;
+}
+
+.fila-orden {
+ display: flex;
+ align-items: center;
+ justify-content: space-between;
+ gap: 10px;
+ font-size: 12.5px;
+ color: var(--texto-sec);
+ padding: 5px 0;
+}
+
+.fila-orden strong {
+ color: #FFFFFF;
+ text-align: right;
+}
+
+.fila-orden.total {
+ margin-top: 8px;
+ padding-top: 10px;
+ border-top: 1px solid var(--borde);
+ font-size: 15px;
+ color: #FFFFFF;
+ font-weight: 800;
+}
+
+.fila-orden.total strong {
+ color: var(--oro-vivo);
+ font-size: 20px;
+ font-weight: 900;
+}
+
+.btn-cancelar-modal {
+ appearance: none;
+ width: 100%;
+ margin-top: 9px;
+ padding: 12px;
+ border-radius: 11px;
+ border: 1px solid var(--borde);
+ background: transparent;
+ color: var(--texto-sec);
+ font-size: 12.5px;
+ font-weight: 700;
+ cursor: pointer;
+}
+
+.btn-cancelar-modal:hover {
+ color: #FFFFFF;
+ background: rgba(255, 255, 255, 0.04);
+}
+
+/* ══ TOAST DE NOTIFICACIÓN ══ */
+#toastConsular {
+ position: fixed;
+ left: 50%;
+ bottom: 20px;
+ transform: translateX(-50%);
+ z-index: 200;
+ background: #101928;
+ border: 1.5px solid var(--cian);
+ color: #FFFFFF;
+ padding: 11px 18px;
+ border-radius: 999px;
+ font-size: 12.5px;
+ font-weight: 800;
+ box-shadow: 0 12px 32px rgba(0, 0, 0, 0.75);
+ white-space: nowrap;
+ max-width: 92vw;
+ overflow: hidden;
+ text-overflow: ellipsis;
+}
+
+#toastConsular.oro {
+ border-color: var(--oro-vivo);
+ color: var(--oro-vivo);
+}
+
+#toastConsular.verde {
+ border-color: var(--verde);
+ color: #6EE7B7;
+}
+
+.resultado-diagnostico.medio {
+ border-color: rgba(245, 208, 97, 0.55);
+ background: linear-gradient(160deg, rgba(212, 175, 55, 0.11), rgba(10, 14, 20, 0.92));
+}
+
+.resultado-diagnostico.riesgo {
+ border-color: rgba(245, 158, 11, 0.65);
+ background: linear-gradient(160deg, rgba(245, 158, 11, 0.12), rgba(10, 14, 20, 0.94));
+}
+
+.badge-dictamen.alerta {
+ background: rgba(245, 158, 11, 0.16);
+ border-color: rgba(245, 158, 11, 0.5);
+ color: #FCD34D;
+}
+
+.pie-pruebas {
+ max-width: 780px;
+ margin: 18px auto 0;
+ padding: 10px 16px;
+ text-align: center;
+ font-size: 11.5px;
+ color: var(--texto-apagado);
+}
+
+.btn-reset-prueba {
+ appearance: none;
+ background: rgba(255, 255, 255, 0.04);
+ border: 1px solid rgba(255, 255, 255, 0.12);
+ color: var(--texto-sec);
+ font-size: 11px;
+ font-weight: 700;
+ padding: 5px 11px;
+ border-radius: 999px;
+ cursor: pointer;
+ margin-left: 6px;
+}
+
+.btn-reset-prueba:hover {
+ color: #FFFFFF;
+ border-color: var(--cian-borde);
+}
+</style>
+</head>
+<body>
+
+<!-- ══ BARRA SUPERIOR DE BUFETE MIGRATORIO ══ -->
+<header class="topbar">
+ <div class="topbar-inner">
+  <div class="brand" id="btnLogoInicio" title="Volver al inicio">
+   <div class="brand-crest" aria-hidden="true">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+     <path d="M12 2L4 5.4V11.4C4 16.5 7.4 21.1 12 22.5C16.6 21.1 20 16.5 20 11.4V5.4L12 2Z" stroke="#D4AF37" stroke-width="1.6" fill="rgba(212,175,55,0.08)"/>
+     <path d="M16.4 9.2L12.7 11.4L9.2 8.2L8.1 8.8L10.4 12.7L8.2 14L6.9 13.4L6.2 13.9L8.1 15.4L9.6 17.3L10.1 16.6L9.5 15.3L11.7 14L15.6 16.3L16.2 15.2L13 11.7L16.7 9.5C17.1 9.3 16.8 8.9 16.4 9.2Z" fill="#00E5FF"/>
+    </svg>
+   </div>
+   <div class="brand-txt">
+    <div class="brand-name">VISAPREP <span>PRO</span></div>
+    <div class="brand-sub">Bufete Digital Consular</div>
+   </div>
+  </div>
+
+  <div class="top-actions">
+   <div class="pill-destino" id="badgeDestinoTop">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M21 16V14L13 9V3.5C13 2.67 12.33 2 11.5 2C10.67 2 10 2.67 10 3.5V9L2 14V16L10 13.5V19L8 20.5V22L11.5 21L15 22V20.5L13 19V13.5L21 16Z" fill="#00E5FF"/></svg>
+    <span id="txtDestinoTop">EE.UU.</span>
+   </div>
+   <button type="button" class="pill-vip-top" id="btnEstadoVipTop">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M3 18H21V20H3V18ZM5 15L3 7L8.5 10.5L12 4L15.5 10.5L21 7L19 15H5Z" fill="currentColor"/></svg>
+    <span id="txtVipTop">VIP $4.99</span>
+   </button>
+  </div>
+ </div>
+</header>
+
+<!-- ══ NAVEGACIÓN DE LAS 4 SECCIONES ══ -->
+<div class="nav-pasos-wrap">
+ <nav class="nav-pasos" aria-label="Etapas de preparación">
+  <button type="button" class="nav-btn activo" data-ir="vistaInicio">1. Inicio</button>
+  <button type="button" class="nav-btn" data-ir="vistaDiagnostico">2. Diagnóstico</button>
+  <button type="button" class="nav-btn" data-ir="vistaChecklist">3. Checklist</button>
+  <button type="button" class="nav-btn vip-tab" data-ir="vistaVip">4. Zona VIP ★</button>
+ </nav>
+</div>
+
+<main class="contenedor">
+
+ <!-- ══════════════════════════════════════════════════════════
+      1. PANTALLA DE INICIO
+      ══════════════════════════════════════════════════════════ -->
+ <section id="vistaInicio" class="vista activa">
+  <div class="hero-card">
+   <svg class="hero-watermark" viewBox="0 0 160 160" fill="none" aria-hidden="true">
+    <circle cx="80" cy="80" r="72" stroke="#D4AF37" stroke-width="3" stroke-dasharray="6 5"/>
+    <circle cx="80" cy="80" r="58" stroke="#00E5FF" stroke-width="2"/>
+    <path d="M50 84L72 104L114 58" stroke="#D4AF37" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+   </svg>
+
+   <div class="eyebrow-consular">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#F5D061" stroke-width="1.8" stroke-dasharray="3 2"/><path d="M8.5 12.3L10.8 14.6L15.8 9.6" stroke="#00E5FF" stroke-width="2" stroke-linecap="round"/></svg>
+    Asistencia Jurídico-Consular · Cuba
+   </div>
+
+   <h1 class="hero-titulo" id="tituloPrincipal">Tu Visa, Paso a Paso. Sin Errores.</h1>
+   <p class="hero-sub">Prepara tu expediente migratorio con estándares de bufete internacional: evaluación de arraigo, lista documental verificada en PDF y redacción consular bilingüe.</p>
+
+   <div class="seccion-label">
+    <div>Selecciona tu consulado de destino</div>
+    <span>Paso 1 de 3</span>
+   </div>
+
+   <!-- Selector Visual de Destinos: [EE.UU.], [España], [Canadá], [México] -->
+   <div class="grid-destinos" id="selectorDestinos">
+    <button type="button" class="card-destino seleccionado" data-pais="eeuu">
+     <div class="dest-top">
+      <span class="dest-flag-badge">
+       <svg width="16" height="12" viewBox="0 0 16 12"><rect width="16" height="12" rx="2" fill="#B22234"/><rect y="2" width="16" height="1.6" fill="#FFF"/><rect y="5.2" width="16" height="1.6" fill="#FFF"/><rect y="8.4" width="16" height="1.6" fill="#FFF"/><rect width="7.2" height="6.8" rx="1" fill="#3C3B6E"/></svg>
+       US
+      </span>
+      <span class="dest-check">✓</span>
+     </div>
+     <div>
+      <div class="dest-nombre">EE.UU.</div>
+      <div class="dest-tipo">Visa B1/B2 · DS-160</div>
+     </div>
+    </button>
+
+    <button type="button" class="card-destino" data-pais="espana">
+     <div class="dest-top">
+      <span class="dest-flag-badge">
+       <svg width="16" height="12" viewBox="0 0 16 12"><rect width="16" height="12" rx="2" fill="#AA151B"/><rect y="3" width="16" height="6" fill="#F1BF00"/></svg>
+       ES
+      </span>
+      <span class="dest-check">✓</span>
+     </div>
+     <div>
+      <div class="dest-nombre">España</div>
+      <div class="dest-tipo">Visado Schengen · Estancia</div>
+     </div>
+    </button>
+
+    <button type="button" class="card-destino" data-pais="canada">
+     <div class="dest-top">
+      <span class="dest-flag-badge">
+       <svg width="16" height="12" viewBox="0 0 16 12"><rect width="16" height="12" rx="2" fill="#FF0000"/><rect x="4" width="8" height="12" fill="#FFFFFF"/><path d="M8 3L9.4 6.2H10.5L8.7 7.8L9.2 9.5L8 8.6L6.8 9.5L7.3 7.8L5.5 6.2H6.6L8 3Z" fill="#FF0000"/></svg>
+       CA
+      </span>
+      <span class="dest-check">✓</span>
+     </div>
+     <div>
+      <div class="dest-nombre">Canadá</div>
+      <div class="dest-tipo">Visitor Visa · IMM 5257</div>
+     </div>
+    </button>
+
+    <button type="button" class="card-destino" data-pais="mexico">
+     <div class="dest-top">
+      <span class="dest-flag-badge">
+       <svg width="16" height="12" viewBox="0 0 16 12"><rect width="16" height="12" rx="2" fill="#FFFFFF"/><rect width="5.3" height="12" rx="1" fill="#006847"/><rect x="10.7" width="5.3" height="12" rx="1" fill="#CE1126"/><circle cx="8" cy="6" r="1.5" fill="#8C6239"/></svg>
+       MX
+      </span>
+      <span class="dest-check">✓</span>
+     </div>
+     <div>
+      <div class="dest-nombre">México</div>
+      <div class="dest-tipo">Visa Visitante · Turismo</div>
+     </div>
+    </button>
+   </div>
+
+   <button type="button" class="btn-primario-cian" id="btnEvaluarGratis">
+    <svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M21 16V14L13 9V3.5C13 2.67 12.33 2 11.5 2C10.67 2 10 2.67 10 3.5V9L2 14V16L10 13.5V19L8 20.5V22L11.5 21L15 22V20.5L13 19V13.5L21 16Z" fill="#051018"/></svg>
+    EVALUAR MI PERFIL GRATIS
+   </button>
+  </div>
+
+  <!-- Iconografía Consular: Avión, Sello de Pasaporte, Maleta Diplomática -->
+  <div class="barra-garantias">
+   <div class="garantia-item">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M21 16V14L13 9V3.5C13 2.67 12.33 2 11.5 2C10.67 2 10 2.67 10 3.5V9L2 14V16L10 13.5V19L8 20.5V22L11.5 21L15 22V20.5L13 19V13.5L21 16Z" fill="#00E5FF"/></svg>
+    <div class="garantia-tit">4 Consulados</div>
+    <div class="garantia-sub">Criterios oficiales actualizados</div>
+   </div>
+   <div class="garantia-item">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#F5D061" stroke-width="1.8" stroke-dasharray="3 2"/><circle cx="12" cy="12" r="6" stroke="#F5D061" stroke-width="1.2"/><path d="M9.2 12.2L11.1 14.1L15 10.2" stroke="#00E5FF" stroke-width="1.9" stroke-linecap="round"/></svg>
+    <div class="garantia-tit">Sello de Viabilidad</div>
+    <div class="garantia-sub">Diagnóstico de arraigo al instante</div>
+   </div>
+   <div class="garantia-item">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="3" y="7" width="18" height="13" rx="2.5" stroke="#00E5FF" stroke-width="1.8"/><path d="M9 7V5C9 3.9 9.9 3 11 3H13C14.1 3 15 3.9 15 5V7" stroke="#F5D061" stroke-width="1.8"/><path d="M3 12H21" stroke="rgba(255,255,255,0.22)" stroke-width="1.4"/></svg>
+    <div class="garantia-tit">Maleta Documental</div>
+    <div class="garantia-sub">Checklist descargable en PDF</div>
+   </div>
+  </div>
+
+  <button type="button" class="banner-vip-grande btnIrSeccionVip" id="bannerVipInicio">
+   <div class="banner-vip-top">
+    <div class="banner-vip-icono">
+     <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#F5D061" stroke-width="1.7" stroke-dasharray="3 2"/><path d="M8 12.5L10.8 15.2L16.2 9.5" stroke="#F5D061" stroke-width="2.1" stroke-linecap="round"/></svg>
+    </div>
+    <div>
+     <div class="banner-vip-titulo">¿Miedo al inglés o a las preguntas de la embajada? Hazte VIP</div>
+     <div class="banner-vip-desc">Desbloquea el Traductor Jurídico de Formularios en inglés y el Generador Bilingüe de Carta de Motivación Consular en PDF.</div>
+    </div>
+   </div>
+   <div class="banner-vip-cta-fila">
+    <span id="txtSubBannerInicio">Suite Jurídica Completa · Pago único $4.99</span>
+    <span class="banner-vip-cta-btn" id="txtBtnBannerInicio">Abrir Zona VIP →</span>
+   </div>
+  </button>
+ </section>
+
+ <!-- ══════════════════════════════════════════════════════════
+      2. EL DIAGNÓSTICO (GRATIS)
+      ══════════════════════════════════════════════════════════ -->
+ <section id="vistaDiagnostico" class="vista">
+  <div class="panel-consular">
+   <div class="panel-header">
+    <div class="panel-header-izq">
+     <div class="icono-caja">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+       <circle cx="12" cy="12" r="9.5" stroke="#00E5FF" stroke-width="1.7" stroke-dasharray="3 2"/>
+       <circle cx="12" cy="12" r="6.5" stroke="#D4AF37" stroke-width="1.3"/>
+       <path d="M9 12.2L11 14.2L15.2 10" stroke="#00E5FF" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+     </div>
+     <div>
+      <h2 class="panel-tit">Diagnóstico Consular de Perfil</h2>
+      <div class="panel-sub" id="subDiagnosticoPais">Evaluación preliminar de arraigo y solvencia · Destino: EE.UU.</div>
+     </div>
+    </div>
+    <span class="tag-gratis">Gratis</span>
+   </div>
+
+   <form id="formDiagnostico">
+    <div class="bloque-pregunta">
+     <label class="pregunta-label"><span class="pregunta-num">01.</span> ¿Tienes pasaporte?</label>
+     <div class="opciones-fila" data-grupo="pasaporte">
+      <button type="button" class="opcion-radio activa" data-val="vigente"><span class="punto-radio"></span>Sí, vigente (+6 meses)</button>
+      <button type="button" class="opcion-radio" data-val="tramite"><span class="punto-radio"></span>En renovación / trámite</button>
+      <button type="button" class="opcion-radio" data-val="no"><span class="punto-radio"></span>Aún no lo tengo</button>
+     </div>
+    </div>
+
+    <div class="bloque-pregunta">
+     <label class="pregunta-label"><span class="pregunta-num">02.</span> ¿Tienes carta de invitación?</label>
+     <div class="opciones-fila" data-grupo="invitacion">
+      <button type="button" class="opcion-radio activa" data-val="familiar"><span class="punto-radio"></span>Sí, de familiar o residente</button>
+      <button type="button" class="opcion-radio" data-val="hotel"><span class="punto-radio"></span>Reserva de hotel / turismo</button>
+      <button type="button" class="opcion-radio" data-val="no"><span class="punto-radio"></span>Aún no cuento con ella</button>
+     </div>
+    </div>
+
+    <div class="bloque-pregunta">
+     <label class="pregunta-label"><span class="pregunta-num">03.</span> ¿Tienes propiedades o trabajo estable en Cuba?</label>
+     <div class="opciones-fila" data-grupo="arraigo">
+      <button type="button" class="opcion-radio activa" data-val="ambos"><span class="punto-radio"></span>Sí, propiedad y empleo/negocio</button>
+      <button type="button" class="opcion-radio" data-val="trabajo"><span class="punto-radio"></span>Trabajo estable o TCP activo</button>
+      <button type="button" class="opcion-radio" data-val="familia"><span class="punto-radio"></span>Vínculos familiares / estudio</button>
+     </div>
+    </div>
+
+    <button type="submit" class="btn-primario-cian" id="btnAnalizarPerfil">
+     <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#051018" stroke-width="2"/><path d="M9 12.2L11.2 14.4L15.5 9.8" stroke="#051018" stroke-width="2.2" stroke-linecap="round"/></svg>
+     ANALIZAR MI PERFIL AHORA
+    </button>
+   </form>
+
+   <div id="cajaAnalizandoDiag" class="caja-analizando oculto">
+    <div class="spinner-consular"></div>
+    <div style="font-weight:800;color:#FFFFFF;font-size:14.5px;margin-bottom:4px">IA Jurídica evaluando factores de arraigo y elegibilidad...</div>
+    <div style="font-size:12px;color:var(--texto-sec)">Contrastando parámetros consulares de <span id="spanPaisAnalizando">EE.UU.</span></div>
+   </div>
+
+   <div id="cajaResultadoDiag" class="resultado-diagnostico oculto">
+    <div class="sello-aprobado-fila">
+     <span class="badge-dictamen" id="badgeDictamenDiag">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" stroke-dasharray="3 2"/><path d="M8.5 12.2L11 14.6L15.8 9.6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+      <span id="txtBadgeDictamen">Dictamen Consular Preliminar</span>
+     </span>
+     <svg width="86" height="34" viewBox="0 0 132 44" fill="none" aria-hidden="true">
+      <rect x="3" y="3" width="126" height="38" rx="8" stroke="#D4AF37" stroke-width="2" stroke-dasharray="5 3"/>
+      <text x="66" y="20" id="svgSelloDiag" text-anchor="middle" fill="#F5D061" font-size="9.5" font-weight="900" font-family="Arial, sans-serif" letter-spacing="1">PERFIL FUERTE</text>
+      <text x="66" y="33" text-anchor="middle" fill="#00E5FF" font-size="8.5" font-weight="800" font-family="Arial, sans-serif" letter-spacing="1">VISAPREP PRO</text>
+     </svg>
+    </div>
+
+    <p class="resultado-frase-exacta" id="txtResultadoExacto">Tu perfil es FUERTE. Tienes altas probabilidades de aprobación. Descarga tu checklist gratis</p>
+
+    <div class="nota-abogado" id="notaAbogadoDiag">
+     Observación técnica: La combinación de pasaporte ordinario en regla, propósito de viaje definido y vínculos demostrables en Cuba constituye la base probatoria principal exigida en entrevista consular.
+    </div>
+
+    <button type="button" class="btn-ejecutivo-oscuro" id="btnIrAChecklist">
+     <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="7" width="18" height="13" rx="2.5" stroke="#00E5FF" stroke-width="1.9"/><path d="M9 7V5C9 3.9 9.9 3 11 3H13C14.1 3 15 3.9 15 5V7" stroke="#F5D061" stroke-width="1.9"/></svg>
+     VER MI CHECKLIST GRATIS →
+    </button>
+   </div>
+  </div>
+ </section>
+
+ <!-- ══════════════════════════════════════════════════════════
+      3. EL CHECKLIST (GRATIS) — DESCARGA REAL CON jsPDF
+      ══════════════════════════════════════════════════════════ -->
+ <section id="vistaChecklist" class="vista">
+  <div class="panel-consular">
+   <div class="panel-header">
+    <div class="panel-header-izq">
+     <div class="icono-caja">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+       <rect x="3" y="7" width="18" height="13" rx="2.5" stroke="#00E5FF" stroke-width="1.8"/>
+       <path d="M9 7V5C9 3.9 9.9 3 11 3H13C14.1 3 15 3.9 15 5V7" stroke="#F5D061" stroke-width="1.8"/>
+       <path d="M8 7V20M16 7V20" stroke="rgba(0,229,255,0.35)" stroke-width="1.3"/>
+      </svg>
+     </div>
+     <div>
+      <h2 class="panel-tit">Checklist Oficial de Documentos</h2>
+      <div class="panel-sub" id="subChecklistPais">Carpeta consular obligatoria · Destino: EE.UU.</div>
+     </div>
+    </div>
+    <span class="tag-gratis">Gratis</span>
+   </div>
+
+   <div class="progreso-maleta">
+    <div class="progreso-top">
+     <span>Estado de tu maleta documental</span>
+     <b id="txtContadorDocs">4 de 4 verificados</b>
+    </div>
+    <div class="barra-fondo">
+     <div class="barra-relleno" id="barraDocs" style="width:100%"></div>
+    </div>
+   </div>
+
+   <div class="lista-documentos" id="listaChecklistDocs"></div>
+
+   <button type="button" id="btnDescargarChecklistPdf" class="btn-primario-cian">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3V15M12 15L7.5 10.5M12 15L16.5 10.5M4 17V19C4 20.1 4.9 21 6 21H18C19.1 21 20 20.1 20 19V17" stroke="#051018" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Descargar Checklist PDF
+   </button>
+
+   <div id="avisoPdfGenerado" class="confirmacion-pdf oculto">
+    <strong>✓ Checklist PDF generado con jsPDF (<span id="spanTamChecklistPdf">PDF A4</span>).</strong><br>
+    Incluye la lista de documentos en pantalla para <span id="spanPaisPdf">EE.UU.</span> con fecha <span id="spanFechaPdf"></span>.<br>
+    <button type="button" class="btn-link-pdf" id="btnVerHojaChecklistPdf">Vista previa del PDF</button>
+    <a id="linkRespaldoChecklistPdf" href="#" download="Checklist-VisaPrep-Pro.pdf">Guardar copia directa</a>
+   </div>
+  </div>
+
+  <!-- BANNER GRANDE VIP -->
+  <button type="button" class="banner-vip-grande btnIrSeccionVip" id="bannerVipChecklist">
+   <div class="banner-vip-top">
+    <div class="banner-vip-icono">
+     <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M21 16V14L13 9V3.5C13 2.67 12.33 2 11.5 2C10.67 2 10 2.67 10 3.5V9L2 14V16L10 13.5V19L8 20.5V22L11.5 21L15 22V20.5L13 19V13.5L21 16Z" fill="#F5D061"/></svg>
+    </div>
+    <div>
+     <div class="banner-vip-titulo">¿Miedo al inglés o a las preguntas de la embajada? Hazte VIP</div>
+     <div class="banner-vip-desc">Traductor inteligente de preguntas de formularios consulares + Redactor jurídico de Carta de Motivación en inglés y español con descarga PDF.</div>
+    </div>
+   </div>
+   <div class="banner-vip-cta-fila">
+    <span id="txtSubBannerChecklist">Desbloqueo completo con QvaPay · $4.99</span>
+    <span class="banner-vip-cta-btn" id="txtBtnBannerChecklist">Entrar a VIP →</span>
+   </div>
+  </button>
+ </section>
+
+ <!-- ══════════════════════════════════════════════════════════
+      4. ZONA VIP — PAGO QVAPAY + TRADUCTOR + CARTA EN PDF
+      ══════════════════════════════════════════════════════════ -->
+ <section id="vistaVip" class="vista">
+
+  <!-- Tarjeta de Estado y Desbloqueo VIP ($4.99 -> Membresía VIP Desbloqueada con borde verde) -->
+  <div class="paywall-vip-card" id="cardPaywallVip">
+   <div class="paywall-top">
+    <div style="display:flex;align-items:center;gap:11px">
+     <div class="icono-caja oro" id="iconoBoxPaywall">
+      <svg width="23" height="23" viewBox="0 0 24 24" fill="none"><path d="M3 18H21V20H3V18ZM5 15L3 7L8.5 10.5L12 4L15.5 10.5L21 7L19 15H5Z" fill="#F5D061"/></svg>
+     </div>
+     <div>
+      <div style="font-size:17px;font-weight:900;color:#FFFFFF" id="titEstadoPaywall">Suite Jurídica Consular VIP</div>
+      <div style="font-size:12px;color:var(--texto-sec)" id="subEstadoPaywall">Incluye Traductor de Formularios + Generador Bilingüe de Carta + Descarga PDF</div>
+     </div>
+    </div>
+    <div class="precio-vip-grande" id="precioPaywallVip">$4.99 <small>USD / único</small></div>
+   </div>
+
+   <div id="zonaBotonQvaPay">
+    <button type="button" class="btn-dorado-vip btnAbrirModalQvaPay" id="btnDesbloquearVipQvaPay">
+     <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="5" y="11" width="14" height="10" rx="2" stroke="#110D02" stroke-width="2.1"/><path d="M8 11V7C8 4.79 9.79 3 12 3C14.21 3 16 4.79 16 7V11" stroke="#110D02" stroke-width="2.1"/></svg>
+     DESBLOQUEAR VIP CON QVAPAY · $4.99
+    </button>
+   </div>
+
+   <div id="zonaExitoVip" class="banner-membresia-verde oculto">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9.5" stroke="#34D399" stroke-width="2"/><path d="M8 12.3L10.8 15L16.2 9.4" stroke="#34D399" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span>Membresía VIP Desbloqueada · Acceso total habilitado a todas las herramientas y descargas PDF.</span>
+   </div>
+  </div>
+
+  <!-- HERRAMIENTA VIP (A): TRADUCTOR DE FORMULARIOS -->
+  <div class="panel-consular">
+   <div class="panel-header">
+    <div class="panel-header-izq">
+     <div class="icono-caja oro">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 5H14M9 3V5M6 5C6 8.8 8.2 12 12 13.5M10.5 8C9.6 10.6 7.5 12.8 4.5 14M13 19L17 10L21 19M14.3 16.2H19.7" stroke="#F5D061" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+     </div>
+     <div>
+      <h2 class="panel-tit">a) Traductor de Formularios</h2>
+      <div class="panel-sub">Escribe la pregunta del formulario en inglés y la IA te la explica en español fácil</div>
+     </div>
+    </div>
+   </div>
+
+   <div class="chips-ejemplos">
+    <button type="button" class="chip-ejemplo" data-preg="Have you ever been refused a U.S. Visa, or been refused admission to the United States?">Negación previa (DS-160)</button>
+    <button type="button" class="chip-ejemplo" data-preg="Provide your present occupation and briefly describe your duties.">Ocupación y funciones</button>
+    <button type="button" class="chip-ejemplo" data-preg="Person/Entity Paying for Your Trip and relationship to you.">¿Quién paga el viaje?</button>
+    <button type="button" class="chip-ejemplo" data-preg="Funds available for my stay in Canada (CAD)">Fondos disponibles</button>
+   </div>
+
+   <div class="campo-grupo">
+    <label class="campo-label" for="inputPreguntaIngles">Pregunta exacta del formulario en inglés:</label>
+    <textarea id="inputPreguntaIngles" class="textarea-consular" placeholder="Ej: Have you ever been refused a U.S. Visa, or been refused admission to the United States?">Have you ever been refused a U.S. Visa, or been refused admission to the United States?</textarea>
+   </div>
+
+   <button type="button" class="btn-ejecutivo-oscuro" id="btnTraducirFormulario">
+    Explicar Pregunta en Español Fácil
+   </button>
+
+   <div id="salidaTraductorWrap" class="dossier-salida oculto">
+    <div class="dossier-barra">
+     <span class="dossier-ref">Guía de Interpretación Consular</span>
+     <span style="font-size:11px;color:var(--cian);font-weight:700" id="tagPaisTraductor">Formulario Oficial</span>
+    </div>
+    <div class="dossier-cuerpo sans" id="textoSalidaTraductor"></div>
+    <div class="velo-candado oculto" id="candadoTraductor">
+     <div style="font-size:14px;font-weight:900;color:#FFFFFF">Explicación jurídica lista para visualizar</div>
+     <div style="font-size:12px;color:var(--texto-sec);max-width:360px">Activa tu membresía VIP para leer la traducción clara y el consejo exacto de respuesta consular.</div>
+     <button type="button" class="btn-dorado-vip btnAbrirModalQvaPay" style="max-width:330px;padding:12px 16px;font-size:12.5px">DESBLOQUEAR VIP CON QVAPAY · $4.99</button>
+    </div>
+   </div>
+  </div>
+
+  <!-- HERRAMIENTA VIP (B): GENERADOR DE CARTA DE MOTIVACIÓN -->
+  <div class="panel-consular">
+   <div class="panel-header">
+    <div class="panel-header-izq">
+     <div class="icono-caja oro">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M14 3H6C4.9 3 4 3.9 4 5V19C4 20.1 4.9 21 6 21H18C19.1 21 20 20.1 20 19V9L14 3Z" stroke="#F5D061" stroke-width="1.8"/><path d="M14 3V9H20" stroke="#F5D061" stroke-width="1.8"/><path d="M8 13H16M8 17H13" stroke="#00E5FF" stroke-width="1.8" stroke-linecap="round"/></svg>
+     </div>
+     <div>
+      <h2 class="panel-tit">b) Generador de Carta de Motivación</h2>
+      <div class="panel-sub">Redacción formal y persuasiva en inglés y español lista para imprimir en PDF</div>
+     </div>
+    </div>
+    <button type="button" class="link-rellenar" id="btnEjemploCarta">Ejemplo real</button>
+   </div>
+
+   <div class="campo-grupo">
+    <label class="campo-label" for="inpNombreFirma">
+     <span>Nombre completo del solicitante <small style="color:var(--texto-sec);font-weight:600">(opcional, para pie de firma)</small></span>
+    </label>
+    <input type="text" id="inpNombreFirma" class="input-consular" placeholder="Ej: Dra. Elena Pérez Gómez">
+   </div>
+
+   <div class="campo-grupo">
+    <label class="campo-label" for="inpLugarFecha">
+     <span>Lugar y fecha (fecha actual del sistema)</span>
+    </label>
+    <input type="text" id="inpLugarFecha" class="input-consular" placeholder="La Habana, fecha actual">
+   </div>
+
+   <div class="campo-grupo">
+    <label class="campo-label" for="inpDedicacion">¿A qué te dedicas?</label>
+    <input type="text" id="inpDedicacion" class="input-consular" placeholder="Ej: Ingeniera informática y titular de negocio privado de diseño en La Habana con 5 años de actividad">
+   </div>
+
+   <div class="campo-grupo">
+    <label class="campo-label" for="inpInvita">¿Quién te invita?</label>
+    <input type="text" id="inpInvita" class="input-consular" placeholder="Ej: Mi hermana residente permanente en Miami, quien ofrece alojamiento por 14 días">
+   </div>
+
+   <div class="campo-grupo">
+    <label class="campo-label" for="inpRegreso">¿Por qué prometes regresar a Cuba?</label>
+    <textarea id="inpRegreso" class="textarea-consular" placeholder="Ej: Propiedad de vivienda registrada a mi nombre en La Habana, contratos vigentes con clientes locales y el cuidado directo de mis padres mayores"></textarea>
+   </div>
+
+   <button type="button" class="btn-primario-cian" id="btnGenerarCarta">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 20H21M16.5 3.5C17.3 2.7 18.7 2.7 19.5 3.5C20.3 4.3 20.3 5.7 19.5 6.5L7 19L3 20L4 16L16.5 3.5Z" stroke="#051018" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Generar Carta
+   </button>
+
+   <!-- Spinner de 2 segundos al tocar Generar Carta -->
+   <div id="cajaRedactandoCarta" class="caja-analizando oculto">
+    <div class="spinner-consular"></div>
+    <div style="font-weight:800;color:#FFFFFF;font-size:14px">Redactando Carta de Motivación formal en inglés y español...</div>
+    <div style="font-size:12px;color:var(--texto-sec)">Estructurando argumentos jurídicos de arraigo y solvencia (2 s)</div>
+   </div>
+
+   <!-- Documento Bilingüe Generado -->
+   <div id="salidaCartaWrap" class="dossier-salida oculto">
+    <div class="dossier-barra">
+     <span class="dossier-ref" id="refExpedienteCarta">EXPEDIENTE CONSULAR · EN / ES</span>
+     <div class="tabs-idioma">
+      <button type="button" class="tab-idioma activo" data-idioma="ambos">Bilingüe (EN + ES)</button>
+      <button type="button" class="tab-idioma" data-idioma="en">English</button>
+      <button type="button" class="tab-idioma" data-idioma="es">Español</button>
+     </div>
+    </div>
+
+    <div class="dossier-cuerpo" id="textoSalidaCarta"></div>
+
+    <div class="velo-candado oculto" id="candadoCarta">
+     <svg width="34" height="34" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#F5D061" stroke-width="1.6" stroke-dasharray="3 2"/><rect x="7" y="11" width="10" height="8" rx="1.8" fill="#F5D061"/><path d="M9.5 11V8.5C9.5 7.1 10.6 6 12 6C13.4 6 14.5 7.1 14.5 8.5V11" stroke="#F5D061" stroke-width="1.8"/></svg>
+     <div style="font-size:15px;font-weight:900;color:#FFFFFF">Carta Consular Bilingüe Redactada</div>
+     <div style="font-size:12.5px;color:var(--texto-sec);max-width:390px">Tu exposición formal en inglés y español ya está lista. Desbloquea VIP con QvaPay para leerla, copiarla y descargarla en PDF.</div>
+     <button type="button" class="btn-dorado-vip btnAbrirModalQvaPay" style="max-width:330px;padding:13px 16px;font-size:12.5px">DESBLOQUEAR VIP CON QVAPAY · $4.99</button>
+    </div>
+
+    <div class="acciones-documento" id="barraAccionesCarta">
+     <button type="button" class="btn-accion-carta" id="btnCopiarPortapapeles">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="9" y="9" width="11" height="11" rx="2" stroke="currentColor" stroke-width="2"/><path d="M5 15H4C2.9 15 2 14.1 2 13V4C2 2.9 2.9 2 4 2H13C14.1 2 15 2.9 15 4V5" stroke="currentColor" stroke-width="2"/></svg>
+      Copiar al Portapapeles
+     </button>
+     <button type="button" class="btn-accion-carta oro" id="btnDescargarCartaPdf">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 3V15M12 15L7.5 10.5M12 15L16.5 10.5M4 17V19C4 20.1 4.9 21 6 21H18C19.1 21 20 20.1 20 19V17" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Descargar Carta en PDF
+     </button>
+    </div>
+   </div>
+
+   <div id="avisoCartaPdfGenerado" class="confirmacion-pdf oculto">
+    <strong>✓ Carta de Motivación generada en PDF real (<span id="spanTamCartaPdf">A4 Bilingüe</span>).</strong><br>
+    <button type="button" class="btn-link-pdf" id="btnVerHojaCartaPdf">Vista previa del PDF</button>
+    <a id="linkRespaldoCartaPdf" href="#" download="Carta-Motivacion-VisaPrep-Pro.pdf">Guardar copia directa</a>
+   </div>
+  </div>
+
+ </section>
+
+</main>
+
+<footer class="pie-pruebas">
+ <span>VISAPREP PRO · Suite Jurídico-Consular</span>
+ <button type="button" id="btnReiniciarPruebaVip" class="btn-reset-prueba oculto">Reiniciar prueba VIP ($4.99)</button>
+</footer>
+
+<!-- ══════════════════════════════════════════════════════════
+     MODAL DE CONFIRMACIÓN DE PAGO QVAPAY (SIMULADO PARA PRUEBAS)
+     ══════════════════════════════════════════════════════════ -->
+<div id="modalConfirmarQvaPay" class="modal-velo oculto" role="dialog" aria-modal="true" aria-labelledby="titModalQva">
+ <div class="modal-qvapay">
+  <div class="modal-qva-top">
+   <div class="modal-qva-marca">
+    <div class="qva-badge-azul">Q</div>
+    <div>
+     <div style="font-size:15px;font-weight:900;color:#FFFFFF" id="titModalQva">Confirmar Pago con QvaPay</div>
+     <div style="font-size:11.5px;color:var(--texto-sec)">Pasarela de verificación instantánea · Modo Pruebas</div>
+    </div>
+   </div>
+   <button type="button" class="btn-cerrar-modal" id="btnCerrarModalQva" aria-label="Cerrar">✕</button>
+  </div>
+
+  <div class="resumen-orden-qva">
+   <div class="fila-orden">
+    <span>Comercio</span>
+    <strong>VISAPREP PRO · Bufete Digital</strong>
+   </div>
+   <div class="fila-orden">
+    <span>Concepto</span>
+    <strong>Membresía VIP Vitalicia</strong>
+   </div>
+   <div class="fila-orden">
+    <span>Incluye</span>
+    <strong>Traductor + Carta IA + PDFs</strong>
+   </div>
+   <div class="fila-orden">
+    <span>Fecha</span>
+    <strong id="fechaModalQva">—</strong>
+   </div>
+   <div class="fila-orden total">
+    <span>Total a pagar</span>
+    <strong>$4.99 USD</strong>
+   </div>
+  </div>
+
+  <div id="estadoBotonesModalQva">
+   <button type="button" class="btn-dorado-vip" id="btnConfirmarPagoModal">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 12.2L11.2 14.4L15.6 9.8" stroke="#110D02" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="9" stroke="#110D02" stroke-width="2"/></svg>
+    CONFIRMAR PAGO DE $4.99
+   </button>
+   <button type="button" class="btn-cancelar-modal" id="btnCancelarPagoModal">Cancelar operación</button>
+  </div>
+
+  <div id="estadoProcesandoModalQva" class="caja-analizando oculto" style="margin-top:0;border-color:var(--oro-borde)">
+   <div class="spinner-consular"></div>
+   <div style="font-weight:800;color:var(--oro-vivo);font-size:14px">Procesando pago seguro con QvaPay...</div>
+   <div style="font-size:12px;color:var(--texto-sec);margin-top:4px">Activando tu Membresía VIP en este dispositivo</div>
+  </div>
+ </div>
+</div>
+
+<!-- Modal de Vista Previa de Hoja PDF A4 (útil también en visores embebidos) -->
+<div id="modalVistaPdf" class="modal-velo oculto" role="dialog" aria-modal="true" aria-labelledby="titVistaPdf">
+ <div class="modal-qvapay" style="max-width:520px">
+  <div class="modal-qva-top">
+   <div class="modal-qva-marca">
+    <div class="qva-badge-azul">PDF</div>
+    <div>
+     <div style="font-size:14.5px;font-weight:900;color:#FFFFFF" id="titVistaPdf">Documento PDF Generado</div>
+     <div style="font-size:11px;color:var(--texto-sec)" id="metaVistaPdf">Generado con jsPDF · Formato A4 Oficial</div>
+    </div>
+   </div>
+   <button type="button" class="btn-cerrar-modal" id="btnCerrarVistaPdf" aria-label="Cerrar">✕</button>
+  </div>
+  <div class="hoja-a4-preview">
+   <div class="hoja-a4-head">
+    <div style="font-size:12px;font-weight:900;letter-spacing:0.6px" id="headHojaPdf">VISAPREP PRO | EXPEDIENTE CONSULAR</div>
+    <div style="font-size:10.5px;color:#F5D061;margin-top:2px" id="subHeadHojaPdf"></div>
+   </div>
+   <div class="hoja-a4-body" id="cuerpoHojaPdf"></div>
+  </div>
+  <button type="button" class="btn-primario-cian" id="btnReDescargarVistaPdf">Descargar PDF</button>
+ </div>
+</div>
+
+<div id="toastConsular" class="oculto"></div>
+
+<!-- Motor PDF 1.4 Nativo Móvil (cero ventanas emergentes, cero errores en pantalla, 100% compatible Android/iOS) -->
+<script>
+(function(global){
+ 'use strict';
+
+ /* Escudo silencioso global: jamás imprimir trazas ni errores técnicos en pantalla o consola */
+ global.addEventListener('error', function(ev){
+  if(ev && typeof ev.preventDefault === 'function') ev.preventDefault();
+  return true;
+ }, true);
+ global.addEventListener('unhandledrejection', function(ev){
+  if(ev && typeof ev.preventDefault === 'function') ev.preventDefault();
+ });
+
+ var _urlsActivas = [];
+ function registrarBlobUrl(u){
+  _urlsActivas.push(u);
+  if(_urlsActivas.length > 12){
+   var vieja = _urlsActivas.shift();
+   try { (global.URL || global.webkitURL).revokeObjectURL(vieja); } catch(e){}
+  }
+ }
+
+ function uint8ABase64(u8){
+  var CHUNK = 0x8000, partes = [];
+  for(var i = 0; i < u8.length; i += CHUNK){
+   partes.push(String.fromCharCode.apply(null, u8.subarray(i, i + CHUNK)));
+  }
+  return global.btoa(partes.join(''));
+ }
+
+ /* Mapeo Unicode -> WinAnsi (CP1252 / Latin-1) para acentos, eñes y puntuación en PDF 1.4 */
+ var MAPA_WINANSI = {
+  0x20AC:128, 0x201A:130, 0x0192:131, 0x201E:132, 0x2026:133, 0x2020:134, 0x2021:135,
+  0x02C6:136, 0x2030:137, 0x0160:138, 0x2039:139, 0x0152:140, 0x017D:142, 0x2018:145,
+  0x2019:146, 0x201C:147, 0x201D:148, 0x2022:149, 0x2013:150, 0x2014:151, 0x02DC:152,
+  0x2122:153, 0x0161:154, 0x203A:155, 0x0153:156, 0x017E:158, 0x0178:159
+ };
+
+ function aBytesWinAnsi(texto){
+  var s = String(texto === null || texto === undefined ? '' : texto);
+  var out = [];
+  for(var i = 0; i < s.length; i++){
+   var c = s.charCodeAt(i);
+   var b = 32;
+   if(c >= 32 && c <= 126){ b = c; }
+   else if(c >= 160 && c <= 255){ b = c; }
+   else if(MAPA_WINANSI[c]){ b = MAPA_WINANSI[c]; }
+   else if(c === 9){ b = 32; }
+   else { continue; }
+   if(b === 40 || b === 41 || b === 92){ out.push(92); }
+   out.push(b);
+  }
+  return out;
+ }
+
+ function numPdf(n){
+  var v = Number(n);
+  if(!isFinite(v)) return '0';
+  var s = v.toFixed(2);
+  return s.replace(/\.00$/, '').replace(/(\.\d)0$/, '$1');
+ }
+
+ function medirAnchoLinea(str, fontSize, esBold){
+  var s = String(str || ''), total = 0;
+  for(var i = 0; i < s.length; i++){
+   var ch = s.charAt(i);
+   if('ilI1.,:;!|\'()[] '.indexOf(ch) >= 0) total += 0.285;
+   else if('mwMW@%'.indexOf(ch) >= 0) total += 0.80;
+   else if(ch >= 'A' && ch <= 'Z') total += 0.65;
+   else total += 0.515;
+  }
+  return total * fontSize * (esBold ? 1.055 : 1.0);
+ }
+
+ function claveFuentePdf(familia, estilo){
+  var f = String(familia || 'helvetica').toLowerCase();
+  var st = String(estilo || 'normal').toLowerCase();
+  var esTimes = f.indexOf('times') >= 0;
+  if(esTimes){
+   if(st.indexOf('bold') >= 0) return 'F5';
+   if(st.indexOf('italic') >= 0 || st.indexOf('oblique') >= 0) return 'F6';
+   return 'F4';
+  }
+  if(st.indexOf('bold') >= 0) return 'F2';
+  if(st.indexOf('italic') >= 0 || st.indexOf('oblique') >= 0) return 'F3';
+  return 'F1';
+ }
+
+ function MotorPDFConsular(opciones){
+  if(!(this instanceof MotorPDFConsular)) return new MotorPDFConsular(opciones);
+  this._W = 595.28;
+  this._H = 841.89;
+  this._paginas = [[]];
+  this._pagActual = 0;
+  this._fontFamily = 'helvetica';
+  this._fontStyle = 'normal';
+  this._fontKey = 'F1';
+  this._fontSize = 12;
+  this._fillRGB = [0, 0, 0];
+  this._drawRGB = [0, 0, 0];
+  this._textRGB = [0, 0, 0];
+  this._lineWidth = 1;
+  this._cacheBytes = null;
+  var self = this;
+  this.internal = {
+   pageSize: {
+    getWidth: function(){ return self._W; },
+    getHeight: function(){ return self._H; }
+   },
+   getNumberOfPages: function(){ return self._paginas.length; }
+  };
+ }
+
+ MotorPDFConsular.prototype._pushAscii = function(str){
+  var arr = this._paginas[this._pagActual];
+  for(var i = 0; i < str.length; i++) arr.push(str.charCodeAt(i) & 0xFF);
+  this._cacheBytes = null;
+ };
+
+ MotorPDFConsular.prototype._pushBytes = function(bytes){
+  var arr = this._paginas[this._pagActual];
+  for(var i = 0; i < bytes.length; i++) arr.push(bytes[i] & 0xFF);
+  this._cacheBytes = null;
+ };
+
+ MotorPDFConsular.prototype.addPage = function(){
+  this._paginas.push([]);
+  this._pagActual = this._paginas.length - 1;
+  this._cacheBytes = null;
+  return this;
+ };
+
+ MotorPDFConsular.prototype.setPage = function(n){
+  var idx = Math.max(1, Math.min(this._paginas.length, parseInt(n, 10) || 1)) - 1;
+  this._pagActual = idx;
+  return this;
+ };
+
+ MotorPDFConsular.prototype.getNumberOfPages = function(){
+  return this._paginas.length;
+ };
+
+ MotorPDFConsular.prototype.setFillColor = function(r, g, b){
+  this._fillRGB = [(r||0)/255, (g||0)/255, (b||0)/255];
+  return this;
+ };
+
+ MotorPDFConsular.prototype.setDrawColor = function(r, g, b){
+  this._drawRGB = [(r||0)/255, (g||0)/255, (b||0)/255];
+  return this;
+ };
+
+ MotorPDFConsular.prototype.setTextColor = function(r, g, b){
+  this._textRGB = [(r||0)/255, (g||0)/255, (b||0)/255];
+  return this;
+ };
+
+ MotorPDFConsular.prototype.setLineWidth = function(w){
+  this._lineWidth = (w && w > 0) ? w : 1;
+  return this;
+ };
+
+ MotorPDFConsular.prototype.setFont = function(fam, st){
+  if(fam) this._fontFamily = fam;
+  this._fontStyle = st || 'normal';
+  this._fontKey = claveFuentePdf(this._fontFamily, this._fontStyle);
+  return this;
+ };
+
+ MotorPDFConsular.prototype.setFontSize = function(sz){
+  this._fontSize = (sz && sz > 0) ? sz : 12;
+  return this;
+ };
+
+ MotorPDFConsular.prototype._estiloPintado = function(style){
+  var s = String(style || 'S').toUpperCase();
+  if(s === 'F') return 'f';
+  if(s === 'FD' || s === 'DF') return 'B';
+  return 'S';
+ };
+
+ MotorPDFConsular.prototype._prefijoGrafico = function(){
+  return numPdf(this._fillRGB[0]) + ' ' + numPdf(this._fillRGB[1]) + ' ' + numPdf(this._fillRGB[2]) + ' rg ' +
+         numPdf(this._drawRGB[0]) + ' ' + numPdf(this._drawRGB[1]) + ' ' + numPdf(this._drawRGB[2]) + ' RG ' +
+         numPdf(this._lineWidth) + ' w ';
+ };
+
+ MotorPDFConsular.prototype.rect = function(x, y, w, h, style){
+  var py = this._H - y - h;
+  var op = this._estiloPintado(style);
+  this._pushAscii('q ' + this._prefijoGrafico() + numPdf(x) + ' ' + numPdf(py) + ' ' + numPdf(w) + ' ' + numPdf(h) + ' re ' + op + ' Q\n');
+  return this;
+ };
+
+ MotorPDFConsular.prototype.roundedRect = function(x, y, w, h, rx, ry, style){
+  var r = Math.max(0, Math.min(rx || 0, ry || rx || 0, w / 2, h / 2));
+  if(r <= 0.2) return this.rect(x, y, w, h, style);
+  var k = 0.55228475 * r;
+  var x0 = x, x1 = x + w, yTop = this._H - y, yBot = this._H - y - h;
+  var op = this._estiloPintado(style);
+  var p = 'q ' + this._prefijoGrafico() +
+   numPdf(x0 + r) + ' ' + numPdf(yTop) + ' m ' +
+   numPdf(x1 - r) + ' ' + numPdf(yTop) + ' l ' +
+   numPdf(x1 - r + k) + ' ' + numPdf(yTop) + ' ' + numPdf(x1) + ' ' + numPdf(yTop - r + k) + ' ' + numPdf(x1) + ' ' + numPdf(yTop - r) + ' c ' +
+   numPdf(x1) + ' ' + numPdf(yBot + r) + ' l ' +
+   numPdf(x1) + ' ' + numPdf(yBot + r - k) + ' ' + numPdf(x1 - r + k) + ' ' + numPdf(yBot) + ' ' + numPdf(x1 - r) + ' ' + numPdf(yBot) + ' c ' +
+   numPdf(x0 + r) + ' ' + numPdf(yBot) + ' l ' +
+   numPdf(x0 + r - k) + ' ' + numPdf(yBot) + ' ' + numPdf(x0) + ' ' + numPdf(yBot + r - k) + ' ' + numPdf(x0) + ' ' + numPdf(yBot + r) + ' c ' +
+   numPdf(x0) + ' ' + numPdf(yTop - r) + ' l ' +
+   numPdf(x0) + ' ' + numPdf(yTop - r + k) + ' ' + numPdf(x0 + r - k) + ' ' + numPdf(yTop) + ' ' + numPdf(x0 + r) + ' ' + numPdf(yTop) + ' c h ' +
+   op + ' Q\n';
+  this._pushAscii(p);
+  return this;
+ };
+
+ MotorPDFConsular.prototype.splitTextToSize = function(texto, maxWidth){
+  var limite = Math.max(40, Number(maxWidth) || 480);
+  var esBold = String(this._fontStyle).toLowerCase().indexOf('bold') >= 0;
+  var bloques = String(texto === null || texto === undefined ? '' : texto).split(/\r?\n/);
+  var resultado = [];
+  for(var b = 0; b < bloques.length; b++){
+   var parrafo = bloques[b];
+   if(!parrafo.trim()){
+    resultado.push('');
+    continue;
+   }
+   var palabras = parrafo.split(/\s+/);
+   var actual = '';
+   for(var w = 0; w < palabras.length; w++){
+    var pal = palabras[w];
+    if(!pal) continue;
+    var candidato = actual ? (actual + ' ' + pal) : pal;
+    if(!actual || medirAnchoLinea(candidato, this._fontSize, esBold) <= limite){
+     actual = candidato;
+    } else {
+     resultado.push(actual);
+     actual = pal;
+    }
+   }
+   if(actual) resultado.push(actual);
+  }
+  return resultado.length ? resultado : [''];
+ };
+
+ MotorPDFConsular.prototype.text = function(lineasOStr, x, y){
+  var lineas = Array.isArray(lineasOStr) ? lineasOStr : String(lineasOStr === null || lineasOStr === undefined ? '' : lineasOStr).split(/\r?\n/);
+  var inter = this._fontSize * 1.22;
+  for(var i = 0; i < lineas.length; i++){
+   var ln = lineas[i];
+   if(!ln) continue;
+   var py = this._H - (y + i * inter);
+   this._pushAscii(
+    'BT /' + this._fontKey + ' ' + numPdf(this._fontSize) + ' Tf ' +
+    numPdf(this._textRGB[0]) + ' ' + numPdf(this._textRGB[1]) + ' ' + numPdf(this._textRGB[2]) + ' rg ' +
+    '1 0 0 1 ' + numPdf(x) + ' ' + numPdf(py) + ' Tm ('
+   );
+   this._pushBytes(aBytesWinAnsi(ln));
+   this._pushAscii(') Tj ET\n');
+  }
+  return this;
+ };
+
+ MotorPDFConsular.prototype._compilarBytes = function(){
+  if(this._cacheBytes) return this._cacheBytes;
+  var buf = [];
+  function wStr(s){ for(var i = 0; i < s.length; i++) buf.push(s.charCodeAt(i) & 0xFF); }
+  function wArr(a){ for(var i = 0; i < a.length; i++) buf.push(a[i] & 0xFF); }
+
+  /* Cabecera binaria oficial PDF 1.4 */
+  wStr('%PDF-1.4\n%');
+  buf.push(0xE2, 0xE3, 0xCF, 0xD3, 0x0A);
+
+  var offsets = [0];
+  function iniObj(id){
+   offsets[id] = buf.length;
+   wStr(id + ' 0 obj\n');
+  }
+  function finObj(){ wStr('\nendobj\n'); }
+
+  var nPags = this._paginas.length;
+  var primerIdPag = 9;
+  var kids = [];
+  for(var p = 0; p < nPags; p++) kids.push((primerIdPag + p * 2) + ' 0 R');
+
+  iniObj(1); wStr('<< /Type /Catalog /Pages 2 0 R >>'); finObj();
+  iniObj(2); wStr('<< /Type /Pages /Kids [' + kids.join(' ') + '] /Count ' + nPags + ' >>'); finObj();
+
+  var fuentes = [
+   [3, 'Helvetica'],
+   [4, 'Helvetica-Bold'],
+   [5, 'Helvetica-Oblique'],
+   [6, 'Times-Roman'],
+   [7, 'Times-Bold'],
+   [8, 'Times-Italic']
+  ];
+  for(var f = 0; f < fuentes.length; f++){
+   iniObj(fuentes[f][0]);
+   wStr('<< /Type /Font /Subtype /Type1 /BaseFont /' + fuentes[f][1] + ' /Encoding /WinAnsiEncoding >>');
+   finObj();
+  }
+
+  for(var idx = 0; idx < nPags; idx++){
+   var idPage = primerIdPag + idx * 2;
+   var idStream = idPage + 1;
+   var contenido = this._paginas[idx];
+
+   iniObj(idPage);
+   wStr('<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] ' +
+        '/Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R /F4 6 0 R /F5 7 0 R /F6 8 0 R >> >> ' +
+        '/Contents ' + idStream + ' 0 R >>');
+   finObj();
+
+   iniObj(idStream);
+   wStr('<< /Length ' + contenido.length + ' >>\nstream\n');
+   wArr(contenido);
+   wStr('\nendstream');
+   finObj();
+  }
+
+  var idInfo = primerIdPag + nPags * 2;
+  iniObj(idInfo);
+  wStr('<< /Title (VISAPREP PRO - Documento Consular) /Producer (VisaPrep Pro Mobile PDF Engine) >>');
+  finObj();
+
+  var totalObjs = idInfo;
+  var startXref = buf.length;
+  wStr('xref\n0 ' + (totalObjs + 1) + '\n');
+  wStr('0000000000 65535 f \n');
+  for(var oid = 1; oid <= totalObjs; oid++){
+   var offStr = ('0000000000' + (offsets[oid] || 0)).slice(-10);
+   wStr(offStr + ' 00000 n \n');
+  }
+  wStr('trailer\n<< /Size ' + (totalObjs + 1) + ' /Root 1 0 R /Info ' + idInfo + ' 0 R >>\nstartxref\n' + startXref + '\n%%EOF\n');
+
+  this._cacheBytes = new Uint8Array(buf);
+  return this._cacheBytes;
+ };
+
+ MotorPDFConsular.prototype.output = function(tipo){
+  var u8 = this._compilarBytes();
+  var t = String(tipo || 'arraybuffer').toLowerCase();
+  if(t === 'arraybuffer') return u8.buffer;
+  if(t === 'uint8array') return u8;
+  if(t === 'blob') return new Blob([u8], { type: 'application/pdf' });
+  if(t === 'bloburl'){
+   var uObj = global.URL || global.webkitURL;
+   var bUrl = uObj.createObjectURL(new Blob([u8], { type: 'application/pdf' }));
+   registrarBlobUrl(bUrl);
+   return bUrl;
+  }
+  if(t === 'datauristring' || t === 'dataurlstring'){
+   return 'data:application/pdf;base64,' + uint8ABase64(u8);
+  }
+  return u8.buffer;
+ };
+
+ /* Descarga directa móvil sin ventanas emergentes (popups) ni redirecciones bloqueadas */
+ MotorPDFConsular.prototype.save = function(nombreArchivo){
+  var nombre = String(nombreArchivo || 'Documento-VisaPrep-Pro.pdf');
+  if(!/\.pdf$/i.test(nombre)) nombre += '.pdf';
+  try {
+   var u8 = this._compilarBytes();
+   var blob = new Blob([u8], { type: 'application/pdf' });
+
+   if(global.navigator && typeof global.navigator.msSaveOrOpenBlob === 'function'){
+    global.navigator.msSaveOrOpenBlob(blob, nombre);
+    return this;
+   }
+
+   var urlDescarga = '';
+   var uApi = global.URL || global.webkitURL;
+   if(uApi && typeof uApi.createObjectURL === 'function'){
+    try {
+     urlDescarga = uApi.createObjectURL(blob);
+     registrarBlobUrl(urlDescarga);
+    } catch(eUrl){ urlDescarga = ''; }
+   }
+   if(!urlDescarga){
+    urlDescarga = 'data:application/pdf;base64,' + uint8ABase64(u8);
+   }
+
+   var a = document.createElement('a');
+   a.href = urlDescarga;
+   a.setAttribute('download', nombre);
+   a.rel = 'noopener';
+   a.style.position = 'fixed';
+   a.style.left = '-9999px';
+   a.style.top = '0';
+   a.style.opacity = '0';
+   a.style.pointerEvents = 'none';
+   document.body.appendChild(a);
+
+   /* Disparo síncrono dentro del mismo gesto táctil del usuario (cero popups) */
+   a.click();
+
+   setTimeout(function(){
+    try { if(a.parentNode) a.parentNode.removeChild(a); } catch(eRem){}
+   }, 400);
+  } catch(eSilent){}
+  return this;
+ };
+
+ global.jspdf = { jsPDF: MotorPDFConsular };
+ global.jsPDF = MotorPDFConsular;
+})(window);
+</script>
+
+<script>
+(function(){
+ 'use strict';
+
+ /* ══ Almacenamiento seguro con localStorage + respaldo en memoria para iframes ══ */
+ var memStore = {};
+ function leerStore(k){
+  try {
+   var v = window.localStorage.getItem(k);
+   if(v !== null) return v;
+  } catch(e){}
+  return memStore[k] || null;
+ }
+ function guardarStore(k, v){
+  memStore[k] = String(v);
+  try { window.localStorage.setItem(k, String(v)); } catch(e){}
+ }
+
+ /* ══ 4. Fechas dinámicas 100% basadas en la fecha actual del sistema (new Date()) ══ */
+ var MESES_ES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+ var MESES_EN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+ function obtenerLugarYFechaES(){
+  var hoy = new Date();
+  return 'La Habana, ' + hoy.getDate() + ' de ' + MESES_ES[hoy.getMonth()] + ' de ' + hoy.getFullYear();
+ }
+
+ function obtenerFechaCortaES(){
+  var hoy = new Date();
+  var dd = ('0' + hoy.getDate()).slice(-2);
+  var mm = ('0' + (hoy.getMonth() + 1)).slice(-2);
+  return dd + '/' + mm + '/' + hoy.getFullYear();
+ }
+
+ function obtenerFechaEN(){
+  var hoy = new Date();
+  return MESES_EN[hoy.getMonth()] + ' ' + hoy.getDate() + ', ' + hoy.getFullYear();
+ }
+
+ /* ══ Integración opcional con SDK Oficial QvaPay Mini-Apps ══ */
+ function initQvaPaySDK(){
+  try {
+   if(window.QvaPay){
+    if(typeof window.QvaPay.ready === 'function') window.QvaPay.ready();
+    if(window.QvaPay.ui && window.QvaPay.ui.colors && typeof window.QvaPay.ui.colors.set === 'function'){
+     window.QvaPay.ui.colors.set({ header: '#0A0E14', background: '#0A0E14' });
+    }
+    if(window.QvaPay.ui && window.QvaPay.ui.header && typeof window.QvaPay.ui.header.set === 'function'){
+     window.QvaPay.ui.header.set({ subtitle: 'Asistente Migratorio Consular' });
+    }
+   }
+  } catch(e){}
+ }
+ initQvaPaySDK();
+ document.addEventListener('qvapay:ready', initQvaPaySDK);
+
+ /* ══ Datos Jurídicos por Jurisdicción Consular ══ */
+ var DESTINOS = {
+  eeuu: {
+   id: 'eeuu',
+   nombre: 'EE.UU.',
+   nombreEN: 'the United States',
+   archivo: 'EEUU',
+   visa: 'Visa de No Inmigrante B1/B2 (Turismo y Visita Temporal)',
+   visaEN: 'B-1/B-2 Non-Immigrant Visitor Visa',
+   formulario: 'Formulario Electrónico DS-160',
+   formularioEN: 'Form DS-160 Electronic Application',
+   embajadaEN: 'Consular Section - Embassy of the United States of America',
+   embajadaES: 'Honorable Sección Consular - Embajada de los Estados Unidos de América',
+   normaEN: 'Section 214(b) of the U.S. Immigration and Nationality Act (INA)',
+   normaES: 'la Sección 214(b) de la Ley de Inmigración y Nacionalidad (INA)',
+   docs: [
+    { id: 'pasaporte', nombre: 'Pasaporte', tag: 'Obligatorio', detalle: 'Pasaporte ordinario cubano vigente por al menos 6 meses más allá de la estancia prevista y con páginas libres para estampado.' },
+    { id: 'fotos', nombre: 'Fotos', tag: 'Norma 5x5 cm', detalle: '2 fotografías biométricas recientes (5 x 5 cm / 2 x 2 pulgadas), fondo blanco puro, rostro despejado sin espejuelos ni edición digital.' },
+    { id: 'formulario', nombre: 'Formulario', tag: 'DS-160 Oficial', detalle: 'Hoja impresa de confirmación del Formulario DS-160 con código de barras láser legible y recibo de cita consular.' },
+    { id: 'cuentas', nombre: 'Estados de cuenta', tag: 'Solvencia y Arraigo', detalle: 'Estados de cuenta bancarios de los últimos 6 meses, título de propiedad inmobiliaria en Cuba y certificación laboral o registro ONAT/TCP.' }
+   ]
+  },
+  espana: {
+   id: 'espana',
+   nombre: 'España',
+   nombreEN: 'Spain',
+   archivo: 'Espana',
+   visa: 'Visado Uniforme Schengen de Corta Estancia (Tipo C)',
+   visaEN: 'Schengen Short-Stay Uniform Visa (Category C)',
+   formulario: 'Solicitud Oficial de Visado Schengen',
+   formularioEN: 'Official Schengen Visa Application Form',
+   embajadaEN: 'Visa Section - Consulate General of Spain in Havana',
+   embajadaES: 'Ilustrísima Sección de Visados - Consulado General de España en La Habana',
+   normaEN: 'Article 21 of Regulation (EC) No 810/2009 (Community Code on Visas)',
+   normaES: 'el Artículo 21 del Reglamento (CE) n.º 810/2009 (Código Comunitario sobre Visados Schengen)',
+   docs: [
+    { id: 'pasaporte', nombre: 'Pasaporte', tag: 'Obligatorio', detalle: 'Pasaporte vigente hasta 3 meses después de la salida prevista del espacio Schengen, expedido en los últimos 10 años y con al menos 2 páginas libres.' },
+    { id: 'fotos', nombre: 'Fotos', tag: 'Norma ICAO', detalle: 'Fotografía reciente tamaño carnet (35 x 45 mm) en color, fondo blanco liso, tomada de frente y con menos de 6 meses de antigüedad.' },
+    { id: 'formulario', nombre: 'Formulario', tag: 'Solicitud Schengen', detalle: 'Impreso oficial de Solicitud de Visado Schengen debidamente cumplimentado y firmado, más prereserva de boleto ida y vuelta y seguro médico de 30.000 EUR.' },
+    { id: 'cuentas', nombre: 'Estados de cuenta', tag: 'Medios Económicos', detalle: 'Estados de cuenta bancarios acreditando solvencia mínima exigida, escritura de propiedad en Cuba y certificación de ingresos o licencia TCP.' }
+   ]
+  },
+  canada: {
+   id: 'canada',
+   nombre: 'Canadá',
+   nombreEN: 'Canada',
+   archivo: 'Canada',
+   visa: 'Temporary Resident Visa (TRV · Visitante)',
+   visaEN: 'Temporary Resident Visitor Visa (TRV)',
+   formulario: 'Formularios IMM 5257 + IMM 5645 (Información Familiar)',
+   formularioEN: 'IRCC Forms IMM 5257 & IMM 5645',
+   embajadaEN: 'Visa and Immigration Section - Immigration, Refugees and Citizenship Canada (IRCC)',
+   embajadaES: 'Oficial de Inmigración y Visados - Immigration, Refugees and Citizenship Canada (IRCC)',
+   normaEN: 'Section 179(b) of the Immigration and Refugee Protection Regulations (IRPR)',
+   normaES: 'el Artículo 179(b) del Reglamento de Inmigración y Protección de los Refugiados de Canadá (IRPR)',
+   docs: [
+    { id: 'pasaporte', nombre: 'Pasaporte', tag: 'Obligatorio', detalle: 'Pasaporte vigente con copia digitalizada de la página biográfica y de todos los sellos o visados anteriores para expediente IRCC.' },
+    { id: 'fotos', nombre: 'Fotos', tag: '35x45 mm + Biometría', detalle: 'Fotografía digital conforme al estándar IRCC (35 x 45 mm) y comprobante de citación para toma de datos biométricos.' },
+    { id: 'formulario', nombre: 'Formulario', tag: 'IMM 5257 / 5645', detalle: 'Formularios oficiales IMM 5257 (Application for Visitor Visa) e IMM 5645 (Family Information) validados electrónicamente sin discrepancias.' },
+    { id: 'cuentas', nombre: 'Estados de cuenta', tag: 'Fondos CAD y Arraigo', detalle: 'Estados de cuenta de los últimos 4 a 6 meses, prueba de fondos disponibles, títulos de propiedad en Cuba y constancia laboral o fiscal.' }
+   ]
+  },
+  mexico: {
+   id: 'mexico',
+   nombre: 'México',
+   nombreEN: 'Mexico',
+   archivo: 'Mexico',
+   visa: 'Visa de Visitante sin permiso para realizar actividades remuneradas',
+   visaEN: 'Non-Remunerated Temporary Visitor Visa',
+   formulario: 'Formato Oficial de Solicitud de Visa Consular',
+   formularioEN: 'Official Consular Visa Application Form',
+   embajadaEN: 'Consular Section - Embassy of Mexico in Havana',
+   embajadaES: 'Honorable Sección Consular - Embajada de los Estados Unidos Mexicanos en La Habana',
+   normaEN: 'Article 37 of the Mexican Migration Law and General Visa Issuance Guidelines',
+   normaES: 'el Artículo 37 de la Ley de Migración y los Lineamientos Generales para la Expedición de Visas',
+   docs: [
+    { id: 'pasaporte', nombre: 'Pasaporte', tag: 'Obligatorio', detalle: 'Pasaporte ordinario vigente en original y copia nítida de la hoja de datos principales y visados previos vigentes.' },
+    { id: 'fotos', nombre: 'Fotos', tag: '3.9 x 3.1 cm', detalle: 'Fotografía reciente a color tamaño pasaporte (3.9 cm x 3.1 cm), rostro descubierto, sin anteojos y fondo blanco.' },
+    { id: 'formulario', nombre: 'Formulario', tag: 'Solicitud Consular', detalle: 'Solicitud oficial de visa impresa por ambas caras, llenada íntegramente sin tachaduras + confirmación de cita consular.' },
+    { id: 'cuentas', nombre: 'Estados de cuenta', tag: 'Arraigo o Solvencia', detalle: 'Estados de cuenta bancarios sellados, escritura pública de bien inmueble en Cuba con antigüedad demostrable y certificación de empleo estable.' }
+   ]
+  }
+ };
+
+ /* ══ Estado Global ══ */
+ var paisActual = 'eeuu';
+ var esVIP = (leerStore('visaprep_estado_usuario') === 'VIP' || leerStore('visaprep_vip_v1') === 'true');
+ var procesandoModal = false;
+ var generandoCarta = false;
+ var respuestasDiag = { pasaporte: 'vigente', invitacion: 'familiar', arraigo: 'ambos' };
+ var checksMarcados = { pasaporte: true, fotos: true, formulario: true, cuentas: true };
+ var cartaActual = { en: '', es: '' };
+ var ultimoChecklistPdf = null;
+ var ultimaCartaPdf = null;
+ var pdfEnModal = null;
+
+ function obtenerLugarYFechaActual(){
+  var el = document.getElementById('inpLugarFecha');
+  var val = el ? (el.value || '').trim() : '';
+  if(!val) return obtenerLugarYFechaES();
+  return val;
+ }
+ var idiomaCartaVista = 'ambos';
+
+ function $(id){ return document.getElementById(id); }
+
+ function mostrarToast(msg, variante){
+  var t = $('toastConsular');
+  t.textContent = msg;
+  t.className = variante || '';
+  clearTimeout(mostrarToast._tm);
+  mostrarToast._tm = setTimeout(function(){
+   t.classList.add('oculto');
+  }, 3200);
+ }
+
+ /* Normaliza símbolos fuera de Latin-1 para fuentes estándar de jsPDF conservando acentos y eñes */
+ function normalizarTextoPdf(str){
+  return String(str || '')
+   .replace(/[—–―─═]/g, '-')
+   .replace(/[“”«»]/g, '"')
+   .replace(/[‘’]/g, "'")
+   .replace(/•/g, '*')
+   .replace(/✓/g, 'X')
+   .replace(/[^\x09\x0A\x0D\x20-\xFF]/g, '');
+ }
+
+ /* ══ Navegación entre Vistas ══ */
+ function irAVista(idVista){
+  var vistas = document.querySelectorAll('.vista');
+  for(var i = 0; i < vistas.length; i++){
+   vistas[i].classList.toggle('activa', vistas[i].id === idVista);
+  }
+  var botones = document.querySelectorAll('.nav-btn');
+  for(var j = 0; j < botones.length; j++){
+   botones[j].classList.toggle('activo', botones[j].getAttribute('data-ir') === idVista);
+  }
+  if(idVista === 'vistaVip' && !($('inpLugarFecha').value || '').trim()){
+   $('inpNombreFirma').value = 'Ing. Camila Rodríguez Morales';
+  $('inpLugarFecha').value = obtenerLugarYFechaES();
+  }
+  try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch(e){ window.scrollTo(0, 0); }
+ }
+
+ /* ══ 1. Generación Real de Checklist PDF con jsPDF leyendo los documentos en pantalla ══ */
+ function descargarChecklistConJsPDF(){
+  try {
+  var jspdfNS = window.jspdf;
+  if(!jspdfNS || !jspdfNS.jsPDF){
+   mostrarToast('Preparando tu PDF...', 'oro');
+   return;
+  }
+  var dest = DESTINOS[paisActual];
+  var doc = new jspdfNS.jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
+  var ancho = doc.internal.pageSize.getWidth();
+  var alto = doc.internal.pageSize.getHeight();
+
+  /* Cabecera corporativa oscura */
+  doc.setFillColor(10, 14, 20);
+  doc.rect(0, 0, ancho, 88, 'F');
+  doc.setFillColor(212, 175, 55);
+  doc.rect(0, 88, ancho, 3, 'F');
+
+  doc.setTextColor(255, 255, 255);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(17);
+  doc.text('VISAPREP PRO  |  CHECKLIST DOCUMENTAL OFICIAL', 40, 40);
+
+  doc.setTextColor(180, 205, 230);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(9.5);
+  var linDest = doc.splitTextToSize(normalizarTextoPdf('Destino: ' + dest.nombre + '  -  ' + dest.visa), ancho - 80);
+  doc.text(linDest[0] || '', 40, 58);
+  doc.text(normalizarTextoPdf('Emitido: ' + obtenerLugarYFechaActual()), 40, 74);
+
+  var y = 118;
+  doc.setTextColor(15, 23, 42);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(12);
+  doc.text(normalizarTextoPdf('LISTA DE DOCUMENTOS REQUERIDOS EN PANTALLA:'), 40, y);
+  y += 20;
+
+  /* Leer directamente los documentos renderizados en pantalla (#listaChecklistDocs) */
+  var nodosPantalla = document.querySelectorAll('#listaChecklistDocs .doc-item');
+  for(var i = 0; i < nodosPantalla.length; i++){
+   var itemEl = nodosPantalla[i];
+   var estaMarcado = itemEl.classList.contains('marcado');
+   var nombreEl = itemEl.querySelector('.doc-nombre-txt');
+   var tagEl = itemEl.querySelector('.doc-tag');
+   var detEl = itemEl.querySelector('.doc-detalle');
+
+   var tituloDoc = normalizarTextoPdf((nombreEl ? nombreEl.textContent : '') + (tagEl ? '  [' + tagEl.textContent + ']' : ''));
+   var detalleDoc = normalizarTextoPdf(detEl ? detEl.textContent : '');
+   var lineasDet = doc.splitTextToSize(detalleDoc, ancho - 115);
+   var altoCaja = 34 + lineasDet.length * 13;
+
+   if(y + altoCaja > alto - 70){
+    doc.addPage();
+    y = 50;
+   }
+
+   doc.setFillColor(246, 248, 252);
+   doc.setDrawColor(212, 175, 55);
+   doc.setLineWidth(0.9);
+   doc.roundedRect(40, y, ancho - 80, altoCaja, 6, 6, 'FD');
+
+   /* Casilla visual en el PDF */
+   doc.setDrawColor(14, 116, 144);
+   doc.setLineWidth(1.2);
+   doc.rect(52, y + 12, 13, 13);
+   if(estaMarcado){
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10);
+    doc.setTextColor(14, 116, 144);
+    doc.text('X', 55, y + 22);
+   }
+
+   doc.setFont('helvetica', 'bold');
+   doc.setFontSize(11.5);
+   doc.setTextColor(10, 14, 20);
+   doc.text((i + 1) + '. ' + tituloDoc, 74, y + 22);
+
+   doc.setFont('helvetica', 'normal');
+   doc.setFontSize(9.8);
+   doc.setTextColor(55, 65, 81);
+   doc.text(lineasDet, 74, y + 38);
+
+   y += altoCaja + 12;
+  }
+
+  y += 10;
+  doc.setFont('helvetica', 'italic');
+  doc.setFontSize(9.5);
+  doc.setTextColor(90, 100, 115);
+  var linRec = doc.splitTextToSize(normalizarTextoPdf('Recomendación jurídica: Verifique que toda la documentación coincida sin contradicciones con su expediente oficial (' + dest.formulario + ').'), ancho - 80);
+  doc.text(linRec, 40, y);
+
+  var totalPagsChk = doc.getNumberOfPages ? doc.getNumberOfPages() : 1;
+  for(var pc = 1; pc <= totalPagsChk; pc++){
+   doc.setPage(pc);
+   doc.setFont('helvetica', 'normal');
+   doc.setFontSize(8.5);
+   doc.setTextColor(130, 140, 155);
+   doc.text(normalizarTextoPdf('VISAPREP PRO · Bufete Digital Consular  |  Página ' + pc + ' de ' + totalPagsChk), 40, alto - 24);
+  }
+
+  var nombreArchivo = 'Checklist-VisaPrep-Pro-' + dest.archivo + '.pdf';
+  var resumenTxt = [];
+  for(var r = 0; r < nodosPantalla.length; r++){
+   var m = nodosPantalla[r].classList.contains('marcado') ? '[X]' : '[ ]';
+   var n = nodosPantalla[r].querySelector('.doc-nombre-txt').textContent;
+   var tg = nodosPantalla[r].querySelector('.doc-tag').textContent;
+   var dt = nodosPantalla[r].querySelector('.doc-detalle').textContent;
+   resumenTxt.push(m + ' ' + (r + 1) + '. ' + n + ' (' + tg + ')\n    ' + dt);
+  }
+  mostrarToast('Preparando tu PDF...', 'oro');
+  var bytesLen = 0;
+  try {
+   var ab = doc.output('arraybuffer');
+   bytesLen = ab ? ab.byteLength : 0;
+   var hrefLimpio = '';
+   try { hrefLimpio = doc.output('bloburl'); } catch(eB){ hrefLimpio = doc.output('datauristring'); }
+   var linkResp = $('linkRespaldoChecklistPdf');
+   linkResp.href = hrefLimpio;
+   linkResp.setAttribute('download', nombreArchivo);
+  } catch(e){}
+
+  ultimoChecklistPdf = {
+   doc: doc,
+   nombre: nombreArchivo,
+   kb: bytesLen ? (Math.max(1, Math.round(bytesLen / 1024)) + ' KB · 1 pág. A4') : 'Formato A4',
+   head: 'VISAPREP PRO  |  CHECKLIST DE DOCUMENTOS CONSULARES',
+   sub: 'Destino: ' + dest.nombre + ' · ' + dest.visa + ' · Emitido: ' + obtenerLugarYFechaActual(),
+   cuerpo: resumenTxt.join('\n\n')
+  };
+
+  try { doc.save(nombreArchivo); } catch(e){}
+
+  $('spanTamChecklistPdf').textContent = ultimoChecklistPdf.kb;
+  $('spanPaisPdf').textContent = dest.nombre;
+  $('spanFechaPdf').textContent = obtenerFechaCortaES();
+  $('avisoPdfGenerado').classList.remove('oculto');
+  mostrarToast('✓ Checklist PDF descargado (' + nombreArchivo + ')', 'verde');
+  } catch(ePdf1){ mostrarToast('Preparando tu PDF...', 'oro'); }
+ }
+
+ /* ══ 3b. Descarga de la Carta de Motivación en PDF con jsPDF ══ */
+ function descargarCartaConJsPDF(){
+  try {
+  var jspdfNS = window.jspdf;
+  if(!jspdfNS || !jspdfNS.jsPDF){
+   mostrarToast('Preparando tu PDF...', 'oro');
+   return;
+  }
+  if(!cartaActual.en || !cartaActual.es){
+   generarCartaAbogado();
+  }
+  var dest = DESTINOS[paisActual];
+  var doc = new jspdfNS.jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
+  var ancho = doc.internal.pageSize.getWidth();
+  var alto = doc.internal.pageSize.getHeight();
+  var margen = 48;
+  var anchoTexto = ancho - margen * 2;
+
+  function pintarEncabezadoPagina(subtituloIdioma){
+   doc.setFillColor(10, 14, 20);
+   doc.rect(0, 0, ancho, 68, 'F');
+   doc.setFillColor(212, 175, 55);
+   doc.rect(0, 68, ancho, 2.5, 'F');
+   doc.setFont('helvetica', 'bold');
+   doc.setFontSize(13.5);
+   doc.setTextColor(255, 255, 255);
+   doc.text('VISAPREP PRO  |  CONSULAR MOTIVATION LETTER', margen, 32);
+   doc.setFont('helvetica', 'normal');
+   doc.setFontSize(9.5);
+   doc.setTextColor(212, 175, 55);
+   doc.text(normalizarTextoPdf(subtituloIdioma + '  -  ' + obtenerLugarYFechaActual()), margen, 50);
+  }
+
+  function escribirBloqueLargo(textoCompleto, subtitulo){
+   pintarEncabezadoPagina(subtitulo);
+   var cursorY = 96;
+   doc.setFont('times', 'normal');
+   doc.setFontSize(11);
+   doc.setTextColor(20, 24, 32);
+
+   var parrafos = normalizarTextoPdf(textoCompleto).split('\n');
+   for(var p = 0; p < parrafos.length; p++){
+    var lineaCruda = parrafos[p];
+    if(!lineaCruda.trim()){
+     cursorY += 9;
+     continue;
+    }
+    var esEncabezado = /^(FORMAL STATEMENT|CARTA JURÍDICA|I\.|II\.|III\.|IV\.|PRIMERO:|SEGUNDO:|TERCERO:|CUARTO:|Subject:|Asunto:)/.test(lineaCruda.trim());
+    doc.setFont('times', esEncabezado ? 'bold' : 'normal');
+    var envueltas = doc.splitTextToSize(lineaCruda, anchoTexto);
+    for(var l = 0; l < envueltas.length; l++){
+     if(cursorY > alto - 54){
+      doc.addPage();
+      pintarEncabezadoPagina(subtitulo + ' (cont.)');
+      cursorY = 96;
+      doc.setFont('times', esEncabezado ? 'bold' : 'normal');
+      doc.setFontSize(11);
+      doc.setTextColor(20, 24, 32);
+     }
+     doc.text(envueltas[l], margen, cursorY);
+     cursorY += 15;
+    }
+   }
+  }
+
+  /* Página 1: Versión Oficial en Inglés */
+  escribirBloqueLargo(cartaActual.en, 'OFFICIAL ENGLISH SUBMISSION (' + dest.nombreEN.toUpperCase() + ')');
+  /* Página siguiente: Versión Formal en Español */
+  doc.addPage();
+  escribirBloqueLargo(cartaActual.es, 'VERSIÓN FORMAL EN ESPAÑOL (' + dest.nombre.toUpperCase() + ')');
+
+  var totPagsCarta = doc.getNumberOfPages ? doc.getNumberOfPages() : 2;
+  for(var pg = 1; pg <= totPagsCarta; pg++){
+   doc.setPage(pg);
+   doc.setFont('helvetica', 'normal');
+   doc.setFontSize(8.5);
+   doc.setTextColor(120, 130, 145);
+   doc.text(normalizarTextoPdf('VISAPREP PRO · Expediente Consular Bilingüe  |  Página ' + pg + ' de ' + totPagsCarta), margen, alto - 24);
+  }
+
+  var nombrePdf = 'Carta-Motivacion-VisaPrep-Pro-' + dest.archivo + '.pdf';
+  var paginasTotales = doc.getNumberOfPages ? doc.getNumberOfPages() : 2;
+  mostrarToast('Preparando tu PDF...', 'oro');
+  var cartaBytes = 0;
+  try {
+   var abCarta = doc.output('arraybuffer');
+   cartaBytes = abCarta ? abCarta.byteLength : 0;
+   var uriLimpio = '';
+   try { uriLimpio = doc.output('bloburl'); } catch(eB2){ uriLimpio = doc.output('datauristring'); }
+   var aResp = $('linkRespaldoCartaPdf');
+   aResp.href = uriLimpio;
+   aResp.setAttribute('download', nombrePdf);
+  } catch(e){}
+
+  ultimaCartaPdf = {
+   doc: doc,
+   nombre: nombrePdf,
+   kb: (cartaBytes ? Math.max(1, Math.round(cartaBytes / 1024)) + ' KB · ' : '') + paginasTotales + ' págs. A4',
+   head: 'VISAPREP PRO  |  CONSULAR MOTIVATION LETTER (EN / ES)',
+   sub: dest.nombre + ' · ' + obtenerLugarYFechaActual(),
+   cuerpo: obtenerTextoCartaVisible()
+  };
+
+  try { doc.save(nombrePdf); } catch(e){}
+
+  $('spanTamCartaPdf').textContent = ultimaCartaPdf.kb;
+  $('avisoCartaPdfGenerado').classList.remove('oculto');
+  mostrarToast('✓ Carta descargada en PDF (' + nombrePdf + ')', 'verde');
+  } catch(ePdf2){ mostrarToast('Preparando tu PDF...', 'oro'); }
+ }
+
+ /* ══ Renderizado Dinámico de País y Checklist ══ */
+ function actualizarPaisUI(){
+  var dest = DESTINOS[paisActual];
+  $('txtDestinoTop').textContent = dest.nombre;
+  $('subDiagnosticoPais').textContent = 'Evaluación preliminar de arraigo y solvencia · Destino: ' + dest.nombre + ' (' + dest.formulario + ')';
+  $('spanPaisAnalizando').textContent = dest.nombre;
+  $('subChecklistPais').textContent = 'Carpeta consular obligatoria · Destino: ' + dest.nombre + ' · ' + dest.visa;
+  $('tagPaisTraductor').textContent = dest.nombre + ' · ' + dest.formulario;
+  $('avisoPdfGenerado').classList.add('oculto');
+  $('avisoCartaPdfGenerado').classList.add('oculto');
+  if(!($('inpLugarFecha').value || '').trim()){
+   $('inpLugarFecha').value = obtenerLugarYFechaES();
+  }
+
+  var cards = document.querySelectorAll('.card-destino');
+  for(var i = 0; i < cards.length; i++){
+   cards[i].classList.toggle('seleccionado', cards[i].getAttribute('data-pais') === paisActual);
+  }
+  renderChecklist();
+ }
+
+ function renderChecklist(){
+  var dest = DESTINOS[paisActual];
+  var cont = $('listaChecklistDocs');
+  cont.innerHTML = '';
+  var totalMarcados = 0;
+
+  for(var i = 0; i < dest.docs.length; i++){
+   (function(docItem){
+    var activo = !!checksMarcados[docItem.id];
+    if(activo) totalMarcados++;
+    var div = document.createElement('div');
+    div.className = 'doc-item' + (activo ? ' marcado' : '');
+    div.innerHTML =
+     '<div class="doc-check">✓</div>' +
+     '<div>' +
+      '<div class="doc-titulo"><span class="doc-nombre-txt">' + docItem.nombre + '</span> <span class="doc-tag">' + docItem.tag + '</span></div>' +
+      '<div class="doc-detalle">' + docItem.detalle + '</div>' +
+     '</div>';
+    div.addEventListener('click', function(){
+     checksMarcados[docItem.id] = !checksMarcados[docItem.id];
+     renderChecklist();
+    });
+    cont.appendChild(div);
+   })(dest.docs[i]);
+  }
+
+  $('txtContadorDocs').textContent = totalMarcados + ' de ' + dest.docs.length + ' verificados';
+  $('barraDocs').style.width = Math.round((totalMarcados / dest.docs.length) * 100) + '%';
+ }
+
+ /* ══ Motor IA Jurídica (A): Traductor de Formularios ══ */
+ function analizarPreguntaIngles(preguntaRaw){
+  var q = (preguntaRaw || '').trim();
+  if(!q){
+   q = 'Have you ever been refused a U.S. Visa, or been refused admission to the United States?';
+  }
+  var low = q.toLowerCase();
+  var dest = DESTINOS[paisActual];
+  var traduccion = '', intencion = '', consejo = '';
+
+  if(low.indexOf('refused') >= 0 || low.indexOf('denied') >= 0 || low.indexOf('withdrawn') >= 0){
+   traduccion = '«¿Alguna vez le han negado una visa anteriormente, le han rechazado la entrada en frontera/aeropuerto o ha retirado su solicitud de admisión?»';
+   intencion = 'El oficial consular comprueba tu honestidad documental. Las bases biométricas consulares conservan todas las solicitudes anteriores.';
+   consejo = 'Si tuviste una negación previa, marca SIEMPRE "YES", indica la fecha aproximada y explica que tus vínculos económicos y patrimoniales en Cuba hoy son más sólidos. Ocultarlo invalida la solicitud.';
+  } else if(low.indexOf('overstay') >= 0 || low.indexOf('unlawfully') >= 0 || low.indexOf('violated') >= 0 || low.indexOf('deport') >= 0){
+   traduccion = '«¿Alguna vez ha permanecido más tiempo del autorizado por inmigración o ha incumplido las condiciones de una visa anterior?»';
+   intencion = 'Verificar tu historial de respeto a los plazos migratorios en viajes previos.';
+   consejo = 'Responde con absoluta exactitud según los sellos de entrada y salida de tus pasaportes anteriores.';
+  } else if(low.indexOf('occupation') >= 0 || low.indexOf('duties') >= 0 || low.indexOf('employer') >= 0 || low.indexOf('job') >= 0){
+   traduccion = '«Indique su ocupación actual y describa brevemente sus funciones profesionales principales.»';
+   intencion = 'Medir tu estabilidad laboral e ingresos regulares que justifican tu retorno puntual a Cuba.';
+   consejo = 'Evita respuestas de una sola palabra. Detalla tu cargo, actividad, antigüedad y responsabilidades concretas de forma coherente con tus certificaciones.';
+  } else if(low.indexOf('paying') >= 0 || low.indexOf('person/entity') >= 0 || low.indexOf('sponsor') >= 0 || low.indexOf('funds') >= 0){
+   traduccion = '«¿Qué persona o entidad cubre los costos de su viaje, qué relación tiene con usted y de qué fondos dispone para la estancia?»';
+   intencion = 'Confirmar solvencia transparente y descartar trabajo no autorizado durante la visita.';
+   consejo = 'Asegúrate de que coincida exactamente con tus estados de cuenta y con la Carta de Invitación / Motivación.';
+  } else if(low.indexOf('relative') >= 0 || low.indexOf('family') >= 0 || low.indexOf('spouse') >= 0 || low.indexOf('sibling') >= 0){
+   traduccion = '«¿Tiene familiares directos residiendo actualmente en el país de destino?»';
+   intencion = 'Evaluar el balance entre tus vínculos familiares fuera y tu arraigo real en Cuba.';
+   consejo = 'Declara siempre con exactitud el estatus real de tus familiares y respalda con documentos tus obligaciones patrimoniales y familiares en Cuba.';
+  } else if(low.indexOf('purpose') >= 0 || low.indexOf('length of stay') >= 0 || low.indexOf('address where') >= 0 || low.indexOf('intended date') >= 0){
+   traduccion = '«¿Cuál es el motivo específico de su viaje, fecha estimada de llegada, duración prevista y dirección exacta de alojamiento?»';
+   intencion = 'Evaluar que tu plan de viaje sea concreto, temporal y coherente con tus vacaciones laborales en Cuba.';
+   consejo = 'Indica una duración razonable (ej. 10 a 21 días), dirección completa con código postal y fechas que cuadren con tu permiso laboral.';
+  } else if(low.indexOf('traveled') >= 0 || low.indexOf('five years') >= 0 || low.indexOf('countries') >= 0){
+   traduccion = '«¿Ha viajado a otros países o regiones durante los últimos cinco (5) años?»';
+   intencion = 'Comprobar tu historial previo como viajero internacional que sale y regresa en fecha.';
+   consejo = 'Enumera todos los viajes de los últimos 5 años tal como constan en los cuños de tu pasaporte.';
+  } else if(low.indexOf('arrested') >= 0 || low.indexOf('convicted') >= 0 || low.indexOf('crime') >= 0 || low.indexOf('offense') >= 0){
+   traduccion = '«¿Alguna vez ha sido detenido, procesado o sancionado por alguna infracción o delito en cualquier país?»';
+   intencion = 'Verificación obligatoria de antecedentes penales y admisibilidad legal.';
+   consejo = 'Debe coincidir estrictamente con tu Certificación de Antecedentes Penales oficial.';
+  } else if(low.indexOf('social media') >= 0 || low.indexOf('platform') >= 0 || low.indexOf('identifier') >= 0){
+   traduccion = '«Indique los nombres de usuario o perfiles públicos que ha utilizado en redes sociales en los últimos 5 años.»';
+   intencion = 'Validación de identidad pública exigida en formularios consulares modernos (como DS-160).';
+   consejo = 'Escribe únicamente tus nombres de usuario reales (nunca contraseñas) y verifica que tu ocupación pública no contradiga tu solicitud.';
+  } else {
+   traduccion = 'Traducción clara al español de la casilla consultada: «' + q + '» — Solicita datos verificables del solicitante dentro del ' + dest.formulario + '.';
+   intencion = 'El consulado de ' + dest.nombre + ' contrasta esta casilla con tu entrevista verbal y tus soportes impresos.';
+   consejo = 'Responde sin abreviaturas ambiguas y verifica 100% de coherencia con las fechas, montos y nombres declarados en tu Carta de Motivación.';
+  }
+
+  return (
+   '1. QUÉ SIGNIFICA EN ESPAÑOL FÁCIL:\n' + traduccion + '\n\n' +
+   '2. QUÉ EVALÚA LA EMBAJADA (' + dest.nombre.toUpperCase() + '):\n' + intencion + '\n\n' +
+   '3. RECOMENDACIÓN DE ABOGADO MIGRATORIO:\n' + consejo
+  );
+ }
+
+ /* ══ Motor IA Jurídica (B): Carta de Motivación Bilingüe con Fecha Actual (new Date()) ══ */
+ function limpiarFraseES(txt, fallback){
+  var s = (txt || '').trim();
+  if(!s) return fallback;
+  return s.replace(/\.+$/, '');
+ }
+
+ function sintetizarOcupacionEN(esTxt){
+  var t = (esTxt || '').toLowerCase();
+  if(!t.trim()){
+   return 'an established independent professional and licensed private enterprise owner in Havana, Cuba, maintaining stable, verifiable lawful income and active client commitments';
+  }
+  var roles = [];
+  if(/ingenier/.test(t)) roles.push('a qualified engineer');
+  if(/m[eé]dic|doctor|odont|enfermer|salud/.test(t)) roles.push('a licensed healthcare professional');
+  if(/abogad|jurist|derecho/.test(t)) roles.push('a legal professional');
+  if(/inform[aá]tic|programad|software|desarrollad|sistemas/.test(t)) roles.push('an IT and software engineering specialist');
+  if(/arquitect/.test(t)) roles.push('a practicing architect');
+  if(/contad|econom|finanz/.test(t)) roles.push('an accounting and financial management professional');
+  if(/profesor|maestr|docent|universidad/.test(t)) roles.push('an academic educator');
+  if(/dise[ñn]/.test(t)) roles.push('a professional design specialist');
+  if(/due[ñn]|propietari|negocio|tcp|mipyme|cuentaprop|cafeter|restauran|tienda|sal[oó]n|taller|empresa/.test(t)){
+   roles.push('the licensed proprietor of an active private commercial enterprise (TCP/MSME) in Cuba');
+  }
+  if(/estudiante/.test(t)) roles.push('a full-time enrolled university student in good academic standing');
+  if(roles.length === 0){
+   roles.push('an established Cuban professional with continuous, verifiable economic activity');
+  }
+  return roles.join(' and ') + ', generating consistent lawful income in Cuba';
+ }
+
+ function sintetizarInvitacionEN(esTxt, destNombreEN){
+  var t = (esTxt || '').toLowerCase();
+  if(!t.trim()){
+   return 'a close family member lawfully residing in ' + destNombreEN + ', who has extended a formal invitation for a brief two-week family and cultural visit';
+  }
+  if(/hotel|turismo|cuenta propia|nadie|propio|autofinanc/.test(t)){
+   return 'arranged under a self-funded short-term cultural and tourism itinerary backed by confirmed hotel reservations and personal bank funds';
+  }
+  var rel = 'a close host lawfully residing in ' + destNombreEN;
+  if(/herman/.test(t)) rel = 'my sibling, lawfully residing in ' + destNombreEN;
+  else if(/madre|mam[aá]|padre|pap[aá]/.test(t)) rel = 'my parent, lawfully residing in ' + destNombreEN;
+  else if(/hij/.test(t)) rel = 'my child, lawfully residing in ' + destNombreEN;
+  else if(/t[ií][oa]/.test(t)) rel = 'my aunt/uncle, lawfully residing in ' + destNombreEN;
+  else if(/prim[oa]/.test(t)) rel = 'my cousin, lawfully residing in ' + destNombreEN;
+  else if(/espos|c[oó]nyuge|pareja/.test(t)) rel = 'my spouse/partner, lawfully residing in ' + destNombreEN;
+  else if(/amig/.test(t)) rel = 'a long-standing personal friend lawfully residing in ' + destNombreEN;
+  return 'hosted by ' + rel + ', who has formally invited me for a strictly temporary stay with verified accommodation support';
+ }
+
+ function sintetizarArraigoEN(esTxt){
+  var t = (esTxt || '').toLowerCase();
+  if(!t.trim()){
+   return 'titled real estate ownership registered in my name in Cuba, active professional contracts requiring my in-person management, and direct family responsibilities in Havana';
+  }
+  var lazos = [];
+  if(/casa|vivienda|apartamento|propiedad|inmueble|terreno/.test(t)){
+   lazos.push('recorded ownership of titled real estate property in Cuba');
+  }
+  if(/negocio|contrato|client|trabajo|empleo|puesto|empresa|tcp|mipyme/.test(t)){
+   lazos.push('ongoing professional and commercial obligations requiring my physical presence back in Cuba');
+  }
+  if(/padre|madre|hijo|ni[ñn]|familia|espos|abuel|cuidado/.test(t)){
+   lazos.push('immediate family dependents residing in Cuba under my direct care and household responsibility');
+  }
+  if(/estudio|universidad|carrera|tesis/.test(t)){
+   lazos.push('active academic enrollment pending degree completion in Cuba');
+  }
+  if(lazos.length === 0){
+   lazos.push('permanent socio-economic, patrimonial, and family roots established in Cuba');
+  }
+  return lazos.join(', combined with ');
+ }
+
+ function generarCartaAbogado(){
+  var dest = DESTINOS[paisActual];
+  var dedRaw = $('inpDedicacion').value;
+  var invRaw = $('inpInvita').value;
+  var regRaw = $('inpRegreso').value;
+
+  var dedES = limpiarFraseES(dedRaw, 'profesional independiente y titular de actividad económica privada legalmente inscrita en La Habana, con ingresos estables y verificables');
+  var invES = limpiarFraseES(invRaw, 'familiar directo con residencia legal en ' + dest.nombre + ', quien extiende invitación formal de hospitalidad temporal por 15 días');
+  var regES = limpiarFraseES(regRaw, 'la titularidad de mi vivienda propia inscrita en Cuba, compromisos profesionales y contractuales en vigor, así como obligaciones familiares directas e indelegables en mi ciudad de residencia');
+
+  var dedEN = sintetizarOcupacionEN(dedRaw);
+  var invEN = sintetizarInvitacionEN(invRaw, dest.nombreEN);
+  var regEN = sintetizarArraigoEN(regRaw);
+
+  /* Fecha dinámica del sistema (new Date()) conservando ciudad con o sin coma */
+  var valorCampo = ($('inpLugarFecha').value || '').trim();
+  var ciudadES = 'La Habana';
+  if(valorCampo){
+   var parteCiudad = valorCampo.split(',')[0].replace(/[0-9]+.*$/, '').trim();
+   if(parteCiudad) ciudadES = parteCiudad;
+  }
+  var hoyGen = new Date();
+  var lugarFechaES = ciudadES + ', ' + hoyGen.getDate() + ' de ' + MESES_ES[hoyGen.getMonth()] + ' de ' + hoyGen.getFullYear();
+  var ciudadEN = (ciudadES.toLowerCase() === 'la habana') ? 'Havana' : ciudadES;
+  var fechaEN = obtenerFechaEN();
+  $('inpLugarFecha').value = lugarFechaES;
+
+  var nombreSol = ($('inpNombreFirma') ? $('inpNombreFirma').value : '').trim();
+  var firmaEN = nombreSol ? (nombreSol + '\n[Signature of Applicant]') : '[Signature of Applicant]';
+  var firmaES = nombreSol ? (nombreSol + '\n[Firma del Solicitante]') : '[Firma del Solicitante]';
+
+  var cartaEN =
+   'FORMAL STATEMENT OF PURPOSE OF TRAVEL & BINDING TIES\n' +
+   'Place and Date: ' + ciudadEN + ', Cuba — ' + fechaEN + '\n' +
+   'To: ' + dest.embajadaEN + '\n' +
+   'Subject: Application for ' + dest.visaEN + ' — Statutory Compliance under ' + dest.normaEN + '\n\n' +
+   'Honorable Consular Officer,\n\n' +
+   'I respectfully submit this formal statement in support of my application for a temporary non-immigrant visa to ' + dest.nombreEN + ', in strict compliance with the evidentiary standards set forth under ' + dest.normaEN + '.\n\n' +
+   'I. PURPOSE OF TEMPORARY VISIT & HOST ARRANGEMENTS\n' +
+   'The sole and legitimate purpose of my intended trip is a brief, well-defined temporary visit ' + invEN + '. My travel itinerary is strictly limited in duration, involves no unauthorized employment or academic enrollment whatsoever, and is fully backed by documented financial means and lawful accommodation.\n\n' +
+   'II. PROFESSIONAL STANDING & LAWFUL SOLVENCY\n' +
+   'In the Republic of Cuba, I currently serve as ' + dedEN + '. My financial records, tax/employment documentation, and personal bank statements enclosed in my consular file confirm that my livelihood is firmly established in my home country.\n\n' +
+   'III. COMPELLING TIES GUARANTEEING TIMELY RETURN TO CUBA\n' +
+   'I maintain permanent, non-abandonable ties to Cuba consisting of ' + regEN + '. As reflected in my supporting civil and property records, my center of vital, economic, and family interests remains unequivocally anchored in Cuba.\n\n' +
+   'IV. SOLEMN UNDERTAKING\n' +
+   'I solemnly affirm that all statements and documents submitted with my application (' + dest.formularioEN + ') are true, complete, and verifiable, and I undertake to depart ' + dest.nombreEN + ' strictly prior to the expiration of my authorized period of stay.\n\n' +
+   'Respectfully submitted,\n' +
+   firmaEN + '\n' +
+   'Cuban Ordinary Passport Holder · ' + ciudadEN + ', Republic of Cuba';
+
+  var cartaES =
+   'CARTA JURÍDICA DE EXPOSICIÓN DE MOTIVOS, SOLVENCIA Y ARRAIGO\n' +
+   'Lugar y fecha: ' + lugarFechaES + '\n' +
+   'Dirigido a: ' + dest.embajadaES + '\n' +
+   'Asunto: Solicitud de ' + dest.visa + ' — Acreditación de Elegibilidad conforme a ' + dest.normaES + '\n\n' +
+   'Distinguido(a) Oficial Consular:\n\n' +
+   'Comparezco respetuosamente ante esta Honorable Sección Consular con el propósito de sustentar documentalmente mi solicitud de visado temporal hacia ' + dest.nombre + ', en estricto apego a los requisitos previstos en ' + dest.normaES + '.\n\n' +
+   'PRIMERO: OBJETO DEL VIAJE E INVITACIÓN FORMAL\n' +
+   'El único motivo de mi desplazamiento es realizar una visita estrictamente temporal, acotada y planificada, contando con el respaldo de: ' + invES + '. Durante mi permanencia respetaré rigurosamente las condiciones migratorias de no-inmigrante, absteniéndome de realizar cualquier actividad ajena a la categoría solicitada.\n\n' +
+   'SEGUNDO: ESTABILIDAD LABORAL Y SOLVENCIA DEMOSTRABLE\n' +
+   'En la República de Cuba desarrollo mi actividad habitual como: ' + dedES + '. Adjunto en mi expediente los estados de cuenta y certificaciones oficiales que acreditan el origen lícito y la suficiencia de los fondos destinados a cubrir mi estancia.\n\n' +
+   'TERCERO: VÍNCULOS SÓLIDOS DE ARRAIGO Y GARANTÍA DE RETORNO A CUBA\n' +
+   'Mi retorno puntual a Cuba dentro del plazo autorizado se encuentra plenamente garantizado por razones patrimoniales, laborales y familiares de peso: ' + regES + '. Dichos vínculos constituyen mi centro permanente de vida y hacen inviable cualquier permanencia fuera del término concedido.\n\n' +
+   'CUARTO: DECLARACIÓN DE VERACIDAD\n' +
+   'Declaro bajo promesa de veracidad que la totalidad de los datos consignados en mi formulario oficial (' + dest.formulario + ') y en los documentos probatorios anexos son auténticos y verificables, comprometiéndome a retornar a territorio cubano antes del vencimiento del visado otorgado.\n\n' +
+   'Con la más alta consideración y respeto,\n' +
+   firmaES + '\n' +
+   'Titular de Pasaporte Ordinario · ' + ciudadES + ', República de Cuba';
+
+  cartaActual.en = cartaEN;
+  cartaActual.es = cartaES;
+  $('refExpedienteCarta').textContent = 'EXPEDIENTE CONSULAR · ' + dest.nombre.toUpperCase() + ' (EN / ES)';
+  renderVistaTextoCarta();
+ }
+
+ function obtenerTextoCartaVisible(){
+  if(idiomaCartaVista === 'en') return cartaActual.en;
+  if(idiomaCartaVista === 'es') return cartaActual.es;
+  return (
+   '──────────────────────────────────\n' +
+   'OFFICIAL ENGLISH VERSION\n' +
+   '──────────────────────────────────\n\n' +
+   cartaActual.en +
+   '\n\n\n' +
+   '──────────────────────────────────\n' +
+   'VERSIÓN FORMAL EN ESPAÑOL\n' +
+   '──────────────────────────────────\n\n' +
+   cartaActual.es
+  );
+ }
+
+ function renderVistaTextoCarta(){
+  $('textoSalidaCarta').textContent = obtenerTextoCartaVisible();
+ }
+
+ /* ══ 2. Modal de Confirmación de Pago QvaPay y Estado VIP en localStorage ══ */
+ function actualizarEstadoVipUI(){
+  var pillTop = $('btnEstadoVipTop');
+  var txtTop = $('txtVipTop');
+  var cardPaywall = $('cardPaywallVip');
+
+  var iconoBox = $('iconoBoxPaywall');
+  var bannerChk = $('bannerVipChecklist');
+  if(esVIP){
+   pillTop.classList.add('activo');
+   txtTop.textContent = 'VIP ACTIVO';
+   cardPaywall.classList.add('desbloqueado');
+   iconoBox.classList.remove('oro');
+   iconoBox.classList.add('verde');
+   iconoBox.innerHTML = '<svg width="23" height="23" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9.5" stroke="#34D399" stroke-width="2"/><path d="M8 12.3L10.8 15L16.2 9.4" stroke="#34D399" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+   $('titEstadoPaywall').textContent = 'Membresía VIP Desbloqueada';
+   $('subEstadoPaywall').textContent = 'Estado VIP activo · Traductor, Generador Bilingüe y descargas PDF habilitados';
+   $('precioPaywallVip').textContent = '✓ VIP ACTIVO';
+   $('zonaBotonQvaPay').classList.add('oculto');
+   $('zonaExitoVip').classList.remove('oculto');
+
+   bannerChk.classList.add('desbloqueado');
+   $('txtSubBannerChecklist').textContent = '✓ Membresía VIP Desbloqueada';
+   $('txtBtnBannerChecklist').textContent = 'Abrir Zona VIP →';
+   $('bannerVipInicio').classList.add('desbloqueado');
+   $('txtSubBannerInicio').textContent = '✓ Membresía VIP Desbloqueada';
+   $('txtBtnBannerInicio').textContent = 'Ir a tus herramientas VIP →';
+   $('btnReiniciarPruebaVip').classList.remove('oculto');
+
+   $('salidaTraductorWrap').classList.remove('dossier-bloqueado');
+   $('candadoTraductor').classList.add('oculto');
+   $('salidaCartaWrap').classList.remove('dossier-bloqueado');
+   $('candadoCarta').classList.add('oculto');
+   $('barraAccionesCarta').classList.remove('oculto');
+  } else {
+   pillTop.classList.remove('activo');
+   txtTop.textContent = 'VIP $4.99';
+   cardPaywall.classList.remove('desbloqueado');
+   iconoBox.classList.remove('verde');
+   iconoBox.classList.add('oro');
+   iconoBox.innerHTML = '<svg width="23" height="23" viewBox="0 0 24 24" fill="none"><path d="M3 18H21V20H3V18ZM5 15L3 7L8.5 10.5L12 4L15.5 10.5L21 7L19 15H5Z" fill="#F5D061"/></svg>';
+   $('titEstadoPaywall').textContent = 'Suite Jurídica Consular VIP';
+   $('subEstadoPaywall').textContent = 'Incluye Traductor de Formularios + Generador Bilingüe de Carta + Descarga PDF';
+   $('precioPaywallVip').innerHTML = '$4.99 <small>USD / único</small>';
+   $('zonaBotonQvaPay').classList.remove('oculto');
+   $('zonaExitoVip').classList.add('oculto');
+   bannerChk.classList.remove('desbloqueado');
+   $('txtSubBannerChecklist').textContent = 'Desbloqueo completo con QvaPay · $4.99';
+   $('txtBtnBannerChecklist').textContent = 'Entrar a VIP →';
+   $('bannerVipInicio').classList.remove('desbloqueado');
+   $('txtSubBannerInicio').textContent = 'Suite Jurídica Completa · Pago único $4.99';
+   $('txtBtnBannerInicio').textContent = 'Abrir Zona VIP →';
+   $('btnReiniciarPruebaVip').classList.add('oculto');
+   $('barraAccionesCarta').classList.add('oculto');
+  }
+ }
+
+ function abrirModalConfirmacionQvaPay(){
+  if(esVIP){
+   mostrarToast('✓ Tu Membresía VIP ya está activa', 'verde');
+   return;
+  }
+  $('fechaModalQva').textContent = obtenerLugarYFechaES();
+  $('estadoBotonesModalQva').classList.remove('oculto');
+  $('estadoProcesandoModalQva').classList.add('oculto');
+  $('modalConfirmarQvaPay').classList.remove('oculto');
+ }
+
+ function cerrarModalConfirmacionQvaPay(){
+  if(procesandoModal){
+   mostrarToast('Espera un instante, estamos confirmando tu pago...', 'oro');
+   return;
+  }
+  $('modalConfirmarQvaPay').classList.add('oculto');
+ }
+
+ function confirmarPagoSimuladoQvaPay(){
+  if(procesandoModal || esVIP) return;
+  procesandoModal = true;
+  $('estadoBotonesModalQva').classList.add('oculto');
+  $('estadoProcesandoModalQva').classList.remove('oculto');
+
+  setTimeout(function(){
+   procesandoModal = false;
+   esVIP = true;
+   guardarStore('visaprep_estado_usuario', 'VIP');
+   guardarStore('visaprep_vip_v1', 'true');
+
+   $('modalConfirmarQvaPay').classList.add('oculto');
+   actualizarEstadoVipUI();
+   mostrarToast('✓ Membresía VIP Desbloqueada con éxito', 'verde');
+  }, 1400);
+ }
+
+ /* ══ Eventos de Interacción ══ */
+ var navBtns = document.querySelectorAll('.nav-btn');
+ for(var i = 0; i < navBtns.length; i++){
+  navBtns[i].addEventListener('click', function(){
+   irAVista(this.getAttribute('data-ir'));
+  });
+ }
+
+ $('btnLogoInicio').addEventListener('click', function(){ irAVista('vistaInicio'); });
+ $('btnEstadoVipTop').addEventListener('click', function(){ irAVista('vistaVip'); });
+
+ var btnsIrVip = document.querySelectorAll('.btnIrSeccionVip');
+ for(var b = 0; b < btnsIrVip.length; b++){
+  btnsIrVip[b].addEventListener('click', function(){ irAVista('vistaVip'); });
+ }
+
+ /* Selección de destino */
+ var destBtns = document.querySelectorAll('.card-destino');
+ for(var d = 0; d < destBtns.length; d++){
+  destBtns[d].addEventListener('click', function(){
+   paisActual = this.getAttribute('data-pais');
+   actualizarPaisUI();
+   if(!$('salidaCartaWrap').classList.contains('oculto')){
+    generarCartaAbogado();
+   }
+   if(!$('salidaTraductorWrap').classList.contains('oculto')){
+    $('textoSalidaTraductor').textContent = analizarPreguntaIngles($('inputPreguntaIngles').value);
+   }
+   mostrarToast('Destino seleccionado: ' + DESTINOS[paisActual].nombre);
+  });
+ }
+
+ /* 1 -> 2: EVALUAR MI PERFIL GRATIS */
+ $('btnEvaluarGratis').addEventListener('click', function(){
+  irAVista('vistaDiagnostico');
+ });
+
+ /* Opciones Diagnóstico */
+ var gruposOpciones = document.querySelectorAll('.opciones-fila');
+ for(var g = 0; g < gruposOpciones.length; g++){
+  (function(contenedor){
+   var clave = contenedor.getAttribute('data-grupo');
+   var botones = contenedor.querySelectorAll('.opcion-radio');
+   for(var k = 0; k < botones.length; k++){
+    botones[k].addEventListener('click', function(){
+     for(var m = 0; m < botones.length; m++) botones[m].classList.remove('activa');
+     this.classList.add('activa');
+     respuestasDiag[clave] = this.getAttribute('data-val');
+    });
+   }
+  })(gruposOpciones[g]);
+ }
+
+ /* Envío de Diagnóstico */
+ $('formDiagnostico').addEventListener('submit', function(e){
+  e.preventDefault();
+  $('cajaResultadoDiag').classList.add('oculto');
+  $('cajaAnalizandoDiag').classList.remove('oculto');
+  $('btnAnalizarPerfil').disabled = true;
+
+  setTimeout(function(){
+   $('cajaAnalizandoDiag').classList.add('oculto');
+   $('btnAnalizarPerfil').disabled = false;
+   var dest = DESTINOS[paisActual];
+   var pts = 0;
+   if(respuestasDiag.pasaporte === 'vigente') pts += 2;
+   else if(respuestasDiag.pasaporte === 'tramite') pts += 1;
+
+   if(respuestasDiag.invitacion === 'familiar' || respuestasDiag.invitacion === 'hotel') pts += 2;
+
+   if(respuestasDiag.arraigo === 'ambos') pts += 2;
+   else if(respuestasDiag.arraigo === 'trabajo') pts += 1.5;
+   else pts += 1;
+
+   var cajaRes = $('cajaResultadoDiag');
+   var badgeRes = $('badgeDictamenDiag');
+   var pasosAbogado = [];
+   if(respuestasDiag.pasaporte === 'no') pasosAbogado.push('1) Solicita primero tu pasaporte ordinario cubano (requisito indispensable para agendar cita).');
+   else if(respuestasDiag.pasaporte === 'tramite') pasosAbogado.push('1) Espera tener el pasaporte físico con +6 meses de vigencia antes de pagar tasas consulares.');
+   else pasosAbogado.push('1) Pasaporte vigente listo para estampado consular.');
+
+   if(respuestasDiag.invitacion === 'no') pasosAbogado.push('2) Define tu respaldo de viaje (carta de invitación formal o itinerario turístico con reservas verificables).');
+   else if(respuestasDiag.invitacion === 'hotel') pasosAbogado.push('2) Acompaña tu reserva de hotel con estados de cuenta que cubran holgadamente toda la estancia.');
+   else pasosAbogado.push('2) Verifica que la invitación incluya dirección exacta, estatus legal del anfitrión y parentesco.');
+
+   if(respuestasDiag.arraigo === 'familia') pasosAbogado.push('3) Refuerza tu arraigo económico sumando constancia de ingresos, estudios o patrimonio familiar en Cuba.');
+   else pasosAbogado.push('3) Presenta certificaciones originales de tus propiedades/ingresos junto a tu ' + dest.formulario + '.');
+
+   cajaRes.classList.remove('medio', 'riesgo');
+   badgeRes.classList.remove('alerta');
+
+   if(pts >= 5 && respuestasDiag.pasaporte === 'vigente'){
+    $('svgSelloDiag').textContent = 'PERFIL FUERTE';
+    $('txtBadgeDictamen').textContent = 'Dictamen Consular Favorable';
+    $('txtResultadoExacto').textContent = 'Tu perfil es FUERTE. Tienes altas probabilidades de aprobación. Descarga tu checklist gratis.';
+   } else if(pts >= 3 && respuestasDiag.pasaporte !== 'no'){
+    cajaRes.classList.add('medio');
+    $('svgSelloDiag').textContent = 'PERFIL VIABLE';
+    $('txtBadgeDictamen').textContent = 'Perfil Viable · Reforzar Soportes';
+    $('txtResultadoExacto').textContent = 'Tu perfil tiene BASE VIABLE, pero debes reforzar puntos clave antes de la cita. Descarga tu checklist gratis.';
+   } else {
+    cajaRes.classList.add('riesgo');
+    badgeRes.classList.add('alerta');
+    $('svgSelloDiag').textContent = 'RIESGO ALTO';
+    $('txtBadgeDictamen').textContent = 'Alerta Preventiva de Elegibilidad';
+    $('txtResultadoExacto').textContent = 'Atención: Hoy tu perfil presenta RIESGO ALTO si te presentas sin corregir estos puntos. Descarga tu checklist gratis.';
+   }
+
+   $('notaAbogadoDiag').textContent = 'Ruta recomendada para ' + dest.nombre + ': ' + pasosAbogado.join(' ');
+   cajaRes.classList.remove('oculto');
+   try { cajaRes.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch(err){}
+  }, 1200);
+ });
+
+ $('btnIrAChecklist').addEventListener('click', function(){
+  irAVista('vistaChecklist');
+ });
+
+ /* 1. Botón Descargar Checklist PDF con jsPDF */
+ $('btnDescargarChecklistPdf').addEventListener('click', descargarChecklistConJsPDF);
+
+ /* 2. Botones que abren el Modal de Confirmación QvaPay */
+ var triggersModal = document.querySelectorAll('.btnAbrirModalQvaPay');
+ for(var tm = 0; tm < triggersModal.length; tm++){
+  triggersModal[tm].addEventListener('click', abrirModalConfirmacionQvaPay);
+ }
+ $('btnConfirmarPagoModal').addEventListener('click', confirmarPagoSimuladoQvaPay);
+ $('btnCancelarPagoModal').addEventListener('click', cerrarModalConfirmacionQvaPay);
+ $('btnCerrarModalQva').addEventListener('click', cerrarModalConfirmacionQvaPay);
+ $('modalConfirmarQvaPay').addEventListener('click', function(e){
+  if(e.target === this) cerrarModalConfirmacionQvaPay();
+ });
+
+ /* 4a. Traductor de Formularios */
+ var chips = document.querySelectorAll('.chip-ejemplo');
+ for(var c = 0; c < chips.length; c++){
+  chips[c].addEventListener('click', function(){
+   $('inputPreguntaIngles').value = this.getAttribute('data-preg');
+  });
+ }
+
+ $('btnTraducirFormulario').addEventListener('click', function(){
+  $('textoSalidaTraductor').textContent = analizarPreguntaIngles($('inputPreguntaIngles').value);
+  var wrap = $('salidaTraductorWrap');
+  wrap.classList.remove('oculto');
+  if(!esVIP){
+   wrap.classList.add('dossier-bloqueado');
+   $('candadoTraductor').classList.remove('oculto');
+   mostrarToast('Desbloquea VIP ($4.99) para leer el análisis completo', 'oro');
+  } else {
+   wrap.classList.remove('dossier-bloqueado');
+   $('candadoTraductor').classList.add('oculto');
+   mostrarToast('✓ Pregunta explicada en español claro', 'verde');
+  }
+ });
+
+ /* 3. Generador de Carta de Motivación (Spinner de 2 segundos + Copiar + Descargar PDF) */
+ $('btnEjemploCarta').addEventListener('click', function(){
+  $('inpLugarFecha').value = obtenerLugarYFechaES();
+  $('inpDedicacion').value = 'Ingeniera informática y dueña de estudio privado de diseño digital en La Habana con 6 años de operación estable';
+  $('inpInvita').value = 'Mi hermana residente legal en ' + DESTINOS[paisActual].nombre + ', quien me brinda alojamiento familiar durante 14 días';
+  $('inpRegreso').value = 'Propiedad de vivienda inscrita a mi nombre en La Habana, contratos activos con clientes nacionales y el cuidado directo de mis padres jubilados';
+  mostrarToast('Datos de ejemplo cargados');
+ });
+
+ $('btnGenerarCarta').addEventListener('click', function(){
+  if(generandoCarta) return;
+  generandoCarta = true;
+  $('btnGenerarCarta').disabled = true;
+  $('salidaCartaWrap').classList.add('oculto');
+  $('avisoCartaPdfGenerado').classList.add('oculto');
+  $('cajaRedactandoCarta').classList.remove('oculto');
+
+  /* Spinner exacto de 2 segundos (2000 ms) */
+  setTimeout(function(){
+   generandoCarta = false;
+   $('btnGenerarCarta').disabled = false;
+   $('cajaRedactandoCarta').classList.add('oculto');
+   generarCartaAbogado();
+
+   var wrap = $('salidaCartaWrap');
+   wrap.classList.remove('oculto');
+   if(!esVIP){
+    wrap.classList.add('dossier-bloqueado');
+    $('candadoCarta').classList.remove('oculto');
+    $('barraAccionesCarta').classList.add('oculto');
+    mostrarToast('Carta redactada · Desbloquea VIP con QvaPay ($4.99)', 'oro');
+   } else {
+    wrap.classList.remove('dossier-bloqueado');
+    $('candadoCarta').classList.add('oculto');
+    $('barraAccionesCarta').classList.remove('oculto');
+    mostrarToast('✓ Carta consular bilingüe generada', 'verde');
+   }
+   try { wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch(err){}
+  }, 2000);
+ });
+
+ /* Pestañas de idioma */
+ var tabsId = document.querySelectorAll('.tab-idioma');
+ for(var t = 0; t < tabsId.length; t++){
+  tabsId[t].addEventListener('click', function(){
+   for(var u = 0; u < tabsId.length; u++) tabsId[u].classList.remove('activo');
+   this.classList.add('activo');
+   idiomaCartaVista = this.getAttribute('data-idioma');
+   renderVistaTextoCarta();
+  });
+ }
+
+ /* Botón "Copiar al Portapapeles" */
+ function copiarFallback(txt){
+  var ta = document.createElement('textarea');
+  ta.value = txt;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); } catch(e){}
+  document.body.removeChild(ta);
+  mostrarToast('✓ Carta copiada al portapapeles', 'verde');
+ }
+
+ $('btnCopiarPortapapeles').addEventListener('click', function(){
+  if(!cartaActual.en || !cartaActual.es) generarCartaAbogado();
+  var texto = obtenerTextoCartaVisible();
+  if(navigator.clipboard && navigator.clipboard.writeText){
+   navigator.clipboard.writeText(texto).then(function(){
+    mostrarToast('✓ Carta copiada al portapapeles', 'verde');
+   }).catch(function(){
+    copiarFallback(texto);
+   });
+  } else {
+   copiarFallback(texto);
+  }
+ });
+
+ /* Botón "Descargar Carta en PDF" */
+ $('btnDescargarCartaPdf').addEventListener('click', descargarCartaConJsPDF);
+
+ /* Vista previa integrada del documento PDF A4 */
+ function abrirModalVistaPdf(info){
+  if(!info) return;
+  pdfEnModal = info;
+  $('titVistaPdf').textContent = info.nombre;
+  $('metaVistaPdf').textContent = 'Generado con jsPDF · ' + info.kb;
+  $('headHojaPdf').textContent = info.head;
+  $('subHeadHojaPdf').textContent = info.sub;
+  $('cuerpoHojaPdf').textContent = info.cuerpo;
+  $('modalVistaPdf').classList.remove('oculto');
+ }
+ $('btnVerHojaChecklistPdf').addEventListener('click', function(){ abrirModalVistaPdf(ultimoChecklistPdf); });
+ $('btnVerHojaCartaPdf').addEventListener('click', function(){ abrirModalVistaPdf(ultimaCartaPdf); });
+ $('btnCerrarVistaPdf').addEventListener('click', function(){ $('modalVistaPdf').classList.add('oculto'); });
+ $('modalVistaPdf').addEventListener('click', function(e){ if(e.target === this) $('modalVistaPdf').classList.add('oculto'); });
+ $('btnReDescargarVistaPdf').addEventListener('click', function(){
+  if(pdfEnModal && pdfEnModal.doc){
+   try { pdfEnModal.doc.save(pdfEnModal.nombre); } catch(e){}
+   mostrarToast('✓ Descarga iniciada: ' + pdfEnModal.nombre, 'verde');
+  }
+ });
+
+ /* Cerrar modales con tecla Escape + Reiniciar modo prueba VIP */
+ document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape'){
+   if(!$('modalVistaPdf').classList.contains('oculto')) $('modalVistaPdf').classList.add('oculto');
+   if(!$('modalConfirmarQvaPay').classList.contains('oculto')) cerrarModalConfirmacionQvaPay();
+  }
+ });
+
+ $('btnReiniciarPruebaVip').addEventListener('click', function(){
+  esVIP = false;
+  memStore = {};
+  try {
+   window.localStorage.removeItem('visaprep_estado_usuario');
+   window.localStorage.removeItem('visaprep_vip_v1');
+  } catch(e){}
+  if(!$('salidaCartaWrap').classList.contains('oculto')){
+   $('salidaCartaWrap').classList.add('dossier-bloqueado');
+   $('candadoCarta').classList.remove('oculto');
+  }
+  if(!$('salidaTraductorWrap').classList.contains('oculto')){
+   $('salidaTraductorWrap').classList.add('dossier-bloqueado');
+   $('candadoTraductor').classList.remove('oculto');
+  }
+  actualizarEstadoVipUI();
+  mostrarToast('Modo prueba reiniciado: estado volvió a Gratis ($4.99)', 'oro');
+ });
+
+ /* Inicialización */
+ actualizarPaisUI();
+ actualizarEstadoVipUI();
+})();
+</script>
+</body>
+</html>
