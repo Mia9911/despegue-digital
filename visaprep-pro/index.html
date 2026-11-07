@@ -246,6 +246,37 @@ body {
  display: none !important;
 }
 
+.fila-volver-top {
+ display: flex;
+ justify-content: flex-start;
+ align-items: center;
+ margin-bottom: 12px;
+}
+
+.btn-volver-inicio {
+ display: inline-flex;
+ align-items: center;
+ gap: 6px;
+ background: rgba(19, 26, 36, 0.92);
+ color: #D8E2F0;
+ border: 1px solid rgba(255, 255, 255, 0.14);
+ border-radius: 10px;
+ padding: 8px 14px;
+ font-family: inherit;
+ font-size: 12.5px;
+ font-weight: 700;
+ letter-spacing: 0.2px;
+ cursor: pointer;
+ transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+}
+
+.btn-volver-inicio:hover,
+.btn-volver-inicio:active {
+ background: rgba(0, 229, 255, 0.1);
+ border-color: rgba(0, 229, 255, 0.42);
+ color: #FFFFFF;
+}
+
 /* ══ 1. PANTALLA DE INICIO ══ */
 .hero-card {
  position: relative;
@@ -1674,6 +1705,7 @@ body {
       2. EL DIAGNÓSTICO (GRATIS)
       ══════════════════════════════════════════════════════════ -->
  <section id="vistaDiagnostico" class="vista">
+  <div class="fila-volver-top"><button type="button" class="btn-volver-inicio" data-ir-inicio="1">← Volver</button></div>
   <div class="panel-consular">
    <div class="panel-header">
     <div class="panel-header-izq">
@@ -1763,6 +1795,7 @@ body {
       3. EL CHECKLIST (GRATIS) — DESCARGA REAL CON jsPDF
       ══════════════════════════════════════════════════════════ -->
  <section id="vistaChecklist" class="vista">
+  <div class="fila-volver-top"><button type="button" class="btn-volver-inicio" data-ir-inicio="1">← Volver</button></div>
   <div class="panel-consular">
    <div class="panel-header">
     <div class="panel-header-izq">
@@ -1799,7 +1832,7 @@ body {
    </button>
 
    <div id="avisoPdfGenerado" class="confirmacion-pdf oculto">
-    <strong>✓ Checklist PDF generado con jsPDF (<span id="spanTamChecklistPdf">PDF A4</span>).</strong><br>
+    <strong>✓ Descarga directa iniciada (<span id="spanTamChecklistPdf">PDF A4</span>).</strong><br>
     Incluye la lista de documentos en pantalla para <span id="spanPaisPdf">EE.UU.</span> con fecha <span id="spanFechaPdf"></span>.<br>
     <button type="button" class="btn-link-pdf" id="btnVerHojaChecklistPdf">Vista previa del PDF</button>
     <a id="linkRespaldoChecklistPdf" href="#" download="Checklist-VisaPrep-Pro.pdf">Guardar copia directa</a>
@@ -1828,6 +1861,7 @@ body {
       4. ZONA VIP — PAGO QVAPAY + TRADUCTOR + CARTA EN PDF
       ══════════════════════════════════════════════════════════ -->
  <section id="vistaVip" class="vista">
+  <div class="fila-volver-top"><button type="button" class="btn-volver-inicio" data-ir-inicio="1">← Volver</button></div>
 
   <!-- Tarjeta de Estado y Desbloqueo VIP ($4.99 -> Membresía VIP Desbloqueada con borde verde) -->
   <div class="paywall-vip-card" id="cardPaywallVip">
@@ -1990,7 +2024,7 @@ body {
    </div>
 
    <div id="avisoCartaPdfGenerado" class="confirmacion-pdf oculto">
-    <strong>✓ Carta de Motivación generada en PDF real (<span id="spanTamCartaPdf">A4 Bilingüe</span>).</strong><br>
+    <strong>✓ Descarga directa de Carta PDF iniciada (<span id="spanTamCartaPdf">A4 Bilingüe</span>).</strong><br>
     <button type="button" class="btn-link-pdf" id="btnVerHojaCartaPdf">Vista previa del PDF</button>
     <a id="linkRespaldoCartaPdf" href="#" download="Carta-Motivacion-VisaPrep-Pro.pdf">Guardar copia directa</a>
    </div>
@@ -2068,7 +2102,7 @@ body {
     <div class="qva-badge-azul">PDF</div>
     <div>
      <div style="font-size:14.5px;font-weight:900;color:#FFFFFF" id="titVistaPdf">Documento PDF Generado</div>
-     <div style="font-size:11px;color:var(--texto-sec)" id="metaVistaPdf">Generado con jsPDF · Formato A4 Oficial</div>
+     <div style="font-size:11px;color:var(--texto-sec)" id="metaVistaPdf">Documento Oficial PDF · Formato A4</div>
     </div>
    </div>
    <button type="button" class="btn-cerrar-modal" id="btnCerrarVistaPdf" aria-label="Cerrar">✕</button>
@@ -2425,31 +2459,44 @@ body {
   return this._cacheBytes;
  };
 
+ function esEntornoWebViewOCriOS(){
+  var ua = (global.navigator && global.navigator.userAgent) ? global.navigator.userAgent : '';
+  return /CriOS\/|FxiOS\/|; wv\)|WebView|FBAN|FBAV|Instagram|Telegram|WhatsApp/i.test(ua);
+ }
+
  MotorPDFConsular.prototype.output = function(tipo){
   var u8 = this._compilarBytes();
   var t = String(tipo || 'arraybuffer').toLowerCase();
   if(t === 'arraybuffer') return u8.buffer;
   if(t === 'uint8array') return u8;
-  if(t === 'blob') return new Blob([u8], { type: 'application/pdf' });
+  if(t === 'blob') return new Blob([u8], { type: 'application/octet-stream' });
   if(t === 'bloburl'){
+   if(esEntornoWebViewOCriOS()){
+    return 'data:application/octet-stream;base64,' + uint8ABase64(u8);
+   }
    var uObj = global.URL || global.webkitURL;
-   var bUrl = uObj.createObjectURL(new Blob([u8], { type: 'application/pdf' }));
+   var bUrl = uObj.createObjectURL(new Blob([u8], { type: 'application/octet-stream' }));
    registrarBlobUrl(bUrl);
    return bUrl;
   }
   if(t === 'datauristring' || t === 'dataurlstring'){
-   return 'data:application/pdf;base64,' + uint8ABase64(u8);
+   return 'data:application/octet-stream;base64,' + uint8ABase64(u8);
   }
   return u8.buffer;
  };
 
- /* Descarga directa móvil sin ventanas emergentes (popups) ni redirecciones bloqueadas */
+ /* Fuerza descarga directa del archivo .pdf al dispositivo (doc.save) sin abrir ventanas en blanco */
  MotorPDFConsular.prototype.save = function(nombreArchivo){
   var nombre = String(nombreArchivo || 'Documento-VisaPrep-Pro.pdf');
   if(!/\.pdf$/i.test(nombre)) nombre += '.pdf';
   try {
    var u8 = this._compilarBytes();
-   var blob = new Blob([u8], { type: 'application/pdf' });
+   var ua = (global.navigator && global.navigator.userAgent) ? global.navigator.userAgent : '';
+   var esIOS = /iPad|iPhone|iPod/.test(ua) || (global.navigator && global.navigator.platform === 'MacIntel' && global.navigator.maxTouchPoints > 1);
+
+   /* application/octet-stream fuerza descarga directa en vez de abrir pestaña de vista previa en blanco */
+   var mimeForzado = (esIOS && !esEntornoWebViewOCriOS()) ? 'application/pdf' : 'application/octet-stream';
+   var blob = new Blob([u8], { type: mimeForzado });
 
    if(global.navigator && typeof global.navigator.msSaveOrOpenBlob === 'function'){
     global.navigator.msSaveOrOpenBlob(blob, nombre);
@@ -2458,33 +2505,36 @@ body {
 
    var urlDescarga = '';
    var uApi = global.URL || global.webkitURL;
-   if(uApi && typeof uApi.createObjectURL === 'function'){
+   if(!esEntornoWebViewOCriOS() && uApi && typeof uApi.createObjectURL === 'function'){
     try {
      urlDescarga = uApi.createObjectURL(blob);
      registrarBlobUrl(urlDescarga);
     } catch(eUrl){ urlDescarga = ''; }
    }
    if(!urlDescarga){
-    urlDescarga = 'data:application/pdf;base64,' + uint8ABase64(u8);
+    urlDescarga = 'data:application/octet-stream;base64,' + uint8ABase64(u8);
    }
 
    var a = document.createElement('a');
+   a.style.display = 'none';
    a.href = urlDescarga;
+   a.download = nombre;
    a.setAttribute('download', nombre);
    a.rel = 'noopener';
-   a.style.position = 'fixed';
-   a.style.left = '-9999px';
-   a.style.top = '0';
-   a.style.opacity = '0';
-   a.style.pointerEvents = 'none';
    document.body.appendChild(a);
 
-   /* Disparo síncrono dentro del mismo gesto táctil del usuario (cero popups) */
-   a.click();
+   /* Disparo síncrono estándar dentro del toque del usuario */
+   try {
+    a.click();
+   } catch(eClick){
+    var evt = document.createEvent('MouseEvents');
+    evt.initMouseEvent('click', true, true, global, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+    a.dispatchEvent(evt);
+   }
 
    setTimeout(function(){
     try { if(a.parentNode) a.parentNode.removeChild(a); } catch(eRem){}
-   }, 400);
+   }, 2000);
   } catch(eSilent){}
   return this;
  };
@@ -3288,7 +3338,7 @@ body {
    mostrarToast('✓ Tu Membresía VIP ya está activa', 'verde');
    return;
   }
-  $('fechaModalQva').textContent = obtenerLugarYFechaES();
+  $('fechaModalQva').textContent = new Date().toLocaleDateString();
   $('estadoBotonesModalQva').classList.remove('oculto');
   $('estadoProcesandoModalQva').classList.add('oculto');
   $('modalConfirmarQvaPay').classList.remove('oculto');
@@ -3563,7 +3613,7 @@ body {
   if(!info) return;
   pdfEnModal = info;
   $('titVistaPdf').textContent = info.nombre;
-  $('metaVistaPdf').textContent = 'Generado con jsPDF · ' + info.kb;
+  $('metaVistaPdf').textContent = 'Documento Oficial PDF · ' + info.kb;
   $('headHojaPdf').textContent = info.head;
   $('subHeadHojaPdf').textContent = info.sub;
   $('cuerpoHojaPdf').textContent = info.cuerpo;
@@ -3607,7 +3657,18 @@ body {
   mostrarToast('Modo prueba reiniciado: estado volvió a Gratis ($4.99)', 'oro');
  });
 
+ /* Botones superiores "← Volver" hacia Inicio */
+ var btnsVolver = document.querySelectorAll('.btn-volver-inicio');
+ for(var bv = 0; bv < btnsVolver.length; bv++){
+  btnsVolver[bv].addEventListener('click', function(){
+   irAVista('vistaInicio');
+  });
+ }
+
  /* Inicialización */
+ if($('fechaModalQva')){
+  $('fechaModalQva').textContent = new Date().toLocaleDateString();
+ }
  actualizarPaisUI();
  actualizarEstadoVipUI();
 })();
