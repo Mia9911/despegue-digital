@@ -478,12 +478,12 @@
    "web3-marketing-87098"
   ],
   "gig": {
-   "v": 380,
+   "v": 381,
    "c": 0,
-   "av": 378,
+   "av": 381,
    "ac": 0
   },
-  "hora": "2026-11-08T14"
+  "hora": "2026-11-08T19"
  },
  "_metricas": {
   "fecha": "2026-11-08",
@@ -504,17 +504,17 @@
  },
  "_retos": {
   "-1003939536300": {
-   "q": "Si 3 gatos cazan 3 ratones en 3 horas, ¿cuánto tardan 6 gatos en 6 ratones?",
+   "q": "¿Qué sigue? Z, X, C, V, …",
    "opts": [
-    "3 horas",
-    "6 horas",
-    "1.5 horas"
+    "B",
+    "N",
+    "A"
    ],
    "k": 0,
-   "abierta": null,
+   "abierta": "2026-11-08T15:03:31.695801-04:00",
    "respuestas": {},
-   "rondas": 7,
-   "proximo": "2026-11-08T14:47:46.213761-04:00"
+   "rondas": 8,
+   "proximo": null
   }
  },
  "_guerra": {
