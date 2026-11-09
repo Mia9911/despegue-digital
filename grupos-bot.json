@@ -23,7 +23,7 @@
   "uuids": []
  },
  "_agenda": {
-  "ultima": "2026-11-08"
+  "ultima": "2026-11-09"
  },
  "_radar_lx": {
   "ultima": "2026-09-29",
@@ -250,6 +250,7 @@
    "social-media-specialist-16775",
    "spanish-tiktok-manager-83562",
    "telegram-crypto-community-managers-16262",
+   "v19169",
    "v19171",
    "v19172",
    "v19178",
@@ -478,28 +479,28 @@
    "web3-marketing-87098"
   ],
   "gig": {
-   "v": 384,
+   "v": 385,
    "c": 0,
    "av": 384,
    "ac": 0
   },
-  "hora": "2026-11-09T02"
+  "hora": "2026-11-09T09"
  },
  "_metricas": {
-  "fecha": "2026-11-08",
+  "fecha": "2026-11-09",
   "badge": {
-   "despegue-tienda": 159,
-   "despegue-sala": 69,
-   "despegue-imperio": 54,
-   "despegue-mina": 82,
-   "arena-plata": 71,
-   "despegue-domino": 42,
-   "despegue-bingo": 53,
-   "despegue-cartas": 60
+   "despegue-tienda": 160,
+   "despegue-sala": 70,
+   "despegue-imperio": 55,
+   "despegue-mina": 83,
+   "arena-plata": 72,
+   "despegue-domino": 43,
+   "despegue-bingo": 54,
+   "despegue-cartas": 61
   }
  },
  "_ranking_sem": {
-  "semana": "2026-W45",
+  "semana": "2026-W46",
   "grupos": {}
  },
  "_retos": {
@@ -518,7 +519,7 @@
   }
  },
  "_guerra": {
-  "semana": "2026-W45",
+  "semana": "2026-W46",
   "activa": true,
   "hp": {
    "caiman": 500,
@@ -539,10 +540,10 @@
   ]
  },
  "_vig_arena": {
-  "dia": "2026-11-08",
-  "lecturas": 2,
-  "aperturas": 179,
-  "rondas": 285
+  "dia": "2026-11-09",
+  "lecturas": 3,
+  "aperturas": 280,
+  "rondas": 459
  },
  "_pagos_visaprep": {
   "uuids": []
