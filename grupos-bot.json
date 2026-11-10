@@ -23,7 +23,7 @@
   "uuids": []
  },
  "_agenda": {
-  "ultima": "2026-11-09"
+  "ultima": "2026-11-10"
  },
  "_radar_lx": {
   "ultima": "2026-09-29",
@@ -173,6 +173,7 @@
    "j105327",
    "j105359",
    "j105386",
+   "j105393",
    "j84007",
    "j93887",
    "j93888",
@@ -251,6 +252,10 @@
    "social-media-specialist-16775",
    "spanish-tiktok-manager-83562",
    "telegram-crypto-community-managers-16262",
+   "v19130",
+   "v19159",
+   "v19161",
+   "v19165",
    "v19169",
    "v19171",
    "v19172",
@@ -480,24 +485,24 @@
    "web3-marketing-87098"
   ],
   "gig": {
-   "v": 389,
+   "v": 390,
    "c": 0,
-   "av": 387,
+   "av": 390,
    "ac": 0
   },
-  "hora": "2026-11-10T03"
+  "hora": "2026-11-10T10"
  },
  "_metricas": {
-  "fecha": "2026-11-09",
+  "fecha": "2026-11-10",
   "badge": {
-   "despegue-tienda": 160,
-   "despegue-sala": 70,
-   "despegue-imperio": 55,
-   "despegue-mina": 83,
-   "arena-plata": 72,
-   "despegue-domino": 43,
-   "despegue-bingo": 54,
-   "despegue-cartas": 61
+   "despegue-tienda": 161,
+   "despegue-sala": 71,
+   "despegue-imperio": 56,
+   "despegue-mina": 84,
+   "arena-plata": 73,
+   "despegue-domino": 44,
+   "despegue-bingo": 55,
+   "despegue-cartas": 62
   }
  },
  "_ranking_sem": {
@@ -541,10 +546,10 @@
   ]
  },
  "_vig_arena": {
-  "dia": "2026-11-09",
-  "lecturas": 3,
-  "aperturas": 280,
-  "rondas": 459
+  "dia": "2026-11-10",
+  "lecturas": 4,
+  "aperturas": 366,
+  "rondas": 599
  },
  "_pagos_visaprep": {
   "uuids": []
