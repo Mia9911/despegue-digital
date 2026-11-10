@@ -4,8 +4,8 @@
    "title": "Despegue Digital Negocios Cuba",
    "username": "DespegueDigitalCuba",
    "activo": true,
-   "ultima": "2026-11-09",
-   "posts": 48
+   "ultima": "2026-11-10",
+   "posts": 49
   },
   "8600965049": {
    "title": "",
@@ -16,7 +16,7 @@
   }
  },
  "_canal": {
-  "ultima": "2026-11-09"
+  "ultima": "2026-11-10"
  },
  "_pagos": {
   "total": 0,
@@ -486,12 +486,12 @@
    "web3-marketing-87098"
   ],
   "gig": {
-   "v": 393,
+   "v": 394,
    "c": 0,
    "av": 393,
    "ac": 0
   },
-  "hora": "2026-11-10T18"
+  "hora": "2026-11-10T23"
  },
  "_metricas": {
   "fecha": "2026-11-10",
@@ -512,17 +512,17 @@
  },
  "_retos": {
   "-1003939536300": {
-   "q": "¿Qué sigue? Z, X, C, V, …",
+   "q": "Si hoy es miércoles, ¿qué día fue hace 3 días?",
    "opts": [
-    "B",
-    "N",
-    "A"
+    "Domingo",
+    "Lunes",
+    "Martes"
    ],
    "k": 0,
-   "abierta": null,
+   "abierta": "2026-11-10T19:09:47.013727-04:00",
    "respuestas": {},
-   "rondas": 8,
-   "proximo": "2026-11-10T16:01:22.267136-04:00"
+   "rondas": 9,
+   "proximo": null
   }
  },
  "_guerra": {
