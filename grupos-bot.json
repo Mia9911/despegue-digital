@@ -254,6 +254,7 @@
    "social-media-specialist-16775",
    "spanish-tiktok-manager-83562",
    "telegram-crypto-community-managers-16262",
+   "v19051",
    "v19053",
    "v19059",
    "v19073",
@@ -499,12 +500,12 @@
    "web3-marketing-87098"
   ],
   "gig": {
-   "v": 409,
+   "v": 410,
    "c": 0,
    "av": 408,
    "ac": 0
   },
-  "hora": "2026-11-12T22"
+  "hora": "2026-11-13T01"
  },
  "_metricas": {
   "fecha": "2026-11-12",
@@ -532,10 +533,10 @@
     "Martes"
    ],
    "k": 0,
-   "abierta": null,
+   "abierta": "2026-11-12T21:25:53.848541-04:00",
    "respuestas": {},
-   "rondas": 9,
-   "proximo": "2026-11-12T19:39:42.689273-04:00"
+   "rondas": 10,
+   "proximo": null
   }
  },
  "_guerra": {
