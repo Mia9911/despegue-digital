@@ -160,6 +160,27 @@
    "username": "",
    "texto": "[FOTO]",
    "ts": "2026-11-14T05:02:51.045480-04:00"
+  },
+  {
+   "chat_id": 1183242190,
+   "nombre": "Yoel",
+   "username": "yoelgarces",
+   "texto": "/start",
+   "ts": "2026-11-15T16:19:06.962255-04:00"
+  },
+  {
+   "chat_id": 1183242190,
+   "nombre": "Yoel",
+   "username": "yoelgarces",
+   "texto": "/muestra",
+   "ts": "2026-11-15T16:19:07.947269-04:00"
+  },
+  {
+   "chat_id": 1183242190,
+   "nombre": "Yoel",
+   "username": "yoelgarces",
+   "texto": "/muestra",
+   "ts": "2026-11-15T16:19:08.425102-04:00"
   }
  ]
 }
