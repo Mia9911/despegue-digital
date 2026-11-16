@@ -23,7 +23,7 @@
   "uuids": []
  },
  "_agenda": {
-  "ultima": "2026-11-15"
+  "ultima": "2026-11-16"
  },
  "_radar_lx": {
   "ultima": "2026-09-29",
@@ -502,28 +502,28 @@
    "web3-marketing-87098"
   ],
   "gig": {
-   "v": 436,
+   "v": 437,
    "c": 0,
    "av": 435,
    "ac": 0
   },
-  "hora": "2026-11-16T01"
+  "hora": "2026-11-16T06"
  },
  "_metricas": {
-  "fecha": "2026-11-15",
+  "fecha": "2026-11-16",
   "badge": {
-   "despegue-tienda": 169,
-   "despegue-sala": 77,
-   "despegue-imperio": 61,
-   "despegue-mina": 89,
-   "arena-plata": 90,
-   "despegue-domino": 50,
-   "despegue-bingo": 60,
-   "despegue-cartas": 67
+   "despegue-tienda": 170,
+   "despegue-sala": 78,
+   "despegue-imperio": 62,
+   "despegue-mina": 90,
+   "arena-plata": 91,
+   "despegue-domino": 51,
+   "despegue-bingo": 61,
+   "despegue-cartas": 68
   }
  },
  "_ranking_sem": {
-  "semana": "2026-W46",
+  "semana": "2026-W47",
   "grupos": {}
  },
  "_retos": {
@@ -542,7 +542,7 @@
   }
  },
  "_guerra": {
-  "semana": "2026-W46",
+  "semana": "2026-W47",
   "activa": true,
   "hp": {
    "caiman": 500,
@@ -563,10 +563,10 @@
   ]
  },
  "_vig_arena": {
-  "dia": "2026-11-15",
-  "lecturas": 9,
-  "aperturas": 711,
-  "rondas": 1176
+  "dia": "2026-11-16",
+  "lecturas": 10,
+  "aperturas": 774,
+  "rondas": 1257
  },
  "_pagos_visaprep": {
   "uuids": []
