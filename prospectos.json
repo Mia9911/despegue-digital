@@ -230,6 +230,34 @@
    "username": "",
    "texto": "[FOTO]",
    "ts": "2026-11-19T15:11:51.042539-04:00"
+  },
+  {
+   "chat_id": 6275684077,
+   "nombre": "Ale",
+   "username": "ale5101",
+   "texto": "/start",
+   "ts": "2026-11-19T19:14:27.907812-04:00"
+  },
+  {
+   "chat_id": 6275684077,
+   "nombre": "Ale",
+   "username": "ale5101",
+   "texto": "Como se reporta al bot",
+   "ts": "2026-11-19T19:14:29.017753-04:00"
+  },
+  {
+   "chat_id": 6275684077,
+   "nombre": "Ale",
+   "username": "ale5101",
+   "texto": "arena 3420",
+   "ts": "2026-11-19T19:14:29.567420-04:00"
+  },
+  {
+   "chat_id": 6275684077,
+   "nombre": "Ale",
+   "username": "ale5101",
+   "texto": "[FOTO]",
+   "ts": "2026-11-19T19:14:31.220171-04:00"
   }
  ]
 }
