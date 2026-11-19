@@ -23,7 +23,7 @@
   "uuids": []
  },
  "_agenda": {
-  "ultima": "2026-11-18"
+  "ultima": "2026-11-19"
  },
  "_radar_lx": {
   "ultima": "2026-09-29",
@@ -503,24 +503,24 @@
    "web3-marketing-87098"
   ],
   "gig": {
-   "v": 457,
+   "v": 458,
    "c": 0,
    "av": 456,
    "ac": 0
   },
-  "hora": "2026-11-19T02"
+  "hora": "2026-11-19T07"
  },
  "_metricas": {
-  "fecha": "2026-11-18",
+  "fecha": "2026-11-19",
   "badge": {
-   "despegue-tienda": 173,
-   "despegue-sala": 80,
-   "despegue-imperio": 64,
-   "despegue-mina": 92,
-   "arena-plata": 94,
-   "despegue-domino": 53,
-   "despegue-bingo": 63,
-   "despegue-cartas": 70
+   "despegue-tienda": 174,
+   "despegue-sala": 81,
+   "despegue-imperio": 65,
+   "despegue-mina": 93,
+   "arena-plata": 95,
+   "despegue-domino": 54,
+   "despegue-bingo": 64,
+   "despegue-cartas": 71
   }
  },
  "_ranking_sem": {
@@ -564,10 +564,10 @@
   ]
  },
  "_vig_arena": {
-  "dia": "2026-11-18",
-  "lecturas": 12,
-  "aperturas": 887,
-  "rondas": 1433
+  "dia": "2026-11-19",
+  "lecturas": 13,
+  "aperturas": 934,
+  "rondas": 1514
  },
  "_pagos_visaprep": {
   "uuids": []
