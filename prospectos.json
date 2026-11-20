@@ -328,6 +328,34 @@
    "username": "",
    "texto": "[FOTO]",
    "ts": "2026-11-19T23:58:26.432318-04:00"
+  },
+  {
+   "chat_id": 6275684077,
+   "nombre": "Ale",
+   "username": "ale5101",
+   "texto": "/precios",
+   "ts": "2026-11-20T08:30:07.870281-04:00"
+  },
+  {
+   "chat_id": 6275684077,
+   "nombre": "Ale",
+   "username": "ale5101",
+   "texto": "/muestra",
+   "ts": "2026-11-20T08:30:08.300234-04:00"
+  },
+  {
+   "chat_id": 6275684077,
+   "nombre": "Ale",
+   "username": "ale5101",
+   "texto": "/vitrina",
+   "ts": "2026-11-20T08:30:08.730679-04:00"
+  },
+  {
+   "chat_id": 6275684077,
+   "nombre": "Ale",
+   "username": "ale5101",
+   "texto": "/vitrina",
+   "ts": "2026-11-20T08:30:09.147424-04:00"
   }
  ]
 }
