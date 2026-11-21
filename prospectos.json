@@ -356,6 +356,27 @@
    "username": "ale5101",
    "texto": "/vitrina",
    "ts": "2026-11-20T08:30:09.147424-04:00"
+  },
+  {
+   "chat_id": 5065618112,
+   "nombre": "Anthony",
+   "username": "anthony_cuba",
+   "texto": "/start",
+   "ts": "2026-11-21T19:56:27.736333-04:00"
+  },
+  {
+   "chat_id": 5065618112,
+   "nombre": "Anthony",
+   "username": "anthony_cuba",
+   "texto": "/garantia",
+   "ts": "2026-11-21T19:56:28.637429-04:00"
+  },
+  {
+   "chat_id": 5065618112,
+   "nombre": "Anthony",
+   "username": "anthony_cuba",
+   "texto": "/soporte",
+   "ts": "2026-11-21T19:56:29.086373-04:00"
   }
  ]
 }
