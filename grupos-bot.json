@@ -4,8 +4,8 @@
    "title": "Despegue Digital Negocios Cuba",
    "username": "DespegueDigitalCuba",
    "activo": true,
-   "ultima": "2026-11-22",
-   "posts": 61
+   "ultima": "2026-11-23",
+   "posts": 62
   },
   "8600965049": {
    "title": "",
@@ -16,7 +16,7 @@
   }
  },
  "_canal": {
-  "ultima": "2026-11-22"
+  "ultima": "2026-11-23"
  },
  "_pagos": {
   "total": 0,
@@ -171,6 +171,8 @@
    "j105287",
    "j105291",
    "j105327",
+   "j105350",
+   "j105351",
    "j105359",
    "j105386",
    "j105393",
@@ -186,6 +188,7 @@
    "j105568",
    "j105570",
    "j105571",
+   "j105597",
    "j84007",
    "j93887",
    "j93888",
@@ -264,6 +267,7 @@
    "social-media-specialist-16775",
    "spanish-tiktok-manager-83562",
    "telegram-crypto-community-managers-16262",
+   "v19023",
    "v19030",
    "v19050",
    "v19051",
@@ -517,12 +521,12 @@
    "web3-marketing-87098"
   ],
   "gig": {
-   "v": 488,
+   "v": 489,
    "c": 0,
-   "av": 486,
+   "av": 489,
    "ac": 0
   },
-  "hora": "2026-11-23T11"
+  "hora": "2026-11-23T21"
  },
  "_metricas": {
   "fecha": "2026-11-23",
@@ -550,10 +554,10 @@
     "Pesan igual"
    ],
    "k": 2,
-   "abierta": "2026-11-22T21:13:27.040355-04:00",
+   "abierta": null,
    "respuestas": {},
    "rondas": 15,
-   "proximo": null
+   "proximo": "2026-11-24T17:23:10.423416-04:00"
   }
  },
  "_guerra": {
