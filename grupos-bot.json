@@ -4,8 +4,8 @@
    "title": "Despegue Digital Negocios Cuba",
    "username": "DespegueDigitalCuba",
    "activo": true,
-   "ultima": "2026-11-25",
-   "posts": 64
+   "ultima": "2026-11-26",
+   "posts": 65
   },
   "8600965049": {
    "title": "",
@@ -16,7 +16,7 @@
   }
  },
  "_canal": {
-  "ultima": "2026-11-25"
+  "ultima": "2026-11-26"
  },
  "_pagos": {
   "total": 0,
@@ -524,12 +524,12 @@
    "web3-marketing-87098"
   ],
   "gig": {
-   "v": 504,
+   "v": 505,
    "c": 0,
    "av": 504,
    "ac": 0
   },
-  "hora": "2026-11-26T20"
+  "hora": "2026-11-27T02"
  },
  "_metricas": {
   "fecha": "2026-11-26",
@@ -550,17 +550,17 @@
  },
  "_retos": {
   "-1003939536300": {
-   "q": "¿Qué sigue? 3, 5, 7, 9, 11, …",
+   "q": "¿Qué pesa más: 1 kg de hierro o 1 kg de plumas?",
    "opts": [
-    "17",
-    "13",
-    "11"
+    "El hierro",
+    "Las plumas",
+    "Pesan igual"
    ],
-   "k": 1,
-   "abierta": null,
+   "k": 2,
+   "abierta": "2026-11-26T22:50:37.419315-04:00",
    "respuestas": {},
-   "rondas": 16,
-   "proximo": "2026-11-26T22:19:16.601598-04:00"
+   "rondas": 17,
+   "proximo": null
   }
  },
  "_guerra": {
