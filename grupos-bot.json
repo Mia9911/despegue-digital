@@ -524,16 +524,17 @@
    "v19609",
    "v19612",
    "v19614",
+   "v19669",
    "video-editor-and-graphic-designer-96026",
    "web3-marketing-87098"
   ],
   "gig": {
-   "v": 509,
+   "v": 510,
    "c": 0,
-   "av": 507,
+   "av": 510,
    "ac": 0
   },
-  "hora": "2026-11-27T21"
+  "hora": "2026-11-28T02"
  },
  "_metricas": {
   "fecha": "2026-11-27",
@@ -561,10 +562,10 @@
     "Pesan igual"
    ],
    "k": 2,
-   "abierta": "2026-11-26T22:50:37.419315-04:00",
+   "abierta": null,
    "respuestas": {},
    "rondas": 17,
-   "proximo": null
+   "proximo": "2026-11-28T22:49:00.247069-04:00"
   }
  },
  "_guerra": {
